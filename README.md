@@ -1,2 +1,2 @@
 # purple-mri
-Penn Utilities for Registration and ParcelLation of Ex vivo MRI
+**P**enn **U**tilities for **R**egistration and **P**arcelLation of **E**x vivo MRI
