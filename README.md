@@ -5,6 +5,9 @@ We perform segmentation of ex vivo MRI.
 
 A stand-alone `pip` package available at PyPI.
 
-First, do bais correction.
-
+Steps:
+- bias correction
+- run through the docker to get the intial 10-label map with cruise toplogvy correction
+- run the surface-based parcellation scheme
+- do the glm and correlation analyses
 
