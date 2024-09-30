@@ -11,3 +11,6 @@ Steps:
 - run the surface-based parcellation scheme
 - do the glm and correlation analyses
 
+TODO:
+- add the 9.4t mtl to 7t hemis registration
+- exvivo to invio volumetric registration greedy script
