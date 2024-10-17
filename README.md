@@ -18,20 +18,30 @@ In particular, `purple-mri` allows you to do the following:
 `purple-mri` follows a series of steps with external dependencies making use of Docker and bash scripts:
 
 ### Pre-processing
-Perform bias correction and image normalization/standardization. We use `N4BiasFieldCorrection` as part of the CLI tool [`c3d`](http://www.itksnap.org/pmwiki/pmwiki.php?n=Convert3D.Convert3D). We highly recommend using the option of an input mask in `N4BiasFieldCorrection` which can be just obtained as a corase threhsold.
+Perform bias correction and image normalization/standardization. We use `N4BiasFieldCorrection` as part of the CLI tool [`c3d`](http://www.itksnap.org/pmwiki/pmwiki.php?n=Convert3D.Convert3D). We highly recommend using the option of an input mask in `N4BiasFieldCorrection` which can be obtained via corase threhsolding.
 [Here](https://github.com/Pulkit-Khandelwal/upenn-picsl-brain-ex-vivo/tree/main/misc_scripts) is a sample script.
 
 ### Deep learning based initial labeling and CRUISE-based post-hoc topology correction
 Currently, we have two Docker images. The first image provides the segmentation and the second employs [Nighres/CRUISE](https://nighres.readthedocs.io/en/latest/installation.html) for post-hoc topology correction. 
 Please follow the [link](https://github.com/Pulkit-Khandelwal/upenn-picsl-brain-ex-vivo/blob/main/exvivo-segm-demo-docker.md) for detailed instructions. Some key commands are here:
 
-Place the image(s) (add a suffix _0000.nii.gz to your filenames) in a folder named `data_for_inference` within your working directory is `/your/working/directory`.
+Place the image(s) (with a suffix _0000.nii.gz to your filenames) in a folder named `data_for_inference` within your working directory is `/your/working/directory`.
 ```
 docker pull pulks/docker_hippogang_exvivo_segm:v${LATEST_TAG}
 
 docker run --gpus all --privileged -v /your/working/directory/:/data/exvivo/ -it pulks/docker_hippogang_exvivo_segm:v${LATEST_TAG} /bin/bash -c "bash /src/commands_nnunet_inference.sh ${OPTION}" >> logs.txt
 ```
 You will see the output in `/your/working/directory/data_for_inference/output_from_nnunet_inference`.
+
+Next, correct for topology so that adjoining gyri and sulci are clearly separated. Copy the segmentations from `output_from_nnunet_inference` to `data_for_topology_correction` in your wokring directory.
+```
+docker pull pulks/docker_nighres:v1.0.0
+
+docker run -v /your/working/directory/:/data/cruise_files/ -it pulks/docker_nighres:v1.0.0 /bin/bash -c "bash /data/prepare_cruise_files.sh"
+
+# Locally run the file to get the final combined label file. See instructions [here](https://github.com/Pulkit-Khandelwal/upenn-picsl-brain-ex-vivo/blob/main/exvivo-segm-demo-docker.md) and links referenced therein.
+bash clean_labels_final.sh
+```
 
 ### Surface-based modeling to obtain whole-hemisphere parcellations
 
