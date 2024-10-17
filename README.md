@@ -32,7 +32,7 @@ docker run --gpus all --privileged -v /your/working/directory/:/data/exvivo/ -it
 ```
 You will see the output in `/your/working/directory/data_for_inference/output_from_nnunet_inference`.
 
-Next, correct for topology so that adjoining gyri and sulci are clearly separated. Copy the segmentations from `output_from_nnunet_inference` to `data_for_topology_correction` in your wokring directory.
+Next, correct for topology so that adjoining gyri and sulci are clearly separated. Copy the segmentations from `output_from_nnunet_inference` to a folder `data_for_topology_correction` in your wokring directory.
 ```
 docker pull pulks/docker_nighres:v1.0.0
 
@@ -43,8 +43,9 @@ bash clean_labels_final.sh
 ```
 
 ### Surface-based modeling to obtain whole-hemisphere parcellations
-Once, you have obtained an initial 10-label topology corrected volumetric segmentation, you can proceed to the surface-based pipeline to obtain parcellations based on your favorite atlas. This step will be on your local machine. No GPUs required. To do this, you should have FreeSurfer installed locally. We have used FreeSurfer version 7.4.1 on linux obtained from [here](https://surfer.nmr.mgh.harvard.edu/fswiki/DownloadAndInstall).
+Once, you have obtained an initial 10-label topology corrected volumetric segmentation, you can proceed to the surface-based pipeline to obtain parcellations based on your favorite atlas. This step will be on your local machine. No GPUs required. To do this, you should have FreeSurfer installed locally. We have used FreeSurfer version 7.4.1 on linux obtained from [here](https://surfer.nmr.mgh.harvard.edu/fswiki/DownloadAndInstall). Moreover, there are some Python dependencies which can be found in the `dependencies.txt` file and installed using `pip`.
 
+Run the following file which calls in several bash scripts which prepares the data, computes appropriate transformations and re-orients the images, corrects surface topology, and perform the parcellation into Desikan-Killiany-Tourville (DKT), Schaefer, Glasser and the Von Economo-Koskinos atlases.
 
 ```
 bash run_surface_pipeline.sh freesurfer_path mri_path segm_path
