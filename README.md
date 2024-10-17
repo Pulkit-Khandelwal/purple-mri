@@ -21,7 +21,17 @@ In particular, `purple-mri` allows you to do the following:
 Perform bias correction and image normalization/standardization. We use `N4BiasFieldCorrection` as part of the CLI tool [`c3d`](http://www.itksnap.org/pmwiki/pmwiki.php?n=Convert3D.Convert3D). We highly recommend using the option of an input mask in `N4BiasFieldCorrection` which can be just obtained as a corase threhsold.
 [Here](https://github.com/Pulkit-Khandelwal/upenn-picsl-brain-ex-vivo/tree/main/misc_scripts) is a sample script.
 
-### Deep learning based initial labeling and CRUISE-based post-hoc topology correction 
+### Deep learning based initial labeling and CRUISE-based post-hoc topology correction
+Currently, we have two Docker images. The first image provides the segmentation and the second employs [Nighres/CRUISE](https://nighres.readthedocs.io/en/latest/installation.html) for post-hoc topology correction. 
+Please follow the [link](https://github.com/Pulkit-Khandelwal/upenn-picsl-brain-ex-vivo/blob/main/exvivo-segm-demo-docker.md) for detailed instructions. Some key commands are here:
+
+Place the image(s) in a folder named `data_for_inference` within your working directory is `/your/working/directory`.
+```
+docker pull pulks/docker_hippogang_exvivo_segm:v${LATEST_TAG}
+
+docker run --gpus all --privileged -v /your/working/directory/:/data/exvivo/ -it pulks/docker_hippogang_exvivo_segm:v${LATEST_TAG} /bin/bash -c "bash /src/commands_nnunet_inference.sh ${OPTION}" >> logs.txt
+```
+You will see the output in `/your/working/directory/data_for_inference/output_from_nnunet_inference`.
 
 ### Surface-based modeling to obtain whole-hemisphere parcellations
 
