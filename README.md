@@ -25,7 +25,7 @@ Perform bias correction and image normalization/standardization. We use `N4BiasF
 Currently, we have two Docker images. The first image provides the segmentation and the second employs [Nighres/CRUISE](https://nighres.readthedocs.io/en/latest/installation.html) for post-hoc topology correction. 
 Please follow the [link](https://github.com/Pulkit-Khandelwal/upenn-picsl-brain-ex-vivo/blob/main/exvivo-segm-demo-docker.md) for detailed instructions. Some key commands are here:
 
-Place the image(s) in a folder named `data_for_inference` within your working directory is `/your/working/directory`.
+Place the image(s) (add a suffix _0000.nii.gz to your filenames) in a folder named `data_for_inference` within your working directory is `/your/working/directory`.
 ```
 docker pull pulks/docker_hippogang_exvivo_segm:v${LATEST_TAG}
 
