@@ -10,7 +10,7 @@ In particular, `purple-mri` allows you to do the following:
 + perform exvivo to invivo registration in volumetric intensity space
 + perform surface-to-surface registration between exvivo or invivo
 + perform intensity-based registration between 9.4 tesla MTL to 7 tesla whole hemsiphere registration
-+ perform vertex-wise and group-wise generalized linear modeling analysis for exvivo subject population and link them with histology data
++ perform vertex-wise and group-wise generalized linear modeling analysis for exvivo subject population for morphometry and histology
 
 ## Steps (for segmentation and parcellation)
 `purple-mri` follows a series of steps with external dependencies making use of Docker and bash scripts:
