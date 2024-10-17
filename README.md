@@ -43,6 +43,14 @@ bash clean_labels_final.sh
 ```
 
 ### Surface-based modeling to obtain whole-hemisphere parcellations
+Once, you have obtained an initial 10-label topology corrected volumetric segmentation, you can proceed to the surface-based pipeline to obtain parcellations based on your favorite atlas. This step will be on your local machine. No GPUs required. To do this, you should have FreeSurfer installed locally. We have used FreeSurfer version 7.4.1 on linux obtained from [here](https://surfer.nmr.mgh.harvard.edu/fswiki/DownloadAndInstall).
+
+
+```
+bash run_surface_pipeline.sh freesurfer_path mri_path segm_path
+```
+
+Place your t2w MRI in `mri_path` and the intial deep learning-based segmentations in `segm_path`.
 
 ## Other scripts
 ### Intensity-based volumetric template building
