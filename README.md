@@ -14,17 +14,17 @@ In particular, `purple-mri` allows you to do the following:
 + perform vertex-wise and group-wise generalized linear modeling analysis for exvivo subject population for morphometry and histology
 
 ## Steps (for segmentation and parcellation)
-`purple-mri` follows a series of steps with external dependencies making use of Docker and bash scripts:
+`purple-mri` follows a series of steps makig use of bash scripts and Docker.
 
 ### Pre-processing
 Perform bias correction and image normalization/standardization. We use `N4BiasFieldCorrection` as part of the CLI tool [`c3d`](http://www.itksnap.org/pmwiki/pmwiki.php?n=Convert3D.Convert3D). We highly recommend using the option of an input mask in `N4BiasFieldCorrection` which can be obtained via corase threhsolding.
-[Here](https://github.com/Pulkit-Khandelwal/upenn-picsl-brain-ex-vivo/tree/main/misc_scripts) is a sample script.
+[Here](https://github.com/Pulkit-Khandelwal/upenn-picsl-brain-ex-vivo/tree/main/misc_scripts/perform_bias_correction.sh) is a sample script.
 
 ### Deep learning based initial labeling and CRUISE-based post-hoc topology correction
 Currently, we have two Docker images. The first image provides the segmentation and the second employs [Nighres/CRUISE](https://nighres.readthedocs.io/en/latest/installation.html) for post-hoc topology correction. 
-Please follow the [link](https://github.com/Pulkit-Khandelwal/upenn-picsl-brain-ex-vivo/blob/main/exvivo-segm-demo-docker.md) for detailed instructions. Some key commands are here:
+Please follow the [link](https://github.com/Pulkit-Khandelwal/upenn-picsl-brain-ex-vivo/blob/main/exvivo-segm-demo-docker.md) for detailed instructions on how to use Docker to get the segmentations. Some key commands are emphasized here:
 
-Place the image(s) (with a suffix _0000.nii.gz to your filenames) in a folder named `data_for_inference` within your working directory is `/your/working/directory`.
+Place the pre-processed image(s) (with a suffix _0000.nii.gz to your filenames) in a folder named `data_for_inference` within your working directory is `/your/working/directory`.
 ```
 docker pull pulks/docker_hippogang_exvivo_segm:v${LATEST_TAG}
 
