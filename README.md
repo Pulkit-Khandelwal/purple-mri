@@ -67,7 +67,7 @@ Place your t2w MRI in `mri_path` and the intial deep learning-based segmentation
 #### Introductory video
 <div align="center">
       <a href="https://youtu.be/0BOeUtlWlYw?si=7NeNDsoePOW3_J4Y">
-         <img src="https://github.com/Pulkit-Khandelwal/purple-mri/images/thumbnail.png" style="width:75%;">
+         <img src="https://github.com/Pulkit-Khandelwal/purple-mri/blob/main/images/thumbnail.png" style="width:75%;">
       </a>
 </div>
 
