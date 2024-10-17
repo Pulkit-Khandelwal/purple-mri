@@ -14,7 +14,7 @@ In particular, `purple-mri` allows you to do the following:
 + perform vertex-wise and group-wise generalized linear modeling analysis for exvivo subject population for morphometry and histology
 
 ## Steps (for segmentation and parcellation)
-`purple-mri` follows a series of steps makig use of bash scripts and Docker.
+`purple-mri` follows a series of steps making use of bash scripts and Docker.
 
 ### Pre-processing
 Perform bias correction and image normalization/standardization. We use `N4BiasFieldCorrection` as part of the CLI tool [`c3d`](http://www.itksnap.org/pmwiki/pmwiki.php?n=Convert3D.Convert3D). We highly recommend using the option of an input mask in `N4BiasFieldCorrection` which can be obtained via corase threhsolding.
