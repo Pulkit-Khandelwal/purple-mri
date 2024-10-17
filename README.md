@@ -9,21 +9,30 @@ In particular, `purple-mri` allows you to do the following:
 + create population specific volumetric and surface-based templates
 + perform exvivo to invivo registration in volumetric intensity space
 + perform surface-to-surface registration between exvivo or invivo
-+ perform vertex-wise and group-wise generalized linear modeling analysis for exvivo subject population and link them with histology data
 + perform intensity-based registration between 9.4 tesla MTL to 7 tesla whole hemsiphere registration
++ perform vertex-wise and group-wise generalized linear modeling analysis for exvivo subject population and link them with histology data
 
-## Steps
-`purple-mri` follows a series of steps with external dependencies making use of Docker and local bash scripts:
+## Steps (for segmentation and parcellation)
+`purple-mri` follows a series of steps with external dependencies making use of Docker and bash scripts:
 
-- bias correction
-- run through the docker to get the intial 10-label map with cruise toplogy correction
-- run the surface-based parcellation scheme
-- do the glm and correlation analyses
+### Pre-processing
+Perform bias correction and image normalization/standardization. We use `c3d` for the same. Here is a sample script.
+
+### Deep learning based initial labeling and CRUISE-based post-hoc topology correction 
+
+### Surface-based modeling to obtain whole-hemisphere parcellations
+
+## Other scripts
+### Intensity-based volumetric template building
+### Ex vivo and in vivo registration
+### Perform GLM analyses
 
 ### Notes
-Note that our method has been developed for a single exvivo hemisphere.
++ Our method has been developed to work on a single exvivo hemisphere.
++ The deep learning-based segmentation was primarily trained on 7T t2w MRI. We have tested the model on t2* flash as well and it works pretty well but, if need be, we recommend re-training the model with some manual labels obtained on t2* flash MRI.
 
-# The package will soon be available as a `pip` install at PyPI.
+
+#### The package will soon be available as a `pip` install at PyPI.
 
 ## Citations
 + Khandelwal, P., Duong, M. T., Sadaghiani, S., Lim, S., Denning, A. E., Chung, E., ... & Yushkevich, P. A. (2024). Automated deep learning segmentation of high-resolution 7 tesla postmortem MRI for quantitative analysis of structure-pathology correlations in neurodegenerative diseases. Imaging Neuroscience, 2, 1-30.
