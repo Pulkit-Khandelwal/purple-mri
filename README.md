@@ -3,6 +3,8 @@
 
 We provide a set of tools packaged as `purple-mri` for segmentation, parcellation and registration of ultra high-resolution (< 300 microns) postmortem human brain hemisphere at 7 tesla t2w MRI at native subject-space resolution. This pipeline leverages advances in both deep learning and classical surface-based modeling techniques to produce parcellations in any atlas used in neuroimaging. The developed method allows us to perform vertex-wise analysis in the template space and thereby link morphometry measures with pathology measurements derived from histology.
 
+Check out the [project page](https://pulkit-khandelwal.github.io/exvivo-brain-upenn/) and our latest papers [here](https://direct.mit.edu/imag/article/doi/10.1162/imag_a_00171/120741) and [here](https://arxiv.org/abs/2403.19497).
+
 In particular, `purple-mri` allows you to do the following:
 + obtain an initial 10 label segmentation: cortical GM, normal appearing WM, WMH, medial temporal lobe, corpus callosum, ventricles, caudate, putamen, globus pallidus and thalamus
 + obtain surface-based native subject-space parcellation based on different brain atlases such as: DKT, Economo, Schaeffer etc
