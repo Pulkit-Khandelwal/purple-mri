@@ -62,8 +62,14 @@ Place your t2w MRI in `mri_path` and the intial deep learning-based segmentation
 + Our method has been developed to work on a single exvivo hemisphere.
 + The deep learning-based segmentation was primarily trained on 7T t2w MRI. We have tested the model on t2* flash as well and it works pretty well but, if need be, we recommend re-training the model with some manual labels obtained on t2* flash MRI.
 
-
 #### The package will soon be available at PyPI.
+
+#### Video teaser (click below)
+<div align="center">
+      <a href="https://youtu.be/0BOeUtlWlYw?si=7NeNDsoePOW3_J4Y">
+         <img src="https://github.com/Pulkit-Khandelwal/purple-mri/tree/main/images/thumbnail.png" style="width:75%;">
+      </a>
+</div>
 
 ## Citations
 + Khandelwal, P., Duong, M. T., Sadaghiani, S., Lim, S., Denning, A. E., Chung, E., ... & Yushkevich, P. A. (2024). Automated deep learning segmentation of high-resolution 7 tesla postmortem MRI for quantitative analysis of structure-pathology correlations in neurodegenerative diseases. Imaging Neuroscience, 2, 1-30.
