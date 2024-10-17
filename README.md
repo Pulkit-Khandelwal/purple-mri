@@ -18,7 +18,8 @@ In particular, `purple-mri` allows you to do the following:
 `purple-mri` follows a series of steps with external dependencies making use of Docker and bash scripts:
 
 ### Pre-processing
-Perform bias correction and image normalization/standardization. We use `N4BiasFieldCorrection` as psrt of the CLI tool [`c3d`](http://www.itksnap.org/pmwiki/pmwiki.php?n=Convert3D.Convert3D). [Here](https://github.com/Pulkit-Khandelwal/upenn-picsl-brain-ex-vivo/tree/main/misc_scripts) is a sample script. We highly recommend using the option of an input mask in `N4BiasFieldCorrection` which can be just obtained as a corase threhsold.
+Perform bias correction and image normalization/standardization. We use `N4BiasFieldCorrection` as part of the CLI tool [`c3d`](http://www.itksnap.org/pmwiki/pmwiki.php?n=Convert3D.Convert3D). We highly recommend using the option of an input mask in `N4BiasFieldCorrection` which can be just obtained as a corase threhsold.
+[Here](https://github.com/Pulkit-Khandelwal/upenn-picsl-brain-ex-vivo/tree/main/misc_scripts) is a sample script.
 
 ### Deep learning based initial labeling and CRUISE-based post-hoc topology correction 
 
