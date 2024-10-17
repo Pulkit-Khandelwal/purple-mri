@@ -1,0 +1,9 @@
+geomloss
+vtk
+pymeshlab
+pykeops
+numpy
+pandas
+scipy
+torch
+plotly
