@@ -62,6 +62,9 @@ Place your t2w MRI in `mri_path` and the intial deep learning-based segmentation
 + Our method has been developed to work on a single exvivo hemisphere.
 + The deep learning-based segmentation was primarily trained on 7T t2w MRI. We have tested the model on t2* flash as well and it works pretty well but, if need be, we recommend re-training the model with some manual labels obtained on t2* flash MRI.
 
+## pip package
+
+
 ## Introductory video
 <div align="center">
       <a href="https://youtu.be/0BOeUtlWlYw?si=7NeNDsoePOW3_J4Y">
