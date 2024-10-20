@@ -47,11 +47,15 @@ Once, you have obtained an initial 10-label topology corrected volumetric segmen
 
 Run the following file which calls in several bash scripts which prepares the data, computes appropriate transformations and re-orients the images, corrects surface topology, and perform the parcellation into Desikan-Killiany-Tourville (DKT), Schaefer, Glasser and the Von Economo-Koskinos atlases.
 
-```
-bash run_surface_pipeline.sh freesurfer_path mri_path segm_path
-```
+For the surface-based modeling step, we assume that all the hemishpehrs are right hemispheres. So, we suggest flipping the left t2w MRI and its corresponding segmentation to left using the following `c3d` command: `image_left.nii.gz -flip y image_right_flipped.nii.gz`
 
-Place your t2w MRI in `mri_path` and the intial deep learning-based segmentations in `segm_path`.
+Place your t2w MRI in `mri_path` and the intial deep learning-based segmentations in `segm_path`. Make sure your mri and segm files have the same names ending with `.nii.gz`.
+
+```
+cd purple_mri
+
+bash run_surface_pipeline.sh freesurfer_path working_dir mri_path segm_path external_atlases_path num_threads
+```
 
 ## Other scripts
 ### Intensity-based volumetric template building
