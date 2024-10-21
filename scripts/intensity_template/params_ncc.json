@@ -1,0 +1,27 @@
+{
+  "dimensions": 3,
+  "masks": {
+    "fixed": false,
+    "moving": false
+  },
+  "options": {
+    "rigid": "-n 100x100x40x0 -m NCC 5x5x5 -s 5.0mm 3.0mm -ia-image-centers",
+    "affine": "-n 100x100x40x0 -m NCC 5x5x5 -s 5.0mm 3.0mm",
+    "deformable": "-n 100x80x40x20x10 -m NCC 5x5x5 -s 5.0mm 3.0mm",
+    "averaging": "-U 1 -N 0 .98 0 1"
+  },
+  "iterations": {
+    "total": 10,
+    "rigid": [0, -1],
+    "affine": [0, -1],
+    "deformable": [2, -1],
+    "averaging": [1, -1]
+  },
+  "scheduler": {
+    "enabled": false,
+    "options": {
+      "averaging" : "-n 4 -m 16G",
+      "registration" : "-n 1 -m 8G"
+    }
+  }
+}
