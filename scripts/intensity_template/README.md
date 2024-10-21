@@ -27,3 +27,6 @@ warp_and_mri_init_template.sh
 ```
 bash greedy_build_template.sh -p params_ncc.json -i manifest_mri_warped.csv -t mri_initial_template.nii.gz -o template_exvivo_mri_template
 ```
+
+#### Credits
+The template building script based on the [scripts](https://github.com/pyushkevich/greedy/tree/master/scripts/template) by Paul Yushkevich.
