@@ -1,13 +1,11 @@
 #### inflate the dots and project to fsaverage surface
-fsaverage_files=/data/pulkit/exvivo_reg_reconstruct/freesurfer_installation/freesurfer/subjects/fsaverage
+fsaverage_files=/path/to/freesurfer_installation/subjects/fsaverage
 freesurfer_surface_processed=/path/to/fs_outputs_per_subject
 SUBJECTS_DIR=${freesurfer_surface_processed}
 working_dir=/path/to/dir
 dot_dir=/path/to/dir
 
 subjects=(ABC XYZ)
-echo ${#subjects[@]}
-
 hemis=rh
 hemis_other=lh
 
@@ -19,11 +17,12 @@ subj_dots_file=${subj}_cortexdots_final
 hemis_check=${subj: -1}
   var=R
   if [ "$hemis_check" == "$var" ]; then
-        echo "Right hemis and therefore skip the processing"s
+        echo "Right hemis"
     else
         echo "Left hemis and so flipping it"
         # flip the left to the right ones
         c3d ${dot_dir}/${subj}/${subj}_cortexdots_final.nii.gz -flip y -o ${dot_dir}/${subj}/${subj}_cortexdots_final_flip.nii.gz
+  done
 
         # split all the dot labels into their respective folders
         c3d ${dot_dir}/${subj}/${subj}_cortexdots_final_flip.nii.gz -split -oo ${dot_dir}/${subj}/${subj}_cortexdots_final_label%02d.nii.gz
@@ -56,7 +55,5 @@ hemis_check=${subj: -1}
         mris_convert -c ${working_dir}/${subj}/${subj_dots_file}_label${num}.fsaverage.mgh ${fsaverage_files}/surf/${hemis}.inflated ${working_dir}/${subj}/${subj_dots_file}_label${num}.fsaverage.inflated.vtk
 
         mris_convert -c ${working_dir}/${subj}/${subj_dots_file}_label${num}.fsaverage.mgh ${fsaverage_files}/surf/${hemis}.pial ${working_dir}/${subj}/${subj_dots_file}_label${num}.fsaverage.pial.vtk
-
-        done
-  fi  
+        
 done;
