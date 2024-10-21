@@ -10,7 +10,7 @@ Steps to build an exvivo template:
 ```
 export PATH="/path/to/greedy_binaries/":$PATH
 
-bash greedy_build_template.sh -p params_ssd.json -i manifest.csv -T reference_subj -o template_exvivo_init_full_segm_binary_ssd
+bash greedy_build_template.sh -p params_ssd.json -i manifest_segm.csv -T reference_subj -o template_exvivo_init_full_segm_binary_ssd
 
 ```
 - Then, warp each subject's MRI to the initial `init-segm-template`. These warped mris are then used to obtain an initial mri template, called `init-mri-template`.
@@ -21,5 +21,5 @@ create_average_shape_method2.sh
 - Based on the parameters in `ncc_params.json`, the warped mris, we use the `init-mri-template` as a reference to obtain an mri-based intensity template.
 
 ```
-bash greedy_build_template.sh -p params_ncc.json -i manifest_mri_warped_full.csv -t mri_initial_template_full.nii.gz -o template_exvivo_mri_template
+bash greedy_build_template.sh -p params_ncc.json -i manifest_mri_warped.csv -t mri_initial_template.nii.gz -o template_exvivo_mri_template
 ```
