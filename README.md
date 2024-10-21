@@ -73,7 +73,7 @@ We build intensity-based volumetric templates using the [greedy](https://sites.g
 
 
 ### Ex vivo and in vivo registration
-Script `exvivo_invivo_greedy_registration.sh` to register t1w (in vivo) and ex vivo (t2w) MRI is located in the folder `scripts`. We use [greedy](https://sites.google.com/view/greedyreg/about?authuser=0) to register the segmentations of in vivo aseg+aparc labels derived from FreeSurfer and 10-label initial deep learning segmentation of postmortem MRI. The warps are then used to regsiter the MRIs.
+Script `exvivo_invivo_greedy_registration.sh` to register in vivo (t1w) and ex vivo (t2w) MRI is located in the folder `scripts`. We use [greedy](https://sites.google.com/view/greedyreg/about?authuser=0) to register the segmentations of in vivo aseg+aparc labels derived from FreeSurfer and 10-label initial deep learning segmentation of postmortem MRI. The warps are then used to regsiter the MRIs.
 
 ### Perform GLM analyses
 
