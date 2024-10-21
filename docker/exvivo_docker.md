@@ -82,7 +82,7 @@ https://github.com/Pulkit-Khandelwal/upenn-picsl-brain-ex-vivo/blob/main/nighres
 `docker pull pulks/docker_nighres:v1.0.0`
 
 Run the docker to get the cruise-nighres topology correction.
-Make directory data_for_topology_correction in let's say `/your/path/docker_stuff/docker_nighres/check/`.
+Make directory `data_for_topology_correction` in let's say `/your/path/docker_stuff/docker_nighres/check/`.
 This directory should consist of only your segmentation output from the first segmentation docker.
 
 # Run docker
