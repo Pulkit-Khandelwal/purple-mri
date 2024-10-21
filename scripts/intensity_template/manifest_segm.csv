@@ -1,0 +1,4 @@
+subj_1,/path/to/binarized_smoothed_segm/subj_1_seg_binary_smooth.nii.gz
+subj_2,/path/to/binarized_smoothed_segm/subj_2_seg_binary_smooth.nii.gz
+subj_3,/path/to/binarized_smoothed_segm/subj_3_seg_binary_smooth.nii.gz
+subj_4,/path/to/binarized_smoothed_segm/subj_4_seg_binary_smooth.nii.gz
