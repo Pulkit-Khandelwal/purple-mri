@@ -69,9 +69,11 @@ bash run_surface_pipeline.sh freesurfer_path working_dir mri_path segm_path exte
 
 ## Other scripts
 ### Intensity-based volumetric template building
+We build intensity-based volumetric templates using the [greedy](https://sites.google.com/view/greedyreg/about?authuser=0) tool. The required binaries (for Linux) and the scripts are located in the the `intensity_template` within the `scripts` directory. Follow the instructions [here](https://github.com/Pulkit-Khandelwal/purple-mri/blob/main/scripts/intensity_template/README.md).
+
 
 ### Ex vivo and in vivo registration
-Script `exvivo_invivo_greedy_registration.sh` to register t1w (in vivo) and ex vivo (t2w) MRI is located in the folder `scripts`. We use the [greedy](https://sites.google.com/view/greedyreg/about?authuser=0) tool to register the segmentations of in vivo aseg+aparc labels derived from FreeSurfer and 10-label initial deep learning segmentation of postmortem MRI. The warps are then used to regsiter the MRIs.
+Script `exvivo_invivo_greedy_registration.sh` to register t1w (in vivo) and ex vivo (t2w) MRI is located in the folder `scripts`. We use [greedy](https://sites.google.com/view/greedyreg/about?authuser=0) to register the segmentations of in vivo aseg+aparc labels derived from FreeSurfer and 10-label initial deep learning segmentation of postmortem MRI. The warps are then used to regsiter the MRIs.
 
 ### Perform GLM analyses
 
