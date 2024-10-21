@@ -1,4 +1,4 @@
-Steps to build an exvio template:
+Steps to build an exvivo template:
 
 - Binarize and smooth all the segmenations.
 - Use one subject from the population as a reference subject.
