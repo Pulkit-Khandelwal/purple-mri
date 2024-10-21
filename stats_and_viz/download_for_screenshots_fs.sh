@@ -1,15 +1,8 @@
 freesurfer_surface_processed=
-mri_dir_mgz=
-mri_dir_nifti=
-redo_subjects_folder=
-tgt_dir_FS_mesh_decimated=
-
-
 to_save_dir=
 
 subjects=()
 echo ${subjects[@]}
-
 hemis=rh
 for subj in "${subjects[@]}"
 do
