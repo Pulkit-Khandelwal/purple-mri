@@ -17,10 +17,10 @@ In particular, `purple-mri` allows you to do the following:
 `purple-mri` follows a series of steps making use of bash scripts and Docker.
 
 ### Pre-processing
-Perform bias correction and image normalization/standardization. We use `N4BiasFieldCorrection` as part of the CLI tool [`c3d`](http://www.itksnap.org/pmwiki/pmwiki.php?n=Convert3D.Convert3D). We highly recommend using the option of an input mask in `N4BiasFieldCorrection` which can be obtained via corase threhsolding.
+Perform bias correction and image normalization/standardization. We use `N4BiasFieldCorrection` as part of the CLI tool [ANTs](https://github.com/ANTsX/ANTs) and [`c3d`](http://www.itksnap.org/pmwiki/pmwiki.php?n=Convert3D.Convert3D). We highly recommend using the option of an input mask in `N4BiasFieldCorrection` which can be obtained via corase threhsolding.
 [Here](https://github.com/Pulkit-Khandelwal/upenn-picsl-brain-ex-vivo/tree/main/misc_scripts/perform_bias_correction.sh) is a sample script.
 
-### Deep learning based initial labeling and CRUISE-based post-hoc topology correction
+### Deep learning-based initial labeling and CRUISE-based post-hoc topology correction
 Currently, we have two Docker images. The first image provides the segmentation and the second employs [Nighres/CRUISE](https://nighres.readthedocs.io/en/latest/installation.html) for post-hoc topology correction. 
 Please follow the [link](https://github.com/Pulkit-Khandelwal/upenn-picsl-brain-ex-vivo/blob/main/exvivo-segm-demo-docker.md) for detailed instructions on how to use Docker to get the segmentations. Some key commands are emphasized here:
 
@@ -43,13 +43,23 @@ bash clean_labels_final.sh
 ```
 
 ### Surface-based modeling to obtain whole-hemisphere parcellations
-Once, you have obtained an initial 10-label topology corrected volumetric segmentation, you can proceed to the surface-based pipeline to obtain parcellations based on your favorite atlas. This step will be on your local machine. No GPUs required. To do this, you should have FreeSurfer installed locally. We have used FreeSurfer version 7.4.1 on linux obtained from [here](https://surfer.nmr.mgh.harvard.edu/fswiki/DownloadAndInstall). Moreover, there are some Python dependencies which can be found in the `dependencies.txt` file and installed using `pip`.
+Once, you have obtained an initial 10-label topology corrected volumetric segmentation, you can proceed to the surface-based pipeline to obtain parcellations based on your favorite atlas. This step will be on your local machine. No GPUs required. To do this, you should have FreeSurfer installed locally. We have used FreeSurfer version 7.4.0 on linux obtained from [here](https://surfer.nmr.mgh.harvard.edu/fswiki/DownloadAndInstall). Moreover, there are some Python dependencies which can be found in the `dependencies.txt` file and installed using `pip`.
 
 Run the following file which calls in several bash scripts which prepares the data, computes appropriate transformations and re-orients the images, corrects surface topology, and perform the parcellation into Desikan-Killiany-Tourville (DKT), Schaefer, Glasser and the Von Economo-Koskinos atlases.
 
 For the surface-based modeling step, we assume that all the hemishpehrs are right hemispheres. So, we suggest flipping the left t2w MRI and its corresponding segmentation to left using the following `c3d` command: `image_left.nii.gz -flip y image_right_flipped.nii.gz`
 
-Place your t2w MRI in `mri_path` and the intial deep learning-based segmentations in `segm_path`. Make sure your mri and segm files have the same names ending with `.nii.gz`.
+Clone the current repository and the run the following script `run_surface_pipeline.sh` from within the `purple_mri` folder which takes the following mandatory arguments:
+`freesurfer_path`: path to the FreeSurfer installtion
+`working_dir`: directory which will have the outputs for each subject stored
+`mri_path`: mri images path
+`segm_path`: 10-label segmentation path
+`external_atlases_path`: directory with files for other atlases
+`num_threads`: number of threads
+
+Place your t2w MRI in a folder `mri_path` and the intial deep learning-based segmentations in `segm_path`.
+Make sure your mri images and segmentation files have the same names ending with `.nii.gz`.
+Place the `fsaverage` in the `working_dir` folder.
 
 ```
 cd purple_mri
