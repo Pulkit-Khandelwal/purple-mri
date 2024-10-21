@@ -22,7 +22,7 @@ Perform bias correction and image normalization/standardization. We use `N4BiasF
 
 ### Deep learning-based initial labeling and CRUISE-based post-hoc topology correction
 Currently, we have two Docker images. The first image provides the segmentation and the second employs [Nighres/CRUISE](https://nighres.readthedocs.io/en/latest/installation.html) for post-hoc topology correction. 
-Please follow the [link](https://github.com/Pulkit-Khandelwal/upenn-picsl-brain-ex-vivo/blob/main/exvivo-segm-demo-docker.md) for detailed instructions on how to use Docker to get the segmentations. Some key commands are emphasized here:
+Please follow the [link]([https://github.com/Pulkit-Khandelwal/upenn-picsl-brain-ex-vivo/blob/main/exvivo-segm-demo-docker.md](https://github.com/Pulkit-Khandelwal/purple-mri/blob/main/docker/exvivo_docker.md) for detailed instructions on how to use Docker to get the segmentations. Some key commands are emphasized here:
 
 Place the pre-processed image(s) (with a suffix _0000.nii.gz to your filenames) in a folder named `data_for_inference` within your working directory is `/your/working/directory`.
 ```
