@@ -16,7 +16,6 @@ bash greedy_build_template.sh -p params_ssd.json -i manifest_segm.csv -T referen
 - Then, warp each subject's MRI to the initial `init-segm-template`. These warped mris are then used to obtain an initial mri template, called `init-mri-template`.
 ```
 create_average_shape_method2.sh
-
 ```
 - Based on the parameters in `ncc_params.json`, the warped mris, we use the `init-mri-template` as a reference to obtain an mri-based intensity template.
 
