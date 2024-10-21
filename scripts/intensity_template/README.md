@@ -1,4 +1,4 @@
-Steps to build an exvivo template:
+## Steps to build an exvivo template:
 
 - Make sure all the images and their segmentations are in the same orientation. You can use `orient` option in `c3d` to do that.
 - Binarize and smooth all the segmentations. Using `c3d`:
