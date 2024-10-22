@@ -47,7 +47,7 @@ Once, you have obtained an initial 10-label topology corrected volumetric segmen
 
 Run the following file which calls in several bash scripts which prepares the data, computes appropriate transformations and re-orients the images, corrects surface topology, and perform the parcellation into Desikan-Killiany-Tourville (DKT), Schaefer, Glasser and the Von Economo-Koskinos atlases.
 
-For the surface-based modeling step, we assume that all the hemishpehrs are right hemispheres. So, we suggest flipping the left t2w MRI and its corresponding segmentation to left using the following `c3d` command: `image_left.nii.gz -flip y image_right_flipped.nii.gz`
+For the surface-based modeling step, we assume that all the hemishpehrs are right hemispheres. So, we suggest flipping the left t2w MRI and its corresponding segmentation to left using the following `c3d` command: `c3d image_left.nii.gz -flip y image_right_flipped.nii.gz`
 
 Clone the current repository and the run the following script `run_surface_pipeline.sh` from within the `purple_mri` folder which takes the following mandatory arguments:
 `freesurfer_path`: path to the FreeSurfer installtion
