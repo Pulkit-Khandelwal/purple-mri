@@ -20,10 +20,3 @@ c3d ${1}/${2}/${2}_cortexdots_final_label16.nii.gz -dilate 1 10x10x10vox -o ${1}
 c3d ${1}/${2}/${2}_cortexdots_final_label17.nii.gz -dilate 1 10x10x10vox -o ${1}/${2}/${2}_cortexdots_final_label17_dilated.nii.gz
 c3d ${1}/${2}/${2}_cortexdots_final_label18.nii.gz -dilate 1 10x10x10vox -o ${1}/${2}/${2}_cortexdots_final_label18_dilated.nii.gz
 c3d ${1}/${2}/${2}_cortexdots_final_label19.nii.gz -dilate 1 10x10x10vox -o ${1}/${2}/${2}_cortexdots_final_label19_dilated.nii.gz
-c3d ${1}/${2}/${2}_cortexdots_final_label20.nii.gz -dilate 1 10x10x10vox -o ${1}/${2}/${2}_cortexdots_final_label20_dilated.nii.gz
-c3d ${1}/${2}/${2}_cortexdots_final_label21.nii.gz -dilate 1 10x10x10vox -o ${1}/${2}/${2}_cortexdots_final_label21_dilated.nii.gz
-c3d ${1}/${2}/${2}_cortexdots_final_label22.nii.gz -dilate 1 10x10x10vox -o ${1}/${2}/${2}_cortexdots_final_label22_dilated.nii.gz
-c3d ${1}/${2}/${2}_cortexdots_final_label23.nii.gz -dilate 1 10x10x10vox -o ${1}/${2}/${2}_cortexdots_final_label23_dilated.nii.gz
-c3d ${1}/${2}/${2}_cortexdots_final_label24.nii.gz -dilate 1 10x10x10vox -o ${1}/${2}/${2}_cortexdots_final_label24_dilated.nii.gz
-c3d ${1}/${2}/${2}_cortexdots_final_label25.nii.gz -dilate 1 10x10x10vox -o ${1}/${2}/${2}_cortexdots_final_label25_dilated.nii.gz
-c3d ${1}/${2}/${2}_cortexdots_final_label26.nii.gz -dilate 1 10x10x10vox -o ${1}/${2}/${2}_cortexdots_final_label26_dilated.nii.gz
