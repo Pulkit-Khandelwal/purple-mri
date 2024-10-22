@@ -22,5 +22,6 @@ You will output files similar to:
 ```
 all_hemis.glm_merged_5mm_pial.vtk
 all_hemis.glm_output_for_ABETA_5mm_pial.vtk
-
+all_hemis.edges.glm_output_for_ABETA_5mm_pial.vtk
 ```
+You can load these onto Paraview and look at significant clusters!
