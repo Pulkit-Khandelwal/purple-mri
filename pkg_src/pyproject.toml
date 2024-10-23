@@ -1,0 +1,33 @@
+[build-system]
+    requires = ["setuptools"]
+
+[project]
+name = "purple_mri"
+version = "0.0.1"
+authors = [
+  { name="Pulkit Khandelwal", email="kpulkit95@gmail.com" },
+]
+description = "purple_mri: Penn Utilities for Registration and ParcelLation of Ex vivo MRI"
+dependencies = [
+  'numpy',
+  'torch',
+  'pykeops',
+  'pymeshlab',
+  'vtk',
+  'SimpleITK',
+  'geomloss'
+]
+readme = "README.md"
+[tool.setuptools]
+    script-files = [
+  "purple_mri/scripts/run_surface_pipeline.sh",
+  "purple_mri/scripts/do_mni_txs.sh",
+  "purple_mri/scripts/prepare_segm_files.sh",
+  "purple_mri/scripts/create_mesh.sh",
+  "purple_mri/scripts/make_fs_directories.sh",
+  "purple_mri/scripts/parcellation.sh",
+  "purple_mri/scripts/topology_correction.sh",
+  "purple_mri/scripts/decimate_mesh.py"]
+
+[project.urls]
+Homepage = "https://github.com/Pulkit-Khandelwal/purple_mri"
