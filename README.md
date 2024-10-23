@@ -77,7 +77,7 @@ pip3 install purple-mri
 Or, using the latest development code:
 
 ```
-git clone [https://github.com/pyushkevich/crashs](https://github.com/Pulkit-Khandelwal/purple-mri.git)
+git clone https://github.com/Pulkit-Khandelwal/purple-mri.git
 cd purple-mri
 pip3 install pkg_src
 ```
