@@ -82,7 +82,20 @@ We perform vertex-wise analysis in `fsaverage` space to fit a generalized linear
 + Our method has been developed to work on a single exvivo hemisphere.
 + The deep learning-based segmentation was primarily trained on 7T t2w MRI. We have tested the model on t2* flash as well and it works pretty well but, if need be, we recommend re-training the model with some manual labels obtained on t2* flash MRI.
 
-## pip package
+## Installation using `pip`
+You have the option to run the surface-based pipeline as a `pip` package.
+```
+git clone [https://github.com/pyushkevich/crashs](https://github.com/Pulkit-Khandelwal/purple-mri.git)
+cd purple-mri
+pip3 install pkg_src
+```
+
+Place the `fsaverage` in the `working_dir` folder. The cli options remain the same as above but this time you have to pass in the last argument as the path to `autodet.gw.stats.binary.rh.dat`.
+
+Once, installed you can run, `purple_mri` as:
+```
+python3 -m purple_mri freesurfer_path working_dir mri_path segm_path external_atlases_path 64 /path/to/autodet.gw.stats.binary.rh.dat
+```
 
 ## Introductory video
 <div align="center">
