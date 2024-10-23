@@ -67,7 +67,7 @@ cd purple_mri
 bash run_surface_pipeline.sh freesurfer_path working_dir mri_path segm_path external_atlases_path num_threads
 ```
 
-## Installation using `pip`
+### Installation using `pip`
 You have the option to run the surface-based pipeline as a `pip` package available at [PyPI](https://pypi.org/project/purple-mri/0.0.1/) and can be installed as:
 
 ```
