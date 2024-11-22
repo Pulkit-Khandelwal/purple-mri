@@ -21,4 +21,4 @@ The script `dots_to_surface_template.sh` calls `dilation_split_dots.sh` and `pre
 The second script to run is `create_multi_comp_vtk_files.sh` which merge all the dots vtk files for a given subject into a single vtk (`${subj}_all_dots_fsaverage.pial.vtk`) file to load onto Paraview and visualzie!
 
 #### Note
-You might notice that some dots do not appear correctly onto the surface. This may be due to one of the following reasons: dot not present for the given subject or inadequate parcellation/registration or the dot is above label 19. For the last case, very minor edits are reuired in the files: `dots_to_surface_template.sh and `create_multi_comp_vtk_files.sh`.
+You might notice that some dots do not appear correctly onto the surface. This may be due to one of the following reasons: dot not present for the given subject or inadequate parcellation/registration or the dot is above label 19. For the last case, very minor edits are required in the files: `dots_to_surface_template.sh` and `create_multi_comp_vtk_files.sh`.
