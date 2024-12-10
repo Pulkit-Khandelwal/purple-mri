@@ -54,7 +54,7 @@ mris_place_surface --adgws-in ${working_dir}/autodet.gw.stats.binary.rh.dat \
 --invol aseg.presurf_100.mgz --${hemis} --i ../surf/${hemis}.white --o ../surf/${hemis}.pial.T1 --pial --nsmooth 0 \
 --pin-medial-wall ../label/${hemis}.cortex.label --aparc ../label/${hemis}.aparc.annot \
 --repulse-surf ../surf/${hemis}.white --white-surf ../surf/${hemis}.white \
---no-rip --intensity 10.00 --curv 10.00
+--no-rip --curv 0.2 --intensity 2.0
 
 cp ${SUBJECTS_DIR}/${subj}/surf/${hemis}.pial.T1 ${SUBJECTS_DIR}/${subj}/surf/${hemis}.pial
 
