@@ -6,6 +6,9 @@
 ### Note: The current (09/04/2024) version of the containers is about ~48GB!!! This is huge and takes quite some time to download and convert from `sif` to `simg` for singualrity. I will reduce the file size in a future update. But, apart frrom that it works just fine!
 
 ##### Change Logs
+12/10/2024:
+- Version `docker_hippogang_exvivo_segm:v1.4.1`: updated model which clean the medial area.
+
 10/10/2024:
 - Added documentation for the post-hoc topology correction docker.
 
