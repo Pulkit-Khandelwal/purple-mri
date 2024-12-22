@@ -41,3 +41,31 @@ do
   mris_convert -c ${vtk_files_for_glm_dir}/${subj}/${hemis}.area.mgh ${fsaverage_files}/surf/${hemis}.${surface_type} ${vtk_files_for_glm_dir}/vtk_files/${subj}.${hemis}.area.${surface_type}.vtk
 
 done;
+
+# The following uses xhemi when you want to warp lh thickness to rh fsaverage space.
+# This is useful when analyzing scans in which some are scanned left or right and
+# want them in a single hemis for glm.
+
+for subj in "${subjects[@]}"
+do
+echo ${subj}
+mkdir -p ${subj}
+# run xhemi
+surfreg --s ${subj} --t fsaverage --lhrh --no-annot --xhemi
+
+# map thickness from lh to rh and rh to rh
+mris_apply_reg --src ${SUBJECTS_DIR}/${subj}/surf/lh.thickness --trg ${subj}/lh.thickness.in.fsaverage.rh.mgh --streg ${SUBJECTS_DIR}/${subj}/xhemi/surf/rh.sphere.reg ${fsaverage_dir}/surf/rh.sphere.reg
+mris_apply_reg --src ${SUBJECTS_DIR}/${subj}/surf/rh.thickness --trg ${subj}/rh.thickness.in.fsaverage.rh.mgh --streg ${SUBJECTS_DIR}/${subj}/surf/rh.sphere.reg ${fsaverage_dir}/surf/rh.sphere.reg
+
+# thickness in vtk
+mris_convert -c ${subj}/lh.thickness.in.fsaverage.rh.mgh ${fsaverage_dir}/surf/rh.pial ${subj}/lh.thickness.in.fsaverage.rh.mgh.vtk
+mris_convert -c ${subj}/rh.thickness.in.fsaverage.rh.mgh ${fsaverage_dir}/surf/rh.pial ${subj}/rh.thickness.in.fsaverage.rh.mgh.vtk
+
+# thickness in original purple native and vtk
+mris_preproc --s ${subj} --target fsaverage --hemi lh --meas thickness --out ${subj}/lh.thickness.mgh
+mris_preproc --s ${subj} --target fsaverage --hemi rh --meas thickness --out ${subj}/rh.thickness.mgh
+
+mris_convert -c ${subj}/lh.thickness.mgh ${fsaverage_dir}/surf/lh.pial ${subj}/lh.thickness.orig.vtk
+mris_convert -c ${subj}/rh.thickness.mgh ${fsaverage_dir}/surf/rh.pial ${subj}/rh.thickness.orig.vtk
+
+done
