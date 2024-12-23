@@ -57,6 +57,13 @@ surfreg --s ${subj} --t fsaverage --lhrh --no-annot --xhemi
 mris_apply_reg --src ${SUBJECTS_DIR}/${subj}/surf/lh.thickness --trg ${subj}/lh.thickness.in.fsaverage.rh.mgh --streg ${SUBJECTS_DIR}/${subj}/xhemi/surf/rh.sphere.reg ${fsaverage_dir}/surf/rh.sphere.reg
 mris_apply_reg --src ${SUBJECTS_DIR}/${subj}/surf/rh.thickness --trg ${subj}/rh.thickness.in.fsaverage.rh.mgh --streg ${SUBJECTS_DIR}/${subj}/surf/rh.sphere.reg ${fsaverage_dir}/surf/rh.sphere.reg
 
+# smooth the thickness
+mri_surf2surf --hemi rh --s fsaverage --sval ${subj}/lh.thickness.in.fsaverage.rh.mgh --tval ${subj}/lh.thickness.in.fsaverage.rh.smooth.mgh --fwhm 5 --no-cortex
+mris_convert -c ${subj}/lh.thickness.in.fsaverage.rh.smooth.mgh ${fsaverage_dir}/surf/rh.pial ${subj}/lh.thickness.in.fsaverage.rh.smooth.mgh.vtk
+
+mri_surf2surf --hemi rh --s fsaverage --sval ${subj}/rh.thickness.in.fsaverage.rh.mgh --tval ${subj}/rh.thickness.in.fsaverage.rh.smooth.mgh --fwhm 5 --no-cortex
+mris_convert -c ${subj}/rh.thickness.in.fsaverage.rh.smooth.mgh ${fsaverage_dir}/surf/rh.pial ${subj}/rh.thickness.in.fsaverage.rh.smooth.mgh.vtk
+
 # thickness in vtk
 mris_convert -c ${subj}/lh.thickness.in.fsaverage.rh.mgh ${fsaverage_dir}/surf/rh.pial ${subj}/lh.thickness.in.fsaverage.rh.mgh.vtk
 mris_convert -c ${subj}/rh.thickness.in.fsaverage.rh.mgh ${fsaverage_dir}/surf/rh.pial ${subj}/rh.thickness.in.fsaverage.rh.mgh.vtk
