@@ -5,16 +5,16 @@
     "moving": false
   },
   "options": {
-    "rigid": "-n 100x100x40x0 -m NCC 5x5x5 -s 5.0mm 3.0mm -ia-image-centers",
-    "affine": "-n 100x100x40x0 -m NCC 5x5x5 -s 5.0mm 3.0mm",
-    "deformable": "-n 100x80x40x20x10 -m NCC 5x5x5 -s 5.0mm 3.0mm",
+    "rigid": "-n 100x100x40x0 -m NCC 2x2x2 -moments",
+    "affine": "-n 100x100x40x0 -m NCC 2x2x2 -moments",
+    "deformable": "-n 200x100x50x10 -m NCC 2x2x2 -s 1.2mm 0.1mm",
     "averaging": "-U 1 -N 0 .98 0 1"
   },
   "iterations": {
     "total": 10,
-    "rigid": [0, -1],
-    "affine": [0, -1],
-    "deformable": [2, -1],
+    "rigid": [-1, -1],
+    "affine": [0, 1],
+    "deformable": [0, -1],
     "averaging": [1, -1]
   },
   "scheduler": {
