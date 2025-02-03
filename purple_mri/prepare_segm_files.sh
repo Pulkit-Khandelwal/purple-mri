@@ -12,7 +12,7 @@ do
 
     c3d ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected.nii.gz -replace 6 7 -o ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected.nii.gz
 
-    c3d ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected.nii.gz -replace 1 42 2 50 3 51 4 52 5 49 7 41 8 43 9 0 10 53 -o ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected_RH_FS_labels.nii.gz
+    c3d ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected.nii.gz -replace 1 42 2 51 3 50 4 52 5 49 7 41 8 43 9 0 10 53 -o ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected_RH_FS_labels.nii.gz
 
     mri_convert ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected_RH_FS_labels.nii.gz ${generated_files_folder}/${subj}_aseg.mgz
     cp ${generated_files_folder}/${subj}_aseg.mgz ${generated_files_folder}/${subj}_aseg.presurf.mgz
