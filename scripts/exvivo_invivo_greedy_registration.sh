@@ -69,7 +69,7 @@ do
     greedy -d 3 -a -dof 12 \
     -i ${work_dir}/${subject}/aseg_gm.nii.gz ${work_dir}/${subject}/seg_gm_ds.nii.gz \
     -i ${work_dir}/${subject}/aseg_wmplus.nii.gz ${work_dir}/${subject}/seg_wmplus_ds.nii.gz \
-    -n 100x100x100 -m NMI -ia moments.mat \
+    -n 100x100x100 -m NMI -ia ${work_dir}/${subject}/moments.mat \
     -o ${work_dir}/${subject}/affine.mat
 
     # Perform deformable registration
