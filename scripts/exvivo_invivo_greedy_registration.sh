@@ -58,11 +58,18 @@ do
         -o ${work_dir}/${subject}/aseg_wmplus.nii.gz
 
     ##### Registration between exvivo and invivo segmentations
+    # Perform moments matching
+    greedy -d 3 \
+    -i ${work_dir}/${subject}/aseg_gm.nii.gz ${work_dir}/${subject}/seg_gm_ds.nii.gz \
+    -i ${work_dir}/${subject}/aseg_wmplus.nii.gz ${work_dir}/${subject}/seg_wmplus_ds.nii.gz \
+    -m NMI -moments \
+    -o ${work_dir}/${subject}/moments.mat
+        
     # Perform affine registration
     greedy -d 3 -a -dof 12 \
     -i ${work_dir}/${subject}/aseg_gm.nii.gz ${work_dir}/${subject}/seg_gm_ds.nii.gz \
     -i ${work_dir}/${subject}/aseg_wmplus.nii.gz ${work_dir}/${subject}/seg_wmplus_ds.nii.gz \
-    -n 100x100x100 -m NMI -ia-image-centers \
+    -n 100x100x100 -m NMI -ia moments.mat \
     -o ${work_dir}/${subject}/affine.mat
 
     # Perform deformable registration
