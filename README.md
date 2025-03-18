@@ -114,5 +114,4 @@ We perform vertex-wise analysis in `fsaverage` space to fit a generalized linear
 
 ## Citations
 + Khandelwal, P., Duong, M. T., Sadaghiani, S., Lim, S., Denning, A. E., Chung, E., ... & Yushkevich, P. A. (2024). Automated deep learning segmentation of high-resolution 7 tesla postmortem MRI for quantitative analysis of structure-pathology correlations in neurodegenerative diseases. Imaging Neuroscience, 2, 1-30.
-+ Khandelwal, P., Duong, M. T., Fuentes, C., Denning, A., Trotman, W., Ittyerah, R., ... & Yushkevich, P. A. (2024). Surface-based parcellation and vertex-wise analysis of ultra high-resolution ex vivo 7 tesla MRI in neurodegenerative diseases. arXiv preprint arXiv:2403.19497.
-
++ Khandelwal, Pulkit, et al. "Surface-Based Parcellation and Vertex-wise Analysis of Ultra High-resolution ex vivo 7 tesla MRI in Alzheimer’s disease and related dementias." International Workshop on Machine Learning in Clinical Neuroimaging. Springer, Cham, 2025.
