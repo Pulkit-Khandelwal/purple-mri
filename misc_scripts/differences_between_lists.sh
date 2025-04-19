@@ -35,3 +35,6 @@ printf '%s\n' "${common_list[@]}"
 
 echo "Here are the unique items between list1 & list2:"
 printf '%s\n' "${diff_list[@]}"
+
+
+comm -12 <(printf '%s\n' "${completed[@]}" | sort) <( printf '%s\n' "${exvivo_75[@]}" | sort)
