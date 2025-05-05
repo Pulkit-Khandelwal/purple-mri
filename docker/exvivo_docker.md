@@ -35,7 +35,7 @@
 - NO need for a GPU! Any linux-based machine works.
 - Choose one of the following options for the segmentations you need. See the command at the end on how to use this Docker.
 
-    - `${OPTION}=exvivo_t2w`: Model trained on t2w mri to get the 10 labels. NOTE: USE THIS FOR FLASH MRI AS WELL (for now dt: 05/05/2024).
+    - `${OPTION}=exvivo_t2w`: Model trained on t2w mri to get the 10 labels. NOTE: USE THIS FOR FLASH MRI AS WELL (for now dt: 05/05/2025).
     
     - `${OPTION}=exvivo_flash_more_subcort`: Added four new segmentation labels: hypothal, optic chiasm, anterior commissure, fornix. This model has been trained on the flash t2* mri.
     
