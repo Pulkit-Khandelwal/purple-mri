@@ -21,6 +21,8 @@ Perform bias correction and image normalization/standardization. We use `N4BiasF
 [Here](https://github.com/Pulkit-Khandelwal/upenn-picsl-brain-ex-vivo/tree/main/misc_scripts/perform_bias_correction.sh) is a sample script.
 
 ### Deep learning-based initial labeling and CRUISE-based post-hoc topology correction
+IMPORTANT NOTE: You don't need to run this topology correction  and skip directly to the surface-based pipeline below. This is because CRUISE correction introduces a lot of "cracks" in the medial area which mess up the surface pipeline. Therefore, we use FreeSurfer's topology correction instead in the surface-based pipeline. However, for the sake of completeness and for user-dependent application.
+
 Currently, we have two Docker images. The first image provides the segmentation and the second employs [Nighres/CRUISE](https://nighres.readthedocs.io/en/latest/installation.html) for post-hoc topology correction. 
 Please follow the [link]([https://github.com/Pulkit-Khandelwal/upenn-picsl-brain-ex-vivo/blob/main/exvivo-segm-demo-docker.md](https://github.com/Pulkit-Khandelwal/purple-mri/blob/main/docker/exvivo_docker.md) for detailed instructions on how to use Docker to get the segmentations. Some key commands are emphasized here:
 
@@ -32,7 +34,7 @@ docker run --gpus all --privileged -v /your/working/directory/:/data/exvivo/ -it
 ```
 You will see the output in `/your/working/directory/data_for_inference/output_from_nnunet_inference`.
 
-Next, correct for topology so that adjoining gyri and sulci are clearly separated. Copy the segmentations from `output_from_nnunet_inference` to a folder `data_for_topology_correction` in your wokring directory.
+Next, correct for topology so that adjoining gyri and sulci are clearly separated. Copy the segmentations from `output_from_nnunet_inference` to a folder `data_for_topology_correction` in your working directory.
 ```
 docker pull pulks/docker_nighres:v1.0.0
 
