@@ -15,23 +15,22 @@ start=$SECONDS
 SUBJECTS_DIR=${working_dir}
 
 ######### segm_parc file
-mris_place_surface --adgws-in ${working_dir}/autodet.gw.stats.binary.rh.dat \
+mris_place_surface --adgws-in ${working_dir}/autodet.gw.stats.binary.rh.dat  \
 --wm ${SUBJECTS_DIR}/${subj}/mri/wm.mgz --threads ${num_threads} --invol ${SUBJECTS_DIR}/${subj}/mri/aseg.presurf_100.mgz --${hemis} \
 --i ${SUBJECTS_DIR}/${subj}/surf/${hemis}.orig \
---o ${SUBJECTS_DIR}/${subj}/surf/${hemis}.white.preaparc --white --seg ${SUBJECTS_DIR}/${subj}/mri/aseg.presurf.mgz
+--o ${SUBJECTS_DIR}/${subj}/surf/${hemis}.white.preaparc --white --nsmooth 5 --seg ${SUBJECTS_DIR}/${subj}/mri/aseg.presurf.mgz
 
 mri_label2label --label-cortex ${SUBJECTS_DIR}/${subj}/surf/${hemis}.white.preaparc ${SUBJECTS_DIR}/${subj}/mri/aseg.presurf.mgz 0 ${SUBJECTS_DIR}/${subj}/label/${hemis}.cortex.label
 
-mris_smooth -n 3 -nw ${SUBJECTS_DIR}/${subj}/surf/${hemis}.white.preaparc ${SUBJECTS_DIR}/${subj}/surf/${hemis}.smoothwm
-mris_inflate ${SUBJECTS_DIR}/${subj}/surf/${hemis}.smoothwm ${SUBJECTS_DIR}/${subj}/surf/${hemis}.inflated
+mris_smooth -n 7 -nw ${SUBJECTS_DIR}/${subj}/surf/${hemis}.white.preaparc ${SUBJECTS_DIR}/${subj}/surf/${hemis}.smoothwm
+mris_inflate -n 40 ${SUBJECTS_DIR}/${subj}/surf/${hemis}.smoothwm ${SUBJECTS_DIR}/${subj}/surf/${hemis}.inflated
 
 mris_curvature -w ${SUBJECTS_DIR}/${subj}/surf/${hemis}.white.preaparc
 mris_curvature -thresh .999 -n -a 5 -w -distances 10 10 ${SUBJECTS_DIR}/${subj}/surf/${hemis}.inflated
 
 mris_sphere ${SUBJECTS_DIR}/${subj}/surf/${hemis}.inflated ${SUBJECTS_DIR}/${subj}/surf/${hemis}.sphere
 
-mris_register -curv -threads ${num_threads} -inflated -init \
--reg ${SUBJECTS_DIR}/${subj}/mri/transforms/init_for_mris_register.lta \
+mris_register -curv -threads ${num_threads} -inflated \
 ${SUBJECTS_DIR}/${subj}/surf/${hemis}.sphere ${freesurfer_path}/average/${hemis}.folding.atlas.acfb40.noaparc.i12.2016-08-02.tif ${SUBJECTS_DIR}/${subj}/surf/${hemis}.sphere.reg
 
 ln -sf ${hemis}.sphere.reg ${hemis}.fsaverage.sphere.reg
@@ -45,16 +44,18 @@ SUBJECTS_DIR=${working_dir}
 
 cd ${SUBJECTS_DIR}/${subj}/mri
 mris_place_surface --adgws-in ${working_dir}/autodet.gw.stats.binary.rh.dat \
---seg aseg.presurf.mgz --threads ${num_threads} --wm wm.mgz --invol aseg.presurf_100.mgz --${hemis} --i ../surf/${hemis}.white.preaparc --o ../surf/${hemis}.white --white --nsmooth 0 \
+--seg aseg.presurf.mgz --threads ${num_threads} --wm wm.mgz --invol aseg.presurf_100.mgz --${hemis} --i ../surf/${hemis}.white.preaparc --o ../surf/${hemis}.white --white --nsmooth 5 \
 --rip-label ../label/${hemis}.cortex.label --rip-bg --rip-surf ../surf/${hemis}.white.preaparc --aparc ../label/${hemis}.aparc.annot
 
 cd ${SUBJECTS_DIR}/${subj}/mri
 mris_place_surface --adgws-in ${working_dir}/autodet.gw.stats.binary.rh.dat \
 --seg aseg.presurf.mgz --threads ${num_threads} --wm wm.mgz \
---invol aseg.presurf_100.mgz --${hemis} --i ../surf/${hemis}.white --o ../surf/${hemis}.pial.T1 --pial --nsmooth 0 \
---pin-medial-wall ../label/${hemis}.cortex.label --aparc ../label/${hemis}.aparc.annot \
+--invol aseg.presurf_100.mgz --${hemis} --i ../surf/${hemis}.white --o ../surf/${hemis}.pial.T1 --pial \
+--pin-medial-wall ../label/${hemis}.cortex.label \
+--aparc ../label/${hemis}.aparc.annot \
 --repulse-surf ../surf/${hemis}.white --white-surf ../surf/${hemis}.white \
---no-rip --curv 0.2 --intensity 2.0
+--first-peak-d1 --no-rip \
+--nsmooth 5 --smooth-after-rip
 
 cp ${SUBJECTS_DIR}/${subj}/surf/${hemis}.pial.T1 ${SUBJECTS_DIR}/${subj}/surf/${hemis}.pial
 
@@ -93,7 +94,6 @@ cd ${SUBJECTS_DIR}/${subj}/mri
 mris_ca_label -l ../label/${hemis}.cortex.label -aseg ../mri/aseg.presurf.mgz ${subj} ${hemis} ../surf/${hemis}.sphere.reg ${freesurfer_path}/average/${hemis}.DKTaparc.atlas.acfb40.noaparc.i12.2016-08-02.gcs ../label/${hemis}.aparc.DKTatlas.annot 
 
 ln -sf ${hemis}.sphere.reg ${hemis}.fsaverage.sphere.reg 
-
 SUBJECTS_DIR=${working_dir}
 
 ##### Cortical Parc Schaefer atlas: 7 and 17 networks
@@ -118,7 +118,6 @@ mri_surf2surf --hemi ${hemis} \
   --tval ${SUBJECTS_DIR}/${subj}/label/${hemis}.aparc.HCP-MMP1.glasser.annot
 
 SUBJECTS_DIR=${working_dir}
-
 ######## dummy left hemis needed for stats computation
 cp ${SUBJECTS_DIR}/${subj}/surf/${hemis}.white ${SUBJECTS_DIR}/${subj}/surf/${hemis_other}.white
 cp ${SUBJECTS_DIR}/${subj}/surf/${hemis}.pial ${SUBJECTS_DIR}/${subj}/surf/${hemis_other}.pial
@@ -131,6 +130,19 @@ cp ${SUBJECTS_DIR}/${subj}/label/${hemis}.aparc.a2009s.annot ${SUBJECTS_DIR}/${s
 pctsurfcon --s ${subj} --${hemis}-only
 
 mri_brainvol_stats --subject ${subj}
+
+######## AParc-to-ASeg aparc.DKTatlas
+cd ${SUBJECTS_DIR}/${subj}/mri
+mri_surf2volseg --o aparc.DKTatlas+aseg.mgz \
+--label-cortex --i aseg.mgz --threads ${num_threads} \
+--lh-annot ${SUBJECTS_DIR}/${subj}/label/lh.aparc.DKTatlas.annot 1000 \
+--lh-cortex-mask ${SUBJECTS_DIR}/${subj}/label/lh.cortex.label \
+--lh-white ${SUBJECTS_DIR}/${subj}/surf/lh.white \
+--lh-pial ${SUBJECTS_DIR}/${subj}/surf/lh.pial \
+--rh-annot ${SUBJECTS_DIR}/${subj}/label/rh.aparc.DKTatlas.annot 2000 \
+--rh-cortex-mask ${SUBJECTS_DIR}/${subj}/label/rh.cortex.label \
+--rh-white ${SUBJECTS_DIR}/${subj}/surf/rh.white \
+--rh-pial ${SUBJECTS_DIR}/${subj}/surf/rh.pial
 
 ######## AParc-to-ASeg aparc
 cd ${SUBJECTS_DIR}/${subj}/mri
