@@ -301,6 +301,6 @@ tgt_path=str(sys.argv[2])
 md_src = load_mesh(os.path.join(src_path, sys.argv[3]))
 print(md_src.keys(), len(md_src['f']), len(md_src['v']))
 
-v_dec, f_dec = decimate(md_src['v'], md_src['f'], 300000)
+v_dec, f_dec = decimate(md_src['v'], md_src['f'], 240000)
 print(len(v_dec), len(f_dec))
 save_vtk(vtk_make_pd(v_dec, f_dec), os.path.join(tgt_path, sys.argv[4]))

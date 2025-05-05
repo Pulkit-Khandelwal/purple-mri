@@ -12,7 +12,9 @@ do
 
     c3d ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected.nii.gz -replace 6 7 -o ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected.nii.gz
 
-    c3d ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected.nii.gz -replace 1 42 2 51 3 50 4 52 5 49 7 41 8 43 9 0 10 53 -o ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected_RH_FS_labels.nii.gz
+    # REPLACED: BEFORE 9 0; NOW 9 192 (freeSurfer label for CC)
+    # REPLACED: Correct labels for subcortical regions: 2 51 3 50 these are correct.
+    c3d ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected.nii.gz -replace 1 42 2 51 3 50 4 52 5 49 7 41 8 43 9 192 10 53 -o ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected_RH_FS_labels.nii.gz
 
     mri_convert ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected_RH_FS_labels.nii.gz ${generated_files_folder}/${subj}_aseg.mgz
     cp ${generated_files_folder}/${subj}_aseg.mgz ${generated_files_folder}/${subj}_aseg.presurf.mgz
@@ -21,9 +23,10 @@ do
     c3d ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected_RH_FS_labels_presurf_100.nii.gz -dup -lstat
     mri_convert ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected_RH_FS_labels_presurf_100.nii.gz ${generated_files_folder}/${subj}_aseg.presurf_100.mgz
 
-    c3d ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected.nii.gz -retain-labels 2 3 4 5 7 9 -o ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected_WM_only.nii.gz
-    c3d ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected_WM_only.nii.gz -replace 2 1 3 1 4 1 5 1 7 1 9 1 -o ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected_WM_only.nii.gz
-        
+    # REPLACED: BEFORE: I did NOT include the ventricle in the WM label, but now I've added that (label 8)
+    c3d ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected.nii.gz -retain-labels 2 3 4 5 7 8 9 -o ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected_WM_only.nii.gz
+    c3d ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected_WM_only.nii.gz -replace 2 1 3 1 4 1 5 1 7 1 8 1 9 1 -o ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected_WM_only.nii.gz
+          
     c3d ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected_WM_only.nii.gz -comp -threshold 1 1 1 0 -o ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected_WM_only_cc.nii.gz
 
     mri_convert ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected_WM_only_cc.nii.gz ${generated_files_folder}/${subj}_wm.mgz
