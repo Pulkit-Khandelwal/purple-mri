@@ -1,11 +1,12 @@
 # Docker/Singularity for postmortem imaging
-## Deep learning-based segmentation of 7 tesla postmortem T2w & flash human brain hemisphere MRI.
+## Deep learning-based segmentation of 7T postmortem T2w human brain hemisphere MRI.
 
 #### Author: Pulkit Khandelwal
 
-### Note: The current (09/04/2024) version of the containers is about ~48GB!!! This is huge and takes quite some time to download and convert from `sif` to `simg` for singualrity. I will reduce the file size in a future update. But, apart frrom that it works just fine!
-
 ##### Change Logs
+05/05/2025:
+- Added the latest 10-labels voxel-level segmentation (v1.4.2). This version cleans up GM/WM mis-segmentations in the medial area; predicts the missing regions (filling-up the sampling cuts) areas and to some extent the A/P signal drop-out issues. Made the light-weight than before.
+
 10/10/2024:
 - Added documentation for the post-hoc topology correction docker.
 
@@ -34,7 +35,7 @@
 - NO need for a GPU! Any linux-based machine works.
 - Choose one of the following options for the segmentations you need. See the command at the end on how to use this Docker.
 
-    - `${OPTION}=exvivo_t2w`: Model trained on t2w mri to get the 10 labels.
+    - `${OPTION}=exvivo_t2w`: Model trained on t2w mri to get the 10 labels. NOTE: USE THIS FOR FLASH MRI AS WELL (for now dt: 05/05/2024).
     
     - `${OPTION}=exvivo_flash_more_subcort`: Added four new segmentation labels: hypothal, optic chiasm, anterior commissure, fornix. This model has been trained on the flash t2* mri.
     
