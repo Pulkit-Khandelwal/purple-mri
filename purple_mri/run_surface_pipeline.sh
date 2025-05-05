@@ -15,21 +15,23 @@ done
 
 echo "Here are the list of subjects to be processed: " ${subjects[@]}
 
-##### STEP 1: Prepare files from the initial 10-label deep learning based-segmentation
+# Define some paths and make folders
 generated_files_folder=${working_dir}/files_prepared_for_pipeline
+tgt_dir_FS_mesh=${working_dir}/freesurfer_high_res_mesh
+tgt_dir_FS_mesh_decimated=${working_dir}/decimated_mesh
+
 mkdir -p ${generated_files_folder}
+mkdir -p ${tgt_dir_FS_mesh}
+mkdir -p ${tgt_dir_FS_mesh_decimated}
+
+##### STEP 1: Prepare files from the initial 10-label deep learning based-segmentation
 bash prepare_segm_files.sh ${working_dir} "${subjects[*]}" ${generated_files_folder} ${segm_path}
 
 ##### STEP 2: Create FreeSurfer-like files
 bash make_fs_directories.sh ${working_dir} ${generated_files_folder} ${mri_path} "${subjects[*]}"
 
 ##### STEP 3: Create mesh and downsample the same
-tgt_dir_FS_mesh=${working_dir}/freesurfer_high_res_mesh
-tgt_dir_FS_mesh_decimated=${working_dir}/decimated_mesh
-mkdir -p ${tgt_dir_FS_mesh}
-mkdir -p ${tgt_dir_FS_mesh_decimated}
-
-# this file calls the Python script: decimate_mesh.py
+# calls decimate_mesh.py
 bash create_mesh.sh ${working_dir} ${tgt_dir_FS_mesh} ${tgt_dir_FS_mesh_decimated} "${subjects[*]}"
 
 ##### STEP 4: Perform some intial regsitration to get all the required orientations
