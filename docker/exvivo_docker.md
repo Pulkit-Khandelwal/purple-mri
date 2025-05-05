@@ -1,5 +1,5 @@
 # Docker/Singularity for postmortem imaging
-## Deep learning-based segmentation of 7T postmortem T2w human brain hemisphere MRI.
+## Voxel-level deep learning-based segmentation of 7T postmortem T2w human brain hemisphere MRI.
 
 #### Author: Pulkit Khandelwal
 
@@ -57,7 +57,7 @@ I have provided some files in the folder `docker_files` for your reference only 
 Download the image from the box into a folder named `data_for_inference` (do NOT give it any other name) and then place this folder any directory of choice, for example, `/data/username/`.
 
 #### Step 2: Pull the docker image
-This should pull my docker image from docker hub. It is a really huge file.
+This should pull my docker image from docker hub,
 `docker pull pulks/docker_hippogang_exvivo_segm:v${LATEST_TAG}`
 
 #### Step 3: Run the docker container
@@ -66,11 +66,11 @@ Run the following command to start the inference. See how the volume is mounted 
 `docker run --gpus all --privileged -v /data/username/:/data/exvivo/ -it pulks/docker_hippogang_exvivo_segm:v${LATEST_TAG} /bin/bash -c "bash /src/commands_nnunet_inference.sh ${OPTION}" >> logs.txt`
 
 #### Check the output!
-Note, you might see a warning diaplyed on the temrinal, you can safely ignore that!
+Note, you might see a warning displayed on the terminal, you can safely ignore that!
 It takes around ~15 minutes to run the inference for the `ex vivo` T2w image. You should see a folder in your local machine at the path:
 `/your/path/to/data_for_inference/output_from_nnunet_inference`
 
-## Note on white matter hypeintensities in `in vivo` FLAIR images
+## Note on white matter hyperintensities in `in vivo` FLAIR images
 If, you want to run the WMH for `in vivo` flair data then run the following command. Make sure that the image is skull-stripped and normalized/standardized.
 It takes around 1 minute to get the WMH segmentations in the `in vivo` FALIR image.
 
@@ -93,15 +93,16 @@ docker run -v /your/path/docker_stuff/docker_nighres/check/:/data/cruise_files/ 
 bash clean_labels_final.sh
 
 # Convert Docker to Singularity
-I converted the Docker image to Singularity and it should run on a linix machine with a GPU. Functionality remains the same.
+I converted the Docker image to Singularity and it should run on a linux machine with a GPU. Functionality remains the same.
 
 Pull the latest `sif` image:
+The {LATEST_TAG} is the same as the Docker image.
 `singularity pull exvivo_dl_segm_pull.sif oras://registry-1.docker.io/pulks/exvivo_dl_segm_tool:v{LATEST_TAG}`
 
 Run the following command:
 `singularity exec --nv --bind /data/username/:/data/exvivo exvivo_dl_segm_pull.sif /bin/bash -c "/src/commands_nnunet_inference.sh ${OPTION}"`
 
-### FOR DEVELOPERS
+### FOR DEVELOPERS ONLY
 #### How did I build the Singularity container?
 #### Native no-root installation of Singularity
 
