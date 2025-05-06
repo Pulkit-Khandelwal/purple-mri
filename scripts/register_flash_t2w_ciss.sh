@@ -1,10 +1,12 @@
+# A general purpose script to register ciss/t2w/flash mri based on initial (GM/WM+) labels.
+# Can be modified to get the mri as an additional channel and/or split labels to go as additional channels.
 
 mri_dir=
 segm_dir=
-flash_mri=${mri_dir}/119502L_flash_reslice_0000.nii.gz
-t2w_mri=${mri_dir}/119502L_reslice_0000.nii.gz
-flash_segm=${segm_dir}/119502L_flash_reslice.nii.gz
-t2w_segm=${segm_dir}/119502L_reslice.nii.gz
+flash_mri=${mri_dir}/flash_reslice_0000.nii.gz
+t2w_mri=${mri_dir}/reslice_0000.nii.gz
+flash_segm=${segm_dir}/flash_reslice.nii.gz
+t2w_segm=${segm_dir}/reslice.nii.gz
 output_dir=
 
 # Extract GM and WM-plus from postmortem deep learning segmentation
@@ -35,7 +37,7 @@ greedy -d 3 -a -dof 12 \
 greedy -d 3 \
 -i ${output_dir}/t2w_segm_gm_ds.nii.gz ${output_dir}/flash_segm_gm_ds.nii.gz \
 -i ${output_dir}/t2w_segm_wmplus_ds.nii.gz ${output_dir}/flash_segm_wmplus_ds.nii.gz \
--it ${output_dir}/moments.mat -n 100x50x20 -m SSD -s 8.0mm 1.0mm -sv \
+-it ${output_dir}/affine.mat -n 100x50x20 -m SSD -s 8.0mm 1.0mm -sv \
 -o ${output_dir}/warp_smooth.nii.gz
 
 # warp conformed exvivo segm
