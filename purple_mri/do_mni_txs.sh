@@ -24,7 +24,7 @@ do
   
   cp ${SUBJECTS_DIR}/mri/transforms/talairach.auto.xfm ${SUBJECTS_DIR}/mri/transforms/talairach.xfm
   
-  lta_convert --src ${SUBJECTS_DIR}/mri/orig_conform.mgz --trg /data/pulkit/exvivo_reg_reconstruct/freesurfer_installation/freesurfer/average/mni305.cor.mgz \
+  lta_convert --src ${SUBJECTS_DIR}/mri/orig_conform.mgz --trg ${SUBJECTS_DIR}/freesurfer/average/mni305.cor.mgz \
   --inxfm ${SUBJECTS_DIR}/mri/transforms/talairach.xfm --outlta ${SUBJECTS_DIR}/mri/transforms/talairach.xfm.lta --subject fsaverage --ltavox2vox
   
   mri_add_xform_to_header -c ${SUBJECTS_DIR}/mri/transforms/talairach.xfm ${SUBJECTS_DIR}/mri/orig_conform.mgz ${SUBJECTS_DIR}/mri/orig_conform.mgz
