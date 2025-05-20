@@ -1,32 +1,38 @@
-
-fsaverage_files=/path/to/freesurfer_installation/subjects/fsaverage
-# Also place the fsaverage folder in the fsaverage_files folder (to avoid any errors)
 SUBJECTS_DIR=/path/to/freesurfer/processed/files/per_subject
+# Place the fsaverage folder in the fsaverage_files folder (to avoid any errors)
+fsaverage_files=${SUBJECTS_DIR}/fsaverage
 working_dir=/path/to/working_dir
 dot_dir=/path/to/cortexdots_final_dir
-
-subjects=()
+processed_files=/path/to/processed_files_dir
 hemis=rh
 hemis_other=lh
+surface=pial # or can be inflated
+subjects=()
 
 for subj in "${subjects[@]}"
 do
 echo "Processing: " ${subj}
-
 # make a folder for each subject
 mkdir -p ${working_dir}/${subj}
 
 # copy the ${subj}_cortexdots_final.nii.gz to the working directory
-cp ${dot_dir}/${subj}_cortexdots_final.nii.gz ${working_dir}/${subj}/${subj}_cortexdots_final.nii.gz
+cp ${dot_dir}/${subj}.nii.gz ${working_dir}/${subj}/${subj}_cortexdots_final.nii.gz
 
 # split all the dot labels into different files in their corresponding subject folder
-c3d ${working_dir}/${subj}/${subj}_cortexdots_final.nii.gz -split -oo ${working_dir}/${subj}/${subj}_cortexdots_final_label%02d.nii.gz
+# c3d ${working_dir}/${subj}/${subj}_cortexdots_final.nii.gz -split -oo ${working_dir}/${subj}/${subj}_cortexdots_final_label%02d.nii.gz
+
+# use the Python version
+python3 split_labels.py ${working_dir}/${subj}/ ${subj}
+raw_list=$(cat ${working_dir}/${subj}/"unique_labels_${subj}.txt")
+clean_list=$(echo "$raw_list" | tr -d '[],')
+read -a valid_labels <<< "$clean_list"
+cp ${working_dir}/${subj}/unique_labels_${subj}.txt ${processed_files}
 
 # inflate each individual dot
 bash dilation_split_dots.sh ${working_dir} ${subj}
 
 subj_dots_file=${subj}_cortexdots_final
-for num in {1..19}
+for num in "${valid_labels[@]}"
 do
 echo ${subj} "label:" ${num}
 
@@ -51,4 +57,19 @@ mris_convert -c ${working_dir}/${subj}/${subj_dots_file}_label${num}.fsaverage.m
 done
 
 python3 prepare_vtk_file_for_merge.py ${working_dir} ${subj}
+
+####### merge arrays
+c3d ${working_dir}/${subj}/${subj}_cortexdots_final.nii.gz -dup -lstat >> ${processed_files}/${subj}_dots_info.txt
+
+for num in "${valid_labels[@]}"
+do
+echo ${subj} "label:" ${num}
+echo ${working_dir}/${subj}/${hemis}.${subj}_cortexdots_final_label${num}.fsaverage.pial_use.vtk \ >> ${working_dir}/${subj}/"merge_arrays_string_${subj}.txt"
+done
+
+./mesh_merge_arrays -B -c \
+${working_dir}/${subj}/${subj}_all_dots_fsaverage.${surface}.vtk dots $(cat ${working_dir}/${subj}/"merge_arrays_string_${subj}.txt")
+
+cp ${working_dir}/${subj}/${subj}_all_dots_fsaverage.${surface}.vtk ${processed_files}
+
 done;

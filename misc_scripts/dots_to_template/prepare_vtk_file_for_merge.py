@@ -125,6 +125,6 @@ for curr_file in files_in_subject:
     md_src = load_mesh(os.path.join(dir_subjects, subj, curr_file))
     pd = vtk_make_pd(md_src['v'], md_src['f'])
     vtk_set_cell_array(pd, 'dots', md_src['curv'])
-    file_path = os.listdir(dir_subjects, subj, curr_file[:-4], '_use.vtk')
+    file_path = os.path.join(dir_subjects, subj, curr_file[:-4] + '_use.vtk')
     print(file_path)
     save_vtk(pd, file_path)
