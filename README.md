@@ -24,7 +24,7 @@ Perform bias correction and image normalization/standardization. We use `N4BiasF
 Currently, we have two Docker images. The first image provides the segmentation and the second employs [Nighres/CRUISE](https://nighres.readthedocs.io/en/latest/installation.html) for post-hoc topology correction. 
 Please follow the [link]([https://github.com/Pulkit-Khandelwal/upenn-picsl-brain-ex-vivo/blob/main/exvivo-segm-demo-docker.md](https://github.com/Pulkit-Khandelwal/purple-mri/blob/main/docker/exvivo_docker.md) for detailed instructions on how to use Docker to get the segmentations. For this, we also have the singularity image at the same link. Some key commands are emphasized here:
 
-Place the pre-processed image(s) (with a suffix _0000.nii.gz to your filenames) in a folder named `data_for_inference` within your working directory is `/your/working/directory`.
+Place the pre-processed image(s) (with a suffix _0000.nii.gz to your filenames) in a folder named `data_for_inference` within your working directory as `/your/working/directory`.
 ```
 docker pull pulks/docker_hippogang_exvivo_segm:v${LATEST_TAG}
 
@@ -45,21 +45,21 @@ bash clean_labels_final.sh
 ```
 
 ### Surface-based modeling to obtain whole-hemisphere parcellations
-Once, you have obtained an initial 10-label topology corrected volumetric segmentation, you can proceed to the surface-based pipeline to obtain parcellations based on your favorite atlas. This step will be on your local machine. No GPUs required. To do this, you should have FreeSurfer installed locally. We have used FreeSurfer version 7.4.0 on linux obtained from [here](https://surfer.nmr.mgh.harvard.edu/fswiki/DownloadAndInstall). Moreover, there are some Python dependencies which can be found in the `dependencies.txt` file and installed using `pip`.
+Once, you have obtained an initial 10-label topology-corrected volumetric segmentation, you can proceed to the surface-based pipeline to obtain parcellations based on your favorite atlas. This step will be on your local machine. No GPUs are required. To do this, you should have FreeSurfer installed locally. We have used FreeSurfer version 7.4.0 on linux obtained from [here](https://surfer.nmr.mgh.harvard.edu/fswiki/DownloadAndInstall). Moreover, there are some Python dependencies that can be found in the `dependencies.txt` file and installed using `pip`.
 
-Run the following file which calls in several bash scripts which prepares the data, computes appropriate transformations and re-orients the images, corrects surface topology, and perform the parcellation into Desikan-Killiany-Tourville (DKT), Schaefer, Glasser and the Von Economo-Koskinos atlases.
+Run the following file which calls in several bash scripts which prepare the data, computes appropriate transformations and re-orients the images, corrects surface topology, and perform the parcellation into Desikan-Killiany-Tourville (DKT), Schaefer, Glasser, and the Von Economo-Koskinos atlases.
 
-For the surface-based modeling step, we assume that all the hemishpehrs are right hemispheres. So, we suggest flipping the left t2w MRI and its corresponding segmentation to left using the following `c3d` command: `c3d image_left.nii.gz -flip y image_right_flipped.nii.gz`
+For the surface-based modeling step, we assume that all the hemispheres are right hemispheres. So, we suggest flipping the left t2w MRI and its corresponding segmentation to left using the following `c3d` command: `c3d image_left.nii.gz -flip y image_right_flipped.nii.gz`. You can also run `purple-mri` in 1mm by conforming the MRI and the deep learning-based segmentation to MNI space using [this](https://github.com/Pulkit-Khandelwal/purple-mri/blob/main/misc_scripts/flip_conform.sh) code snippet.
 
-Clone the current repository and the run the following script `run_surface_pipeline.sh` from within the `purple_mri` folder which takes the following mandatory arguments:
-`freesurfer_path`: path to the FreeSurfer installtion
+Clone the current repository and then run the following script `run_surface_pipeline.sh` from within the `purple_mri` folder which takes the following mandatory arguments:
+`freesurfer_path`: path to the FreeSurfer installation
 `working_dir`: directory which will have the outputs for each subject stored
 `mri_path`: mri images path
 `segm_path`: 10-label segmentation path
 `external_atlases_path`: directory with files for other atlases
 `num_threads`: number of threads
 
-Place your t2w MRI in a folder `mri_path` and the intial deep learning-based segmentations in `segm_path`.
+Place your t2w MRI in a folder `mri_path` and the initial deep learning-based segmentations in `segm_path`.
 Make sure your mri images and segmentation files have the same names ending with `.nii.gz`.
 Place the `fsaverage` in the `working_dir` folder.
 
@@ -84,7 +84,7 @@ cd purple-mri
 pip3 install pkg_src
 ```
 
-Place the `fsaverage` in the `working_dir` folder. The cli options remain the same as above but this time you have to pass in the last argument as the path to `autodet.gw.stats.binary.rh.dat`.
+Place the `fsaverage` in the `working_dir` folder. The CLI options remain the same as above but this time you have to pass in the last argument as the path to `autodet.gw.stats.binary.rh.dat`.
 
 Once, installed you can run, `purple_mri` as:
 ```
@@ -93,11 +93,11 @@ python3 -m purple_mri freesurfer_path working_dir mri_path segm_path external_at
 
 ## Other scripts
 ### Intensity-based volumetric template building
-We build intensity-based volumetric templates using the [greedy](https://sites.google.com/view/greedyreg/about?authuser=0) tool. The required binaries (for Linux) and the scripts are located in the the `intensity_template` within the `scripts` directory. Follow the instructions [here](https://github.com/Pulkit-Khandelwal/purple-mri/blob/main/scripts/intensity_template/README.md).
+We build intensity-based volumetric templates using the [greedy](https://sites.google.com/view/greedyreg/about?authuser=0) tool. The required binaries (for Linux) and the scripts are located in the `intensity_template` within the `scripts` directory. Follow the instructions [here](https://github.com/Pulkit-Khandelwal/purple-mri/blob/main/scripts/intensity_template/README.md).
 
 
 ### Ex vivo and in vivo registration
-Script `exvivo_invivo_greedy_registration.sh` to register in vivo (t1w) and ex vivo (t2w) MRI is located in the folder `scripts`. We use [greedy](https://sites.google.com/view/greedyreg/about?authuser=0) to register the segmentations of in vivo aseg+aparc labels derived from FreeSurfer and 10-label initial deep learning segmentation of postmortem MRI. The warps are then used to regsiter the MRIs.
+Script `exvivo_invivo_greedy_registration.sh` to register in vivo (t1w) and ex vivo (t2w) MRI is located in the folder `scripts`. We use [greedy](https://sites.google.com/view/greedyreg/about?authuser=0) to register the segmentations of in vivo aseg+aparc labels derived from FreeSurfer and 10-label initial deep learning segmentation of postmortem MRI. The warps are then used to register the MRIs.
 
 ### Perform GLM analyses
 We perform vertex-wise analysis in `fsaverage` space to fit a generalized linear model (GLM) between cortical thickness (mm) and with global ratings of amyloid-β, Braak staging, CERAD, and semiquantitative ratings of the medial temporal lobe (MTL) neuronal loss and tau pathology, with age, sex and postmortem interval (PMI) as covariates. You can follow the steps detailed [here](https://github.com/Pulkit-Khandelwal/purple-mri/tree/main/glm). The same can be repeated for the Deformation-based morphometry.
