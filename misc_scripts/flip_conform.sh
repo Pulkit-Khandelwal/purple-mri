@@ -1,4 +1,4 @@
-# Check the hemisphere
+# Check the hemisphere and flip if left
 hemis_check=${subj: -1}
 echo $hemis_check
 var=R
