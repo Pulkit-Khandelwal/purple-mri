@@ -7,7 +7,7 @@ for i in $str_split; do subjects+=($i) ; done
 for subj in "${subjects[@]}"
 do
     echo ${subj}
-    cp ${segm_path}/${subj}_reslice.nii.gz ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected_orig.nii.gz
+    cp ${segm_path}/${subj}.nii.gz ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected_orig.nii.gz
     c3d ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected_orig.nii.gz -replace 6 7 -o ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected_orig.nii.gz
 
     ##### Let's get the CC for each label and then merge it
