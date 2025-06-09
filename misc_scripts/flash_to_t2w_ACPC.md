@@ -1,7 +1,7 @@
 ### Steps to convert the FLASH space voxel coordinates to T2w image, i.e., in the AC/PC aligned orientation, aka, the `_resliced.nii.gz` T2w image where the dots are placed.
 
 
-#### Let's follow an example use case for the case `119454L` to understand what is needed and the steps required to the same. The script was tested on a Macbook.
+#### Let's follow an example use case for the case `ask Pulkit` to understand what is needed and the steps required to the same. The script was tested on a Macbook.
 #### All files to reproduce the trasformation are at this box link:
 https://upenn.box.com/s/1cc00mjrp35c6nki5ojjmwk481xaiwqb
 
