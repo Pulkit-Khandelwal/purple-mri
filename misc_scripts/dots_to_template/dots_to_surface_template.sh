@@ -8,6 +8,7 @@ hemis=rh
 hemis_other=lh
 surface=pial # or can be inflated
 subjects=()
+fsaverage_pial_surface=/data/pulkit/exvivo_reg_reconstruct/surface_stuff_freesurfer/october_2024/purple_work/scripts_native_res_april2025/dots_to_template/fsaverage_pial.vtk
 
 for subj in "${subjects[@]}"
 do
@@ -61,10 +62,20 @@ python3 prepare_vtk_file_for_merge.py ${working_dir} ${subj}
 ####### merge arrays
 c3d ${working_dir}/${subj}/${subj}_cortexdots_final.nii.gz -dup -lstat >> ${processed_files}/${subj}_dots_info.txt
 
-for num in "${valid_labels[@]}"
+# We will add a dummy first vtk mesh as just the pial surface
+# so that we can load the mesh onto Paraview and start looking at 1 to 19 dots
+# and ignore the index 0
+
+cp ${fsaverage_pial_surface} ${working_dir}/${subj}/${hemis}.${subj}_cortexdots_final_label0.fsaverage.pial_use.vtk
+for num in $(seq 0 19)
 do
-echo ${subj} "label:" ${num}
-echo ${working_dir}/${subj}/${hemis}.${subj}_cortexdots_final_label${num}.fsaverage.pial_use.vtk \ >> ${working_dir}/${subj}/"merge_arrays_string_${subj}.txt"
+  if [ -f "${working_dir}/${subj}/${hemis}.${subj}_cortexdots_final_label${num}.fsaverage.pial_use.vtk" ]; then
+    echo "Dot ${num} was placed!"
+   else
+    echo "Dot ${num} was NOT placed!"
+    cp ${fsaverage_pial_surface} ${working_dir}/${subj}/${hemis}.${subj}_cortexdots_final_label${num}.fsaverage.pial_use.vtk
+  fi
+    echo ${working_dir}/${subj}/${hemis}.${subj}_cortexdots_final_label${num}.fsaverage.pial_use.vtk \ >> ${working_dir}/${subj}/"merge_arrays_string_${subj}.txt"
 done
 
 ./mesh_merge_arrays -B -c \
