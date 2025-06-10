@@ -66,6 +66,7 @@ c3d ${working_dir}/${subj}/${subj}_cortexdots_final.nii.gz -dup -lstat >> ${proc
 # so that we can load the mesh onto Paraview and start looking at 1 to 19 dots
 # and ignore the index 0
 
+# Get from here: https://github.com/Pulkit-Khandelwal/purple-mri/blob/main/misc_scripts/dots_to_template/fsaverage_pial.vtk
 cp ${fsaverage_pial_surface} ${working_dir}/${subj}/${hemis}.${subj}_cortexdots_final_label0.fsaverage.pial_use.vtk
 for num in $(seq 0 19)
 do
