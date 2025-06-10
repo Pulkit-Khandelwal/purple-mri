@@ -128,3 +128,31 @@ for curr_file in files_in_subject:
     file_path = os.path.join(dir_subjects, subj, curr_file[:-4] + '_use.vtk')
     print(file_path)
     save_vtk(pd, file_path)
+
+
+"""
+# This is how to merge all the dots into one vtk file with 20 cell arrays
+# The first one is dummy, and then the rest correspond to the dots indexing
+dir_subjects='/path/to/all/subjects/vtk/files/from/above/code'
+subjects = [f for f in os.listdir(dir_subjects) if f.endswith('.pial.vtk')]
+print("total subjects_in_roi_files: ", len(subjects))
+
+arr_list = []
+for subj in subjects:
+    print(subj)
+    md_src = load_mesh(os.path.join(dir_subjects, subj))
+    a=md_src['dots']
+    arr_list.append(a)
+
+stacked = np.stack(arr_list, axis=0)
+total = stacked.sum(axis=0)
+expanded = np.concatenate((np.zeros((327680, 1), dtype=total.dtype), total), axis=1)
+
+fsaverage_pial_surface='fsaverage_pial.vtk'
+md_dst = load_mesh(fsaverage_pial_surface)
+pd = vtk_make_pd(md_src['v'], md_dst['f'])
+vtk_set_cell_array(pd, 'dots', expanded)
+file_path = os.path.join('all_subjects_all_dots.vtk')
+save_vtk(pd, file_path)
+"""
+
