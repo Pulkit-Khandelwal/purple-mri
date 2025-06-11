@@ -33,8 +33,7 @@ docker run --gpus all --privileged -v /your/working/directory/:/data/exvivo/ -it
 You will see the output in `/your/working/directory/data_for_inference/output_from_nnunet_inference`.
 
 
-IMPORTANT NOTE: You don't need to run the following topology correction step and skip directly to the surface-based pipeline below. This is because CRUISE correction introduces a lot of "cracks" in the medial area which mess up the surface pipeline. Therefore, we use FreeSurfer's topology correction instead in the surface-based pipeline. However, for the sake of completeness and for user-dependent application.
-Correct for topology so that adjoining gyri and sulci are clearly separated. Copy the segmentations from `output_from_nnunet_inference` to a folder `data_for_topology_correction` in your working directory.
+IMPORTANT NOTE: You don't need to run the following topology correction step and skip directly to the surface-based pipeline below. This is because CRUISE correction introduces a lot of "cracks" in the medial area which mess up the surface pipeline. Therefore, we use FreeSurfer's topology correction instead in the surface-based pipeline. However, for the sake of completeness and for user-dependent application, we mention it here, and correct for topology so that adjoining gyri and sulci are clearly separated. Copy the segmentations from `output_from_nnunet_inference` to a folder `data_for_topology_correction` in your working directory.
 ```
 docker pull pulks/docker_nighres:v1.0.0
 
@@ -70,7 +69,7 @@ bash run_surface_pipeline.sh freesurfer_path working_dir mri_path segm_path exte
 ```
 
 ### Installation using `pip`
-You have the option to run the surface-based pipeline as a `pip` package available at [PyPI](https://pypi.org/project/purple-mri/0.0.1/) and can be installed as:
+This might not be up-to-date, so please use the bash scripts directly. You have the option to run the surface-based pipeline as a `pip` package available at [PyPI](https://pypi.org/project/purple-mri/0.0.1/) and can be installed as:
 
 ```
 pip3 install purple-mri
