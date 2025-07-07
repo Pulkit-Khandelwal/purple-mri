@@ -87,7 +87,7 @@ Make directory `data_for_topology_correction` in let's say `/your/path/docker_st
 This directory should consist of only your segmentation output from the first segmentation docker.
 
 # Run docker
-docker run -v /your/path/docker_stuff/docker_nighres/check/:/data/cruise_files/ -it pulks/docker_nighres:v1.0.0 /bin/bash -c "bash /data/prepare_cruise_files.sh"
+`docker run -v /your/path/docker_stuff/docker_nighres/check/:/data/cruise_files/ -it pulks/docker_nighres:v1.0.0 /bin/bash -c "bash /data/prepare_cruise_files.sh"`
 
 # Locally run the file to get the final combined label file which is located in the above GitHub directory
 bash clean_labels_final.sh
