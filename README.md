@@ -39,7 +39,7 @@ docker pull pulks/docker_nighres:v1.0.0
 
 docker run -v /your/working/directory/:/data/cruise_files/ -it pulks/docker_nighres:v1.0.0 /bin/bash -c "bash /data/prepare_cruise_files.sh"
 
-# Locally run the file to get the final combined label file. See instructions [here](https://github.com/Pulkit-Khandelwal/upenn-picsl-brain-ex-vivo/blob/main/exvivo-segm-demo-docker.md) and links referenced therein.
+# Locally run the file to get the final combined label file.
 bash clean_labels_final.sh
 ```
 
