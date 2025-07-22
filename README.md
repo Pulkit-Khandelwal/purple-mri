@@ -103,7 +103,7 @@ We perform vertex-wise analysis in `fsaverage` space to fit a generalized linear
 
 ## Notes
 + Our method has been developed to work on a single exvivo hemisphere.
-+ The deep learning-based segmentation was primarily trained on 7T t2w MRI. We have tested the model on t2* flash as well and it works pretty well but, if need be, we recommend re-training the model with some manual labels obtained on t2* flash MRI.
++ The deep learning-based segmentation was primarily trained on 7T T2w MRI. We are currently working on a 7T T2* FLASH segmentation model.
 
 
 ## Introductory video
