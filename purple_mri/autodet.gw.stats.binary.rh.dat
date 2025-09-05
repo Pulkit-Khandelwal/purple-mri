@@ -4,10 +4,10 @@ white_border_low   142.000000
 white_outside_low  142.000000
 white_inside_hi    241.000000
 white_outside_hi   153.000000
-pial_border_hi    100.000000
-pial_border_low   100.000000
+pial_border_hi    241.000000
+pial_border_low   142.000000
 pial_outside_low  100.000000
-pial_inside_hi    142.000000
+pial_inside_hi    241.000000
 pial_outside_hi   100.000000
 use_mode 1
 variablesigma 1.000000
