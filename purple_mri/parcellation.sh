@@ -59,7 +59,7 @@ for ((iter=1; iter<=num_iters; iter++)); do
   fi
 
   mris_place_surface \
-    --adgws-in ${working_dir}/autodet.gw.stats.binary.${hemis}.NEW.dat \
+    --adgws-in ${working_dir}/autodet.gw.stats.binary.${hemis}.dat \
     --seg aseg.presurf_100.mgz \
     --threads ${num_threads} \
     --nsmooth 1 \
