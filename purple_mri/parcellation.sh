@@ -47,15 +47,35 @@ mris_place_surface --adgws-in ${working_dir}/autodet.gw.stats.binary.rh.dat \
 --seg aseg.presurf.mgz --threads ${num_threads} --wm wm.mgz --invol aseg.presurf_100.mgz --${hemis} --i ../surf/${hemis}.white.preaparc --o ../surf/${hemis}.white --white --nsmooth 5 \
 --rip-label ../label/${hemis}.cortex.label --rip-bg --rip-surf ../surf/${hemis}.white.preaparc --aparc ../label/${hemis}.aparc.annot
 
-cd ${SUBJECTS_DIR}/${subj}/mri
-mris_place_surface --adgws-in ${working_dir}/autodet.gw.stats.binary.rh.dat \
---seg aseg.presurf.mgz --threads ${num_threads} --wm wm.mgz \
---invol aseg.presurf_100.mgz --${hemis} --i ../surf/${hemis}.white --o ../surf/${hemis}.pial.T1 --pial \
---pin-medial-wall ../label/${hemis}.cortex.label \
---aparc ../label/${hemis}.aparc.annot \
---repulse-surf ../surf/${hemis}.white --white-surf ../surf/${hemis}.white \
---first-peak-d1 --no-rip \
---nsmooth 5 --smooth-after-rip
+num_iters=10
+input_surf="../surf/${hemis}.smoothwm"
+for ((iter=1; iter<=num_iters; iter++)); do
+  echo "iteration >>>>>>>" $iter
+  output_surf="../surf/${hemis}.pial.T1.iter${iter}"
+
+  # Use the previous iteration's pial surface as repulse & white surf after the first iteration
+  if [[ $iter -gt 1 ]]; then
+    input_surf="../surf/${hemis}.pial.T1.iter$((iter-1))"
+  fi
+
+  mris_place_surface \
+    --adgws-in ${working_dir}/autodet.gw.stats.binary.${hemis}.NEW.dat \
+    --seg aseg.presurf_100.mgz \
+    --threads ${num_threads} \
+    --nsmooth 1 \
+    --wm wm.mgz \
+    --invol aseg.presurf_100.mgz \
+    --${hemis} \
+    --i "${input_surf}" \
+    --o "${output_surf}" \
+    --pial \
+    --repulse-surf "${input_surf}" \
+    --white-surf "${input_surf}" \
+    --no-intensity-proc \
+    --max-cbv-dist 4.0 \
+    --intensity 30.0 \
+    --curv 5.0
+done
 
 cp ${SUBJECTS_DIR}/${subj}/surf/${hemis}.pial.T1 ${SUBJECTS_DIR}/${subj}/surf/${hemis}.pial
 
