@@ -5,16 +5,16 @@
 # Please familarize yourself with the code and see if you have to change the file names or folders as per your use case.
 
 ####### ex vivo
-exvivo_mri_dir=/data/pulkit/for_zkm/postmortem_t2w_mri
-exvivo_segm_dir=/data/pulkit/for_zkm/postmortem_t2w_segm_10_label
-exvivo_segm_cleaned_dir=/data/pulkit/for_zkm/postmortem_t2w_segm_10_label_cleaned
+exvivo_mri_dir=/your/data/path/postmortem_t2w_mri
+exvivo_segm_dir=/your/data/path/postmortem_t2w_segm_10_label
+exvivo_segm_cleaned_dir=/your/data/path/postmortem_t2w_segm_10_label_cleaned
 
 ####### in vivo
-invivo_dir_mri=/data/pulkit/for_zkm/antemortem_t1w_qced_resampled_1mm
-invivo_dir_segm=/data/pulkit/for_zkm/antemortem_t1w_qced_resampled_1mm_synthseg_segm
+invivo_dir_mri=/your/data/path/antemortem_t1w_qced_resampled_1mm
+invivo_dir_segm=/your/data/path/antemortem_t1w_qced_resampled_1mm_synthseg_segm
 
 ####### working directory
-work_dir=/data/pulkit/for_zkm/work_dir_registration
+work_dir=/your/data/path/work_dir_registration
 mkdir -p ${work_dir}
 
 subjects=()
