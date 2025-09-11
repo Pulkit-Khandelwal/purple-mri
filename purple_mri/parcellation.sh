@@ -30,8 +30,11 @@ mris_curvature -thresh .999 -n -a 5 -w -distances 10 10 ${SUBJECTS_DIR}/${subj}/
 
 mris_sphere ${SUBJECTS_DIR}/${subj}/surf/${hemis}.inflated ${SUBJECTS_DIR}/${subj}/surf/${hemis}.sphere
 
-mris_register -curv -threads ${num_threads} -inflated \
-${SUBJECTS_DIR}/${subj}/surf/${hemis}.sphere ${freesurfer_path}/average/${hemis}.folding.atlas.acfb40.noaparc.i12.2016-08-02.tif ${SUBJECTS_DIR}/${subj}/surf/${hemis}.sphere.reg
+mris_register -curv -threads ${num_threads} -inflated -init \
+-reg ${SUBJECTS_DIR}/${subj}/mri/transforms/init_for_mris_register.lta \
+${SUBJECTS_DIR}/${subj}/surf/${hemis}.sphere \
+${freesurfer_path}/average/${hemis}.folding.atlas.acfb40.noaparc.i12.2016-08-02.tif \
+${SUBJECTS_DIR}/${subj}/surf/${hemis}.sphere.reg
 
 ln -sf ${hemis}.sphere.reg ${hemis}.fsaverage.sphere.reg
 
