@@ -148,6 +148,15 @@ mri_surf2surf --hemi ${hemis} \
   --sval-annot ${external_atlases_path}/glasser/${hemis}.HCP-MMP1.annot \
   --tval ${SUBJECTS_DIR}/${subj}/label/${hemis}.aparc.HCP-MMP1.glasser.annot
 
+##### Julich_v3 atlas
+cd ${SUBJECTS_DIR}/${subj}/mri
+mri_surf2surf --hemi ${hemis} \
+  --srcsubject fsaverage \
+  --trgsubject ${subj} \
+  --sval-annot ${external_atlases_path}/julich/siibra_${hemis}_fs.annot \
+  --tval ${SUBJECTS_DIR}/${subj}/label/${hemis}.aparc.julich.annot
+
+
 SUBJECTS_DIR=${working_dir}
 ######## dummy left hemis needed for stats computation
 cp ${SUBJECTS_DIR}/${subj}/surf/${hemis}.white ${SUBJECTS_DIR}/${subj}/surf/${hemis_other}.white
