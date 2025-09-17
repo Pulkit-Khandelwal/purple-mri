@@ -5,6 +5,7 @@ mri_path=$3
 segm_path=$4
 external_atlases_path=$5
 num_threads=$6
+hemis=$7
 
 subjects=()
 for file in ${mri_path}/*.nii.gz
