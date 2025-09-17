@@ -1,7 +1,8 @@
 working_dir=$1
 generated_files_folder=$2
 mri_dir=$3
-str_split=$4
+hemis=$4
+str_split=$5
 for i in $str_split; do subjects+=($i) ; done
 
 hemis=rh
