@@ -3,9 +3,9 @@ str_split=$2
 freesurfer_path=$3
 num_threads=$4
 external_atlases_path=$5
+hemis=$6
 for i in $str_split; do subjects+=($i) ; done
 
-hemis=$6
 if [[ "$hemis" == "rh" ]]; then
     hemis_other="lh"
 else
