@@ -5,8 +5,13 @@ num_threads=$4
 external_atlases_path=$5
 for i in $str_split; do subjects+=($i) ; done
 
-hemis=rh
-hemis_other=lh
+hemis=$6
+if [[ "$hemis" == "rh" ]]; then
+    hemis_other="lh"
+else
+    hemis_other="rh"
+fi
+
 for subj in "${subjects[@]}"
 do
 echo ${subj}
@@ -80,7 +85,10 @@ for ((iter=1; iter<=num_iters; iter++)); do
     --curv 5.0
 done
 
-cp ${SUBJECTS_DIR}/${subj}/surf/${hemis}.pial.T1 ${SUBJECTS_DIR}/${subj}/surf/${hemis}.pial
+cd ${SUBJECTS_DIR}/${subj}/mri
+cp ../surf/${hemis}.pial.T1.iter10 ../surf/${hemis}.pial.T1
+cp ../surf/${hemis}.pial.T1.iter10 ../surf/${hemis}.pial
+mris_smooth -n 3 -nw ../surf/${hemis}.pial ../surf/${hemis}.pial.smoothed
 
 ######## white curv
 cd ${SUBJECTS_DIR}/${subj}/mri
