@@ -57,6 +57,7 @@ Clone the current repository and then run the following script `run_surface_pipe
 `segm_path`: 10-label segmentation path
 `external_atlases_path`: directory with files for other atlases
 `num_threads`: number of threads
+`hemis`: rh or lh
 
 Place your t2w MRI in a folder `mri_path` and the initial deep learning-based segmentations in `segm_path`.
 Make sure your mri images and segmentation files have the same names ending with `.nii.gz`.
@@ -65,7 +66,7 @@ Place the `fsaverage` in the `working_dir` folder.
 ```
 cd purple_mri
 
-bash run_surface_pipeline.sh freesurfer_path working_dir mri_path segm_path external_atlases_path num_threads
+bash run_surface_pipeline.sh freesurfer_path working_dir mri_path segm_path external_atlases_path num_threads rh
 ```
 
 ### Installation using `pip`
