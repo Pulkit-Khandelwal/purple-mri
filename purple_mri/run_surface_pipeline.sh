@@ -29,17 +29,17 @@ mkdir -p ${tgt_dir_FS_mesh_decimated}
 bash prepare_segm_files.sh ${working_dir} "${subjects[*]}" ${generated_files_folder} ${segm_path}
 
 ##### STEP 2: Create FreeSurfer-like files
-bash make_fs_directories.sh ${working_dir} ${generated_files_folder} ${mri_path} "${subjects[*]}"
+bash make_fs_directories.sh ${working_dir} ${generated_files_folder} ${mri_path} ${hemis} "${subjects[*]}"
 
 ##### STEP 3: Create mesh and downsample the same
-# calls decimate_mesh.py
-bash create_mesh.sh ${working_dir} ${tgt_dir_FS_mesh} ${tgt_dir_FS_mesh_decimated} "${subjects[*]}"
+# this file calls the Python script: decimate_mesh.py
+bash create_mesh.sh ${working_dir} ${tgt_dir_FS_mesh} ${tgt_dir_FS_mesh_decimated} ${hemis} "${subjects[*]}"
 
 ##### STEP 4: Perform some intial regsitration to get all the required orientations
 bash do_mni_txs.sh ${freesurfer_path} ${working_dir} "${subjects[*]}"
 
 ##### STEP 5: Perform surface-based topology correction
-bash topology_correction.sh ${working_dir} "${subjects[*]}"
+bash topology_correction.sh ${working_dir} ${hemis} "${subjects[*]}"
 
 ##### STEP 6: Perform surface-based parcellation
-bash parcellation.sh ${working_dir} "${subjects[*]}" ${freesurfer_path} ${num_threads} ${external_atlases_path}
+bash parcellation.sh ${working_dir} "${subjects[*]}" ${freesurfer_path} ${num_threads} ${external_atlases_path} ${hemis}
