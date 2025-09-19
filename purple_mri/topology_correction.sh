@@ -3,7 +3,6 @@ hemis=$2
 str_split=$3
 for i in $str_split; do subjects+=($i) ; done
 
-hemis=rh
 for subj in "${subjects[@]}"
 do
 echo ${subj}
