@@ -30,14 +30,14 @@ do
 
     # REPLACED: BEFORE 9 0; NOW 9 192 (freeSurfer label for CC)
     # REPLACED: Correct labels for subcortical regions: 2 51 3 50 these are correct.
-    c3d ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected.nii.gz -replace 1 42 2 51 3 50 4 52 5 49 7 41 8 43 9 192 10 53 -o ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected_RH_FS_labels.nii.gz
+    c3d ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected.nii.gz -replace 1 42 2 51 3 50 4 52 5 49 7 41 8 43 9 192 10 53 -o ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected_${hemis}_FS_labels.nii.gz
 
-    mri_convert ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected_RH_FS_labels.nii.gz ${generated_files_folder}/${subj}_aseg.mgz
+    mri_convert ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected_${hemis}_FS_labels.nii.gz ${generated_files_folder}/${subj}_aseg.mgz
     cp ${generated_files_folder}/${subj}_aseg.mgz ${generated_files_folder}/${subj}_aseg.presurf.mgz
 
-    c3d ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected_RH_FS_labels.nii.gz -replace 0 100 42 142 50 150 51 151 52 152 49 149 41 241 43 143 53 153 -o ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected_RH_FS_labels_presurf_100.nii.gz
-    c3d ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected_RH_FS_labels_presurf_100.nii.gz -dup -lstat
-    mri_convert ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected_RH_FS_labels_presurf_100.nii.gz ${generated_files_folder}/${subj}_aseg.presurf_100.mgz
+    c3d ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected_${hemis}_FS_labels.nii.gz -replace 0 100 42 142 50 150 51 151 52 152 49 149 41 241 43 143 53 153 -o ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected_${hemis}_FS_labels_presurf_100.nii.gz
+    c3d ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected_${hemis}_FS_labels_presurf_100.nii.gz -dup -lstat
+    mri_convert ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected_${hemis}_FS_labels_presurf_100.nii.gz ${generated_files_folder}/${subj}_aseg.presurf_100.mgz
 
     # REPLACED: BEFORE: I did NOT include the ventricle in the WM label, but now I've added that (label 8)
     c3d ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected.nii.gz -retain-labels 2 3 4 5 7 8 9 -o ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected_WM_only.nii.gz
