@@ -26,7 +26,7 @@ mkdir -p ${tgt_dir_FS_mesh}
 mkdir -p ${tgt_dir_FS_mesh_decimated}
 
 ##### STEP 1: Prepare files from the initial 10-label deep learning based-segmentation
-bash prepare_segm_files.sh ${working_dir} "${subjects[*]}" ${generated_files_folder} ${segm_path}
+bash prepare_segm_files.sh ${working_dir} "${subjects[*]}" ${generated_files_folder} ${segm_path} ${hemis}
 
 ##### STEP 2: Create FreeSurfer-like files
 bash make_fs_directories.sh ${working_dir} ${generated_files_folder} ${mri_path} ${hemis} "${subjects[*]}"
