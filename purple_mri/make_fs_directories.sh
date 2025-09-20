@@ -5,7 +5,6 @@ hemis=$4
 str_split=$5
 for i in $str_split; do subjects+=($i) ; done
 
-hemis=rh
 for subj in "${subjects[@]}"
 do
   echo ${subj}
@@ -38,7 +37,7 @@ do
   cp ${generated_files_folder}/${subj}_aseg.presurf.mgz ${SUBJECTS_DIR}/mri/aseg.presurf.mgz
   cp ${generated_files_folder}/${subj}_aseg.presurf_100.mgz ${SUBJECTS_DIR}/mri/aseg.presurf_100.mgz
   cp ${generated_files_folder}/${subj}_aseg.mgz ${SUBJECTS_DIR}/mri/aseg.mgz
-  cp ${generated_files_folder}/${subj}_rh.ribbon.mgz ${SUBJECTS_DIR}/mri/${hemis}.ribbon.mgz
+  cp ${generated_files_folder}/${subj}_${hemis}.ribbon.mgz ${SUBJECTS_DIR}/mri/${hemis}.ribbon.mgz
   cp ${generated_files_folder}/${subj}.ribbon.mgz ${SUBJECTS_DIR}/mri/ribbon.mgz
 
 done;
