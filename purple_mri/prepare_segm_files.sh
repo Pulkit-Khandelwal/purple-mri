@@ -28,8 +28,9 @@ do
     echo "CC obtained for each label and merged to get a nicer segmentation with no erroneous segmentation labels hanging around"
     c3d ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected.nii.gz -dup -lstat
 
-    # REPLACED: BEFORE 9 0; NOW 9 192 (freeSurfer label for CC)
+    # REPLACED: BEFORE 9 0; NOW 9 192 (freeSurfer label for CC).
     # REPLACED: Correct labels for subcortical regions: 2 51 3 50 these are correct.
+    # Mapped the labels like the right hemisphere but doesn't matter at all.
     c3d ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected.nii.gz -replace 1 42 2 51 3 50 4 52 5 49 7 41 8 43 9 192 10 53 -o ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected_${hemis}_FS_labels.nii.gz
 
     mri_convert ${generated_files_folder}/${subj}_reslice_aseg_ready_with_overlap_corrected_${hemis}_FS_labels.nii.gz ${generated_files_folder}/${subj}_aseg.mgz
