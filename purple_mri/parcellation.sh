@@ -20,7 +20,7 @@ start=$SECONDS
 SUBJECTS_DIR=${working_dir}
 
 ######### segm_parc file
-mris_place_surface --adgws-in ${working_dir}/autodet.gw.stats.binary.rh.dat  \
+mris_place_surface --adgws-in ${working_dir}/autodet.gw.stats.binary.dat  \
 --wm ${SUBJECTS_DIR}/${subj}/mri/wm.mgz --threads ${num_threads} --invol ${SUBJECTS_DIR}/${subj}/mri/aseg.presurf_100.mgz --${hemis} \
 --i ${SUBJECTS_DIR}/${subj}/surf/${hemis}.orig \
 --o ${SUBJECTS_DIR}/${subj}/surf/${hemis}.white.preaparc --white --nsmooth 5 --seg ${SUBJECTS_DIR}/${subj}/mri/aseg.presurf.mgz
@@ -51,7 +51,7 @@ mris_ca_label -l ${SUBJECTS_DIR}/${subj}/label/${hemis}.cortex.label -aseg ${SUB
 SUBJECTS_DIR=${working_dir}
 
 cd ${SUBJECTS_DIR}/${subj}/mri
-mris_place_surface --adgws-in ${working_dir}/autodet.gw.stats.binary.rh.dat \
+mris_place_surface --adgws-in ${working_dir}/autodet.gw.stats.binary.dat \
 --seg aseg.presurf.mgz --threads ${num_threads} --wm wm.mgz --invol aseg.presurf_100.mgz --${hemis} --i ../surf/${hemis}.white.preaparc --o ../surf/${hemis}.white --white --nsmooth 5 \
 --rip-label ../label/${hemis}.cortex.label --rip-bg --rip-surf ../surf/${hemis}.white.preaparc --aparc ../label/${hemis}.aparc.annot
 
