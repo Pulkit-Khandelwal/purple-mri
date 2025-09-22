@@ -1,7 +1,6 @@
 freesurfer_path=$1
 working_dir=$2
 str_split=$3
-hemis=rh
 for i in $str_split; do subjects+=($i) ; done
 
 for subj in "${subjects[@]}"
