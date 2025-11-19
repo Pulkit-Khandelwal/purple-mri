@@ -4,6 +4,9 @@
 #### Author: Pulkit Khandelwal
 
 ##### Change Logs
+11/19/2025:
+- Added the flash model for thalamus segmentation (v1.4.3).
+
 05/05/2025:
 - Added the latest 10-labels voxel-level segmentation (v1.4.2). This version cleans up GM/WM mis-segmentations in the medial area; predicts the missing regions (filling-up the sampling cuts) areas and to some extent the A/P signal drop-out issues. Made the light-weight than before.
 
@@ -41,7 +44,10 @@
     
     - `${OPTION}=exvivo_ciss_t2w`: Multi-input segmentation to solve the anterior/posterior missing segmentation issue.
     
-    - `${OPTION}=invivo_flair_wmh`: White matter hyperintensities segmentation on invivio flair
+    - `${OPTION}=exvivo_flash_thalamus`: Flash model for thalamus segmentation.
+    
+    - `${OPTION}=invivo_flair_wmh`: White matter hyperintensities segmentation on invivio flair.
+    
 
 - Replace ${LATEST_TAG} with the latest version of the Docker. See change logs above.
 
