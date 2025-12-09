@@ -1,5 +1,5 @@
 # This is a bare-bones guide to use the exvivo docker via Apptainer/Singurality.
-### First, read the docker instructions [here](https://github.com/Pulkit-Khandelwal/purple-mri/blob/main/docker/exvivo_docker.md).
+### First, read the docker instructions [here](https://github.com/Pulkit-Khandelwal/purple-mri/blob/main/docker/exvivo_docker.md) for Docker and to see how to organize the files and which options to select.
 
 ## Docker Usage
 Suppose this is what you ran for Docker:
