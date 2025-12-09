@@ -18,6 +18,7 @@ RUN /bin/bash -c "cd src \
     && source /ml/bin/activate \
     && pip3 install -r requirements.txt --use-pep517"
 
+COPY sitecustomize.py /usr/lib/python3.8/sitecustomize.py
 COPY ./network_architecture/* /ml/src/nnunet/nnunet/network_architecture/
 COPY ./network_trainer/* /ml/src/nnunet/nnunet/training/network_training/
 COPY ./nnunet_paths_that_it_requires/ /src/nnunet_paths_that_it_requires/
