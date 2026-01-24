@@ -5,7 +5,7 @@
 
 ##### Change Logs
 12/09/2025:
-- Fixed the numpy core module issue die to versioon mismatch (v1.4.4).
+- Fixed the numpy core module issue due to version mismatch (v1.4.4).
 
 11/19/2025:
 - Added the flash model for thalamus segmentation (v1.4.3).
