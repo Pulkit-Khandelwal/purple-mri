@@ -11,7 +11,7 @@
 - Added the flash model for thalamus segmentation (v1.4.3).
 
 05/05/2025:
-- Added the latest 10-labels voxel-level segmentation (v1.4.2). This version cleans up GM/WM mis-segmentations in the medial area; predicts the missing regions (filling-up the sampling cuts) areas and to some extent the A/P signal drop-out issues. Made the light-weight than before.
+- Added the latest 10-labels voxel-level segmentation (v1.4.2). This version cleans up GM/WM mis-segmentations in the medial area; predicts the missing regions (filling-up the sampling cuts) areas and to some extent the A/P signal drop-out issues. Made light-weight than before.
 
 10/10/2024:
 - Added documentation for the post-hoc topology correction docker.
