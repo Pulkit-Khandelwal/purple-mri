@@ -1,0 +1,696 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>simpleble &mdash; simpleble 0.0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="simpleble 0.0.1 documentation" href="../index.html"/>
+        <link rel="up" title="Module code" href="index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> simpleble
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../simpleble.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Example Codes</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">simpleble</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Module code</a> &raquo;</li>
+        
+      <li>simpleble</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for simpleble</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">bluepy.btle</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">binascii</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+
+<div class="viewcode-block" id="SimpleBleClient"><a class="viewcode-back" href="../simpleble.html#simpleble.SimpleBleClient">[docs]</a><span class="k">class</span> <span class="nc">SimpleBleClient</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This is a class implementation of a simple BLE client.</span>
+
+<span class="sd">    :param iface: The Bluetooth interface on which to make the connection. On Linux, 0 means `/dev/hci0`, 1 means `/dev/hci1` and so on., defaults to 0</span>
+<span class="sd">    :type iface: int, optional</span>
+<span class="sd">    :param scanCallback: A function handle of the form ``callback(client, device, isNewDevice, isNewData)``, where ``client`` is a handle to the :class:`simpleble.SimpleBleClient` that invoked the callback and ``device`` is the detected :class:`simpleble.SimpleBleDevice` object. ``isNewDev`` is `True` if the device (as identified by its MAC address) has not been seen before by the scanner, and `False` otherwise. ``isNewData`` is `True` if new or updated advertising data is available, defaults to None</span>
+<span class="sd">    :type scanCallback: function, optional</span>
+<span class="sd">    :param notificationCallback: A function handle of the form ``callback(client, characteristic, data)``, where ``client`` is a handle to the :class:`simpleble.SimpleBleClient` that invoked the callback, ``characteristic`` is the notified :class:`bluepy.blte.Characteristic` object and data is a `bytearray` containing the updated value. Defaults to None</span>
+<span class="sd">    :type notificationCallback: function, optional</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iface</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scanCallback</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">notificationCallback</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor method</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scanner</span> <span class="o">=</span> <span class="n">Scanner</span><span class="p">(</span><span class="n">iface</span><span class="p">)</span> <span class="k">if</span><span class="p">(</span><span class="n">scanCallback</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span>\
+            <span class="k">else</span> <span class="n">Scanner</span><span class="p">()</span><span class="o">.</span><span class="n">withDelegate</span><span class="p">(</span><span class="n">SimpleBleScanDelegate</span><span class="p">(</span><span class="n">scanCallback</span><span class="p">,</span> <span class="bp">self</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_iface</span> <span class="o">=</span> <span class="n">iface</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_discoveredDevices</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_characteristics</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_connected</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_connectedDevice</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_notificationCallback</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="SimpleBleClient.setScanCallback"><a class="viewcode-back" href="../simpleble.html#simpleble.SimpleBleClient.setScanCallback">[docs]</a>    <span class="k">def</span> <span class="nf">setScanCallback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the callback function to be executed when a device is detected by the client.</span>
+
+<span class="sd">        :param callback: A function handle of the form ``callback(client, device, isNewDevice, isNewData)``, where ``client`` is a handle to the :class:`simpleble.SimpleBleClient` that invoked the callback and ``device`` is the detected :class:`simpleble.SimpleBleDevice` object. ``isNewDev`` is `True` if the device (as identified by its MAC address) has not been seen before by the scanner, and `False` otherwise. ``isNewData`` is `True` if new or updated advertising data is available. </span>
+<span class="sd">        :type callback: function </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scanner</span><span class="o">.</span><span class="n">withDelegate</span><span class="p">(</span></div>
+            <span class="n">SimpleBleScanDelegate</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">client</span><span class="o">=</span><span class="bp">self</span><span class="p">))</span>
+
+<div class="viewcode-block" id="SimpleBleClient.setNotificationCallback"><a class="viewcode-back" href="../simpleble.html#simpleble.SimpleBleClient.setNotificationCallback">[docs]</a>    <span class="k">def</span> <span class="nf">setNotificationCallback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the callback function to be executed when a device sends a notification to the client.</span>
+
+<span class="sd">        :param callback: A function handle of the form ``callback(client, characteristic, data)``, where ``client`` is a handle to the :class:`simpleble.SimpleBleClient` that invoked the callback, ``characteristic`` is the notified :class:`bluepy.blte.Characteristic` object and data is a `bytearray` containing the updated value. Defaults to None</span>
+<span class="sd">        :type callback: function, optional</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_connectedDevice</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_connectedDevice</span><span class="o">.</span><span class="n">setNotificationCallback</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_notificationCallback</span> <span class="o">=</span> <span class="n">callback</span>
+
+<div class="viewcode-block" id="SimpleBleClient.scan"><a class="viewcode-back" href="../simpleble.html#simpleble.SimpleBleClient.scan">[docs]</a>    <span class="k">def</span> <span class="nf">scan</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">10.0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Scans for and returns detected nearby devices</span>
+
+<span class="sd">        :param timeout: Specify how long (in seconds) the scan should last, defaults to 10.0</span>
+<span class="sd">        :type timeout: float, optional</span>
+<span class="sd">        :return: List of :class:`simpleble.SimpleBleDevice` objects</span>
+<span class="sd">        :rtype: list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_discoveredDevices</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">scanEntries</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scanner</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">scanEntry</span> <span class="ow">in</span> <span class="n">scanEntries</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_discoveredDevices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">SimpleBleDevice</span><span class="p">(</span>
+                    <span class="n">client</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+                    <span class="n">addr</span><span class="o">=</span><span class="n">scanEntry</span><span class="o">.</span><span class="n">addr</span><span class="p">,</span>
+                    <span class="n">iface</span><span class="o">=</span><span class="n">scanEntry</span><span class="o">.</span><span class="n">iface</span><span class="p">,</span>
+                    <span class="n">data</span><span class="o">=</span><span class="n">scanEntry</span><span class="o">.</span><span class="n">getScanData</span><span class="p">(),</span>
+                    <span class="n">rssi</span><span class="o">=</span><span class="n">scanEntry</span><span class="o">.</span><span class="n">rssi</span><span class="p">,</span>
+                    <span class="n">connectable</span><span class="o">=</span><span class="n">scanEntry</span><span class="o">.</span><span class="n">connectable</span><span class="p">,</span> <span class="n">updateCount</span><span class="o">=</span><span class="n">scanEntry</span><span class="o">.</span><span class="n">updateCount</span>
+                <span class="p">)</span>
+            <span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_discoveredDevices</span>
+
+<div class="viewcode-block" id="SimpleBleClient.connect"><a class="viewcode-back" href="../simpleble.html#simpleble.SimpleBleClient.connect">[docs]</a>    <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Attempts to connect client to a given :class:`simpleble.SimpleBleDevice` object and returns a bool indication of the result.</span>
+
+<span class="sd">        :param device: An instance of the device to which we want to connect. Normally acquired by calling :meth:`simpleble.SimpleBleClient.scan` or :meth:`simpleble.SimpleBleClient.searchDevice`</span>
+<span class="sd">        :type device: SimpleBleDevice</span>
+<span class="sd">        :return: `True` if connection was successful, `False` otherwise</span>
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_connected</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+        <span class="k">if</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_connected</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_connectedDevice</span> <span class="o">=</span> <span class="n">device</span>
+            <span class="k">if</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_notificationCallback</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_connectedDevice</span><span class="o">.</span><span class="n">setNotificationCallback</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_notificationCallback</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connected</span>
+
+<div class="viewcode-block" id="SimpleBleClient.disconnect"><a class="viewcode-back" href="../simpleble.html#simpleble.SimpleBleClient.disconnect">[docs]</a>    <span class="k">def</span> <span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Drops existing connection. </span>
+<span class="sd">        Note that the current version of the project assumes that the client can be connected to at most one device at a time.     </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_connectedDevice</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_scanner</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_connectedDevice</span> <span class="o">=</span> <span class="kc">None</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_connected</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="SimpleBleClient.isConnected"><a class="viewcode-back" href="../simpleble.html#simpleble.SimpleBleClient.isConnected">[docs]</a>    <span class="k">def</span> <span class="nf">isConnected</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check to see if client is connected to a device</span>
+
+<span class="sd">        :return: `True` if connected, `False` otherwise</span>
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connected</span>
+
+<div class="viewcode-block" id="SimpleBleClient.getCharacteristics"><a class="viewcode-back" href="../simpleble.html#simpleble.SimpleBleClient.getCharacteristics">[docs]</a>    <span class="k">def</span> <span class="nf">getCharacteristics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">startHnd</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">endHnd</span><span class="o">=</span><span class="mh">0xFFFF</span><span class="p">,</span> <span class="n">uuids</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns a list containing :class:`bluepy.btle.Characteristic` objects for the peripheral. If no arguments are given, will return all characteristics. If startHnd and/or endHnd are given, the list is restricted to characteristics whose handles are within the given range.</span>
+
+<span class="sd">        :param startHnd: Start index, defaults to 1</span>
+<span class="sd">        :type startHnd: int, optional</span>
+<span class="sd">        :param endHnd: End index, defaults to 0xFFFF</span>
+<span class="sd">        :type endHnd: int, optional</span>
+<span class="sd">        :param uuids: a list of UUID strings, defaults to None</span>
+<span class="sd">        :type uuids: list, optional</span>
+<span class="sd">        :return: List of returned :class:`bluepy.btle.Characteristic` objects </span>
+<span class="sd">        :rtype: list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_characteristics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connectedDevice</span><span class="o">.</span><span class="n">getCharacteristics</span><span class="p">(</span>
+            <span class="n">startHnd</span><span class="p">,</span> <span class="n">endHnd</span><span class="p">,</span> <span class="n">uuids</span>
+        <span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_characteristics</span>
+
+<div class="viewcode-block" id="SimpleBleClient.readCharacteristic"><a class="viewcode-back" href="../simpleble.html#simpleble.SimpleBleClient.readCharacteristic">[docs]</a>    <span class="k">def</span> <span class="nf">readCharacteristic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">characteristic</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">uuid</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reads the current value of the characteristic identified by either a :class:`bluepy.btle.Characteristic` object ``characteristic``, or a UUID string ``uuid``. If both are provided, then the characteristic will be read on the basis of the ``characteristic`` object. A :class:`bluepy.btle.BTLEException.GATT_ERROR` is raised if no inputs are specified or the requested characteristic was not found.</span>
+
+<span class="sd">        :param characteristic: A :class:`bluepy.btle.Characteristic` object, defaults to None</span>
+<span class="sd">        :type characteristic: :class:`bluepy.btle.Characteristic`, optional</span>
+<span class="sd">        :param uuid: A given UUID string, defaults to None</span>
+<span class="sd">        :type uuid: string, optional</span>
+<span class="sd">        :raises: :class:`bluepy.btle.BTLEException.GATT_ERROR`: If no inputs are specified or the requested characteristic was not found.</span>
+<span class="sd">        :return: The value read from the characteristic</span>
+<span class="sd">        :rtype: bytearray</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">characteristic</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">uuid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="n">characteristic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connectedDevice</span><span class="o">.</span><span class="n">getCharacteristic</span><span class="p">(</span>
+                <span class="n">uuids</span><span class="o">=</span><span class="p">[</span><span class="n">uuid</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">characteristic</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">BTLEException</span><span class="p">(</span>
+                <span class="n">BTLEException</span><span class="o">.</span><span class="n">GATT_ERROR</span><span class="p">,</span> <span class="s2">&quot;Characteristic was either not found, given the UUID, or not specified&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connectedDevice</span><span class="o">.</span><span class="n">readCharacteristic</span><span class="p">(</span></div>
+            <span class="n">characteristic</span><span class="o">.</span><span class="n">getHandle</span><span class="p">())</span>
+
+<div class="viewcode-block" id="SimpleBleClient.writeCharacteristic"><a class="viewcode-back" href="../simpleble.html#simpleble.SimpleBleClient.writeCharacteristic">[docs]</a>    <span class="k">def</span> <span class="nf">writeCharacteristic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">characteristic</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">uuid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">withResponse</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Writes the data val (of type str on Python 2.x, byte on 3.x) to the characteristic identified by either a :class:`bluepy.btle.Characteristic` object ``characteristic``, or a UUID string ``uuid``. If both are provided, then the characteristic will be read on the basis of the ``characteristic`` object. A :class:`bluepy.btle.BTLEException.GATT_ERROR` is raised if no inputs are specified or the requested characteristic was not found. If ``withResponse`` is `True`, the client will await confirmation that the write was successful from the device.</span>
+
+<span class="sd">        :param val: Value to be written in characteristic</span>
+<span class="sd">        :type val: str on Python 2.x, byte on 3.x</span>
+<span class="sd">        :param characteristic: A :class:`bluepy.btle.Characteristic` object, defaults to None</span>
+<span class="sd">        :type characteristic: :class:`bluepy.btle.Characteristic`, optional</span>
+<span class="sd">        :param uuid: A given UUID string, defaults to None</span>
+<span class="sd">        :type uuid: string, optional</span>
+<span class="sd">        :param withResponse: If ``withResponse`` is `True`, the client will await confirmation that the write was successful from the device, defaults to False</span>
+<span class="sd">        :type withResponse: bool, optional</span>
+<span class="sd">        :raises: :class:`bluepy.btle.BTLEException.GATT_ERROR`: If no inputs are specified or the requested characteristic was not found.</span>
+<span class="sd">        :return: `True` or `False` indicating success or failure of write operation, in the case that ``withResponce`` is `True`</span>
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">characteristic</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">uuid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="n">characteristic</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">getCharacteristic</span><span class="p">(</span><span class="n">uuids</span><span class="o">=</span><span class="p">[</span><span class="n">uuid</span><span class="p">])</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">characteristic</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">BTLEException</span><span class="p">(</span>
+                <span class="n">BTLEException</span><span class="o">.</span><span class="n">GATT_ERROR</span><span class="p">,</span> <span class="s2">&quot;Characteristic was either not found, given the UUID, or not specified&quot;</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connectedDevice</span><span class="o">.</span><span class="n">writeCharacteristic</span><span class="p">(</span><span class="n">characteristic</span><span class="o">.</span><span class="n">getHandle</span><span class="p">(),</span> <span class="n">val</span><span class="p">,</span> <span class="n">withResponse</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SimpleBleClient.searchDevice"><a class="viewcode-back" href="../simpleble.html#simpleble.SimpleBleClient.searchDevice">[docs]</a>    <span class="k">def</span> <span class="nf">searchDevice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mac</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">10.0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Searches for and returns, given it exists, a :class:`simpleble.SimpleBleDevice` device objects, based on the provided ``name`` and/or ``mac`` address. If both a ``name`` and a ``mac`` are provided, then the client will only return a device that matches both conditions.</span>
+
+<span class="sd">        :param name: The &quot;Complete Local Name&quot; Generic Access Attribute (GATT) of the device, defaults to None</span>
+<span class="sd">        :type name: str, optional</span>
+<span class="sd">        :param mac: The MAC address of the device, defaults to None</span>
+<span class="sd">        :type mac: str, optional</span>
+<span class="sd">        :param timeout: Specify how long (in seconds) the scan should last, defaults to 10.0. Internally, it serves as an input to the invoked :meth:`simpleble.SimpleBleClient.scan` method.</span>
+<span class="sd">        :type timeout: float, optional</span>
+<span class="sd">        :raises AssertionError: If neither a ``name`` nor a ``mac`` inputs have been provided</span>
+<span class="sd">        :return: A :class:`simpleble.SimpleBleDevice` object if search was succesfull, None otherwise</span>
+<span class="sd">        :rtype: :class:`simpleble.SimpleBleDevice` | None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">check</span> <span class="o">=</span> <span class="ow">not</span> <span class="p">(</span><span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">chekc</span> <span class="o">=</span> <span class="ow">not</span> <span class="p">(</span><span class="n">mac</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">check</span> <span class="ow">or</span> <span class="n">chekc</span>
+        <span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Either a name or a mac address must be provided to find a device!&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">e</span>
+        <span class="n">mode</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="n">mode</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">mac</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="n">mode</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="c1"># Perform initial detection attempt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">device</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_discoveredDevices</span><span class="p">:</span>
+            <span class="n">found</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">addr</span> <span class="o">==</span> <span class="n">mac</span><span class="p">):</span>
+                <span class="n">found</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">adtype</span><span class="p">,</span> <span class="n">desc</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="n">device</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">adtype</span> <span class="o">==</span> <span class="mi">9</span> <span class="ow">and</span> <span class="n">value</span> <span class="o">==</span> <span class="n">name</span><span class="p">):</span>
+                    <span class="n">found</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">found</span> <span class="o">&gt;=</span> <span class="n">mode</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">device</span></div>
+        <span class="k">return</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="SimpleBleClient.printFoundDevices"><a class="viewcode-back" href="../simpleble.html#simpleble.SimpleBleClient.printFoundDevices">[docs]</a>    <span class="k">def</span> <span class="nf">printFoundDevices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Print all devices discovered during the last scan. Should only be called after a :meth:`simpleble.SimpleBleClient.scan` has been called first.         </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">device</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_discoveredDevices</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Device </span><span class="si">%s</span><span class="s2"> (</span><span class="si">%s</span><span class="s2">), RSSI=</span><span class="si">%d</span><span class="s2"> dB&quot;</span> <span class="o">%</span>
+                  <span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">addr</span><span class="p">,</span> <span class="n">device</span><span class="o">.</span><span class="n">addrType</span><span class="p">,</span> <span class="n">device</span><span class="o">.</span><span class="n">rssi</span><span class="p">))</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">adtype</span><span class="p">,</span> <span class="n">desc</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="n">device</span><span class="o">.</span><span class="n">data</span><span class="p">:</span></div></div>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  </span><span class="si">%s</span><span class="s2"> = </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">desc</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="SimpleBleScanDelegate"><a class="viewcode-back" href="../simpleble.html#simpleble.SimpleBleScanDelegate">[docs]</a><span class="k">class</span> <span class="nc">SimpleBleScanDelegate</span><span class="p">(</span><span class="n">DefaultDelegate</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">client</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">callback</span> <span class="o">=</span> <span class="n">callback</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">client</span>
+
+<div class="viewcode-block" id="SimpleBleScanDelegate.handleDiscovery"><a class="viewcode-back" href="../simpleble.html#simpleble.SimpleBleScanDelegate.handleDiscovery">[docs]</a>    <span class="k">def</span> <span class="nf">handleDiscovery</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scanEntry</span><span class="p">,</span> <span class="n">isNewDevice</span><span class="p">,</span> <span class="n">isNewData</span><span class="p">):</span>
+        <span class="n">device</span> <span class="o">=</span> <span class="n">SimpleBleDevice</span><span class="p">(</span>
+            <span class="n">client</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="p">,</span>
+            <span class="n">addr</span><span class="o">=</span><span class="n">scanEntry</span><span class="o">.</span><span class="n">addr</span><span class="p">,</span>
+            <span class="n">iface</span><span class="o">=</span><span class="n">scanEntry</span><span class="o">.</span><span class="n">iface</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">scanEntry</span><span class="o">.</span><span class="n">getScanData</span><span class="p">(),</span>
+            <span class="n">rssi</span><span class="o">=</span><span class="n">scanEntry</span><span class="o">.</span><span class="n">rssi</span><span class="p">,</span>
+            <span class="n">connectable</span><span class="o">=</span><span class="n">scanEntry</span><span class="o">.</span><span class="n">connectable</span><span class="p">,</span> <span class="n">updateCount</span><span class="o">=</span><span class="n">scanEntry</span><span class="o">.</span><span class="n">updateCount</span>
+        <span class="p">)</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">isNewDevice</span><span class="p">,</span> <span class="n">isNewData</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="SimpleBleNotificationDelegate"><a class="viewcode-back" href="../simpleble.html#simpleble.SimpleBleNotificationDelegate">[docs]</a><span class="k">class</span> <span class="nc">SimpleBleNotificationDelegate</span><span class="p">(</span><span class="n">DefaultDelegate</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">client</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">callback</span> <span class="o">=</span> <span class="n">callback</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">client</span>
+
+<div class="viewcode-block" id="SimpleBleNotificationDelegate.handleNotification"><a class="viewcode-back" href="../simpleble.html#simpleble.SimpleBleNotificationDelegate.handleNotification">[docs]</a>    <span class="k">def</span> <span class="nf">handleNotification</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">characteristic</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="n">characteristic</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="SimpleBleDevice"><a class="viewcode-back" href="../simpleble.html#simpleble.SimpleBleDevice">[docs]</a><span class="k">class</span> <span class="nc">SimpleBleDevice</span><span class="p">(</span><span class="n">Peripheral</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This is a conceptual class representation of a simple BLE device (GATT Server). It is essentially an extended combination of the :class:`bluepy.btle.Peripheral` and :class:`bluepy.btle.ScanEntry` classes</span>
+
+<span class="sd">    :param client: A handle to the :class:`simpleble.SimpleBleClient` client object that detected the device</span>
+<span class="sd">    :type client: class:`simpleble.SimpleBleClient`</span>
+<span class="sd">    :param addr: Device MAC address, defaults to None</span>
+<span class="sd">    :type addr: str, optional</span>
+<span class="sd">    :param addrType: Device address type - one of ADDR_TYPE_PUBLIC or ADDR_TYPE_RANDOM, defaults to ADDR_TYPE_PUBLIC</span>
+<span class="sd">    :type addrType: str, optional</span>
+<span class="sd">    :param iface: Bluetooth interface number (0 = /dev/hci0) used for the connection, defaults to 0</span>
+<span class="sd">    :type iface: int, optional</span>
+<span class="sd">    :param data: A list of tuples (adtype, description, value) containing the AD type code, human-readable description and value for all available advertising data items, defaults to None</span>
+<span class="sd">    :type data: list, optional</span>
+<span class="sd">    :param rssi: Received Signal Strength Indication for the last received broadcast from the device. This is an integer value measured in dB, where 0 dB is the maximum (theoretical) signal strength, and more negative numbers indicate a weaker signal, defaults to 0</span>
+<span class="sd">    :type rssi: int, optional</span>
+<span class="sd">    :param connectable: `True` if the device supports connections, and `False` otherwise (typically used for advertising ‘beacons’)., defaults to `False`</span>
+<span class="sd">    :type connectable: bool, optional</span>
+<span class="sd">    :param updateCount: Integer count of the number of advertising packets received from the device so far, defaults to 0</span>
+<span class="sd">    :type updateCount: int, optional</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">addr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">addrType</span><span class="o">=</span><span class="n">ADDR_TYPE_PUBLIC</span><span class="p">,</span> <span class="n">iface</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rssi</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">connectable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">updateCount</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor method</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">deviceAddr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">addrType</span><span class="o">=</span><span class="n">addrType</span><span class="p">,</span> <span class="n">iface</span><span class="o">=</span><span class="n">iface</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">addr</span> <span class="o">=</span> <span class="n">addr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">addrType</span> <span class="o">=</span> <span class="n">addrType</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">iface</span> <span class="o">=</span> <span class="n">iface</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rssi</span> <span class="o">=</span> <span class="n">rssi</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connectable</span> <span class="o">=</span> <span class="n">connectable</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">updateCount</span> <span class="o">=</span> <span class="n">updateCount</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_connected</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_services</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_characteristics</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_client</span> <span class="o">=</span> <span class="n">client</span>
+
+<div class="viewcode-block" id="SimpleBleDevice.getServices"><a class="viewcode-back" href="../simpleble.html#simpleble.SimpleBleDevice.getServices">[docs]</a>    <span class="k">def</span> <span class="nf">getServices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uuids</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns a list of :class:`bluepy.blte.Service` objects representing the services offered by the device. This will perform Bluetooth service discovery if this has not already been done; otherwise it will return a cached list of services immediately..</span>
+
+<span class="sd">        :param uuids: A list of string service UUIDs to be discovered, defaults to None</span>
+<span class="sd">        :type uuids: list, optional</span>
+<span class="sd">        :return: A list of the discovered :class:`bluepy.blte.Service` objects, which match the provided ``uuids``</span>
+<span class="sd">        :rtype: list On Python 3.x, this returns a dictionary view object, not a list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_services</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">uuids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">uuid</span> <span class="ow">in</span> <span class="n">uuids</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">service</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getServiceByUUID</span><span class="p">(</span><span class="n">uuid</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">services</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">service</span><span class="p">)</span>
+                <span class="k">except</span> <span class="n">BTLEException</span><span class="p">:</span>
+                    <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_services</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">getServices</span><span class="p">()</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_services</span>
+
+<div class="viewcode-block" id="SimpleBleDevice.setNotificationCallback"><a class="viewcode-back" href="../simpleble.html#simpleble.SimpleBleDevice.setNotificationCallback">[docs]</a>    <span class="k">def</span> <span class="nf">setNotificationCallback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the callback function to be executed when the device sends a notification to the client.</span>
+
+<span class="sd">        :param callback: A function handle of the form ``callback(client, characteristic, data)``, where ``client`` is a handle to the :class:`simpleble.SimpleBleClient` that invoked the callback, ``characteristic`` is the notified :class:`bluepy.blte.Characteristic` object and data is a `bytearray` containing the updated value. Defaults to None</span>
+<span class="sd">        :type callback: function, optional</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">withDelegate</span><span class="p">(</span>
+            <span class="n">SimpleBleNotificationDelegate</span><span class="p">(</span>
+                <span class="n">callback</span><span class="p">,</span>
+                <span class="n">client</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_client</span>
+            <span class="p">)</span></div>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="SimpleBleDevice.getCharacteristics"><a class="viewcode-back" href="../simpleble.html#simpleble.SimpleBleDevice.getCharacteristics">[docs]</a>    <span class="k">def</span> <span class="nf">getCharacteristics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">startHnd</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">endHnd</span><span class="o">=</span><span class="mh">0xFFFF</span><span class="p">,</span> <span class="n">uuids</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns a list containing :class:`bluepy.btle.Characteristic` objects for the peripheral. If no arguments are given, will return all characteristics. If startHnd and/or endHnd are given, the list is restricted to characteristics whose handles are within the given range.</span>
+
+<span class="sd">        :param startHnd: Start index, defaults to 1</span>
+<span class="sd">        :type startHnd: int, optional</span>
+<span class="sd">        :param endHnd: End index, defaults to 0xFFFF</span>
+<span class="sd">        :type endHnd: int, optional</span>
+<span class="sd">        :param uuids: a list of UUID strings, defaults to None</span>
+<span class="sd">        :type uuids: list, optional</span>
+<span class="sd">        :return: List of returned :class:`bluepy.btle.Characteristic` objects </span>
+<span class="sd">        :rtype: list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_characteristics</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">uuids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">uuid</span> <span class="ow">in</span> <span class="n">uuids</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">characteristic</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">getCharacteristics</span><span class="p">(</span>
+                        <span class="n">startHnd</span><span class="p">,</span> <span class="n">endHnd</span><span class="p">,</span> <span class="n">uuid</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_characteristics</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">characteristic</span><span class="p">)</span>
+                <span class="k">except</span> <span class="n">BTLEException</span><span class="p">:</span>
+                    <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_characteristics</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">getCharacteristics</span><span class="p">(</span><span class="n">startHnd</span><span class="p">,</span> <span class="n">endHnd</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_characteristics</span>
+
+<div class="viewcode-block" id="SimpleBleDevice.connect"><a class="viewcode-back" href="../simpleble.html#simpleble.SimpleBleDevice.connect">[docs]</a>    <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Attempts to initiate a connection with the device.</span>
+
+<span class="sd">        :return: `True` if connection was successful, `False` otherwise</span>
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">addr</span><span class="p">,</span> <span class="n">addrType</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">addrType</span><span class="p">,</span> <span class="n">iface</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">iface</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">BTLEException</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_connected</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">return</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">ex</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_connected</span> <span class="o">=</span> <span class="kc">True</span></div>
+        <span class="k">return</span> <span class="kc">True</span>
+
+<div class="viewcode-block" id="SimpleBleDevice.disconnect"><a class="viewcode-back" href="../simpleble.html#simpleble.SimpleBleDevice.disconnect">[docs]</a>    <span class="k">def</span> <span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Drops existing connection to device</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_connected</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="SimpleBleDevice.isConnected"><a class="viewcode-back" href="../simpleble.html#simpleble.SimpleBleDevice.isConnected">[docs]</a>    <span class="k">def</span> <span class="nf">isConnected</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Checks to see if device is connected</span>
+
+<span class="sd">        :return: `True` if connected, `False` otherwise</span>
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connected</span>
+
+<div class="viewcode-block" id="SimpleBleDevice.printInfo"><a class="viewcode-back" href="../simpleble.html#simpleble.SimpleBleDevice.printInfo">[docs]</a>    <span class="k">def</span> <span class="nf">printInfo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Print info about device</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Device </span><span class="si">%s</span><span class="s2"> (</span><span class="si">%s</span><span class="s2">), RSSI=</span><span class="si">%d</span><span class="s2"> dB&quot;</span> <span class="o">%</span>
+              <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">addr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">addrType</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rssi</span><span class="p">))</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">adtype</span><span class="p">,</span> <span class="n">desc</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span></div></div>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  </span><span class="si">%s</span><span class="s2"> = </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">desc</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;This example demonstrates a simple BLE client that scans for devices,</span>
+<span class="sd">    connects to a device (GATT server) of choice and continuously reads a </span>
+<span class="sd">    characteristic on that device.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># The UUID of the characteristic we want to read and the name of the device # we want to read it from</span>
+    <span class="n">Characteristic_UUID</span> <span class="o">=</span> <span class="s2">&quot;beb5483e-36e1-4688-b7f5-ea07361b26a8&quot;</span>
+    <span class="n">Device_Name</span> <span class="o">=</span> <span class="s2">&quot;MyESP32&quot;</span>
+
+    <span class="c1"># Define our scan and notification callback methods</span>
+    <span class="k">def</span> <span class="nf">myScanCallback</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">isNewDevice</span><span class="p">,</span> <span class="n">isNewData</span><span class="p">):</span>
+        <span class="n">client</span><span class="o">.</span><span class="n">_yes</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;#MAC: &quot;</span> <span class="o">+</span> <span class="n">device</span><span class="o">.</span><span class="n">addr</span> <span class="o">+</span> <span class="s2">&quot; #isNewDevice: &quot;</span> <span class="o">+</span>
+              <span class="nb">str</span><span class="p">(</span><span class="n">isNewDevice</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; #isNewData: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">isNewData</span><span class="p">))</span>
+    <span class="c1"># TODO: NOTIFICATIONS ARE NOT SUPPORTED YET</span>
+    <span class="c1"># def myNotificationCallback(client, characteristic, data):</span>
+    <span class="c1">#     print(&quot;Notification received!&quot;)</span>
+    <span class="c1">#     print(&quot;  Characteristic UUID: &quot; + characteristic.uuid)</span>
+    <span class="c1">#     print(&quot;  Data: &quot; + str(data))</span>
+
+    <span class="c1"># Instantiate a SimpleBleClient and set it&#39;s scan callback</span>
+    <span class="n">bleClient</span> <span class="o">=</span> <span class="n">SimpleBleClient</span><span class="p">()</span>
+    <span class="n">bleClient</span><span class="o">.</span><span class="n">setScanCallback</span><span class="p">(</span><span class="n">myScanCallback</span><span class="p">)</span>
+    <span class="c1"># TODO: NOTIFICATIONS ARE NOT SUPPORTED YET</span>
+    <span class="c1"># bleClient.setNotificationCallback(myNotificationCollback)</span>
+
+    <span class="c1"># Error handling to detect Keyboard interrupt (Ctrl+C)</span>
+    <span class="c1"># Loop to ensure we can survive connection drops</span>
+    <span class="k">while</span><span class="p">(</span><span class="ow">not</span> <span class="n">bleClient</span><span class="o">.</span><span class="n">isConnected</span><span class="p">()):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Search for 2 seconds and return a device of interest if found.</span>
+            <span class="c1"># Internally this makes a call to bleClient.scan(timeout), thus</span>
+            <span class="c1"># triggering the scan callback method when nearby devices are detected</span>
+            <span class="n">device</span> <span class="o">=</span> <span class="n">bleClient</span><span class="o">.</span><span class="n">searchDevice</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;MyESP32&quot;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">device</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+                <span class="c1"># If the device was found print out it&#39;s info</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Found device!!&quot;</span><span class="p">)</span>
+                <span class="n">device</span><span class="o">.</span><span class="n">printInfo</span><span class="p">()</span>
+
+                <span class="c1"># Proceed to connect to the device</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Proceeding to connect....&quot;</span><span class="p">)</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">bleClient</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">device</span><span class="p">)):</span>
+
+                    <span class="c1"># Have a peek at the services provided by the device</span>
+                    <span class="n">services</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">getServices</span><span class="p">()</span>
+                    <span class="k">for</span> <span class="n">service</span> <span class="ow">in</span> <span class="n">services</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Service [&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">service</span><span class="o">.</span><span class="n">uuid</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;]&quot;</span><span class="p">)</span>
+
+                    <span class="c1"># Check to see if the device provides a characteristic with the</span>
+                    <span class="c1"># desired UUID</span>
+                    <span class="n">counter</span> <span class="o">=</span> <span class="n">bleClient</span><span class="o">.</span><span class="n">getCharacteristics</span><span class="p">(</span>
+                        <span class="n">uuids</span><span class="o">=</span><span class="p">[</span><span class="n">Characteristic_UUID</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="k">if</span><span class="p">(</span><span class="n">counter</span><span class="p">):</span>
+                        <span class="c1"># If it does, then we proceed to read its value every second</span>
+                        <span class="k">while</span><span class="p">(</span><span class="kc">True</span><span class="p">):</span>
+                            <span class="c1"># Error handling ensures that we can survive from</span>
+                            <span class="c1"># potential connection drops</span>
+                            <span class="k">try</span><span class="p">:</span>
+                                <span class="c1"># Read the data as bytes and convert to string</span>
+                                <span class="n">data_bytes</span> <span class="o">=</span> <span class="n">bleClient</span><span class="o">.</span><span class="n">readCharacteristic</span><span class="p">(</span>
+                                    <span class="n">counter</span><span class="p">)</span>
+                                <span class="n">data_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">chr</span><span class="p">,</span> <span class="n">data_bytes</span><span class="p">))</span>
+
+                                <span class="c1"># Now print the data and wait for a second</span>
+                                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Data: &quot;</span> <span class="o">+</span> <span class="n">data_str</span><span class="p">)</span>
+                                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+                            <span class="k">except</span> <span class="n">BTLEException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                                <span class="c1"># If we get disconnected from the device, keep</span>
+                                <span class="c1"># looping until we have reconnected</span>
+                                <span class="k">if</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="n">BTLEException</span><span class="o">.</span><span class="n">DISCONNECTED</span><span class="p">):</span>
+                                    <span class="n">bleClient</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
+                                    <span class="nb">print</span><span class="p">(</span>
+                                        <span class="s2">&quot;Connection to BLE device has been lost!&quot;</span><span class="p">)</span>
+                                    <span class="k">break</span>
+                                    <span class="c1"># while(not bleClient.isConnected()):</span>
+                                    <span class="c1">#     bleClient.connect(device)</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Could not connect to device! Retrying in 3 sec...&quot;</span><span class="p">)</span>
+                    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">3.0</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Device not found! Retrying in 3 sec...&quot;</span><span class="p">)</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">3.0</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">BTLEException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="c1"># If we get disconnected from the device, keep</span>
+            <span class="c1"># looping until we have reconnected</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="n">BTLEException</span><span class="o">.</span><span class="n">DISCONNECTED</span><span class="p">):</span>
+                <span class="n">bleClient</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="s2">&quot;Connection to BLE device has been lost!&quot;</span><span class="p">)</span>
+                <span class="k">break</span>
+        <span class="k">except</span> <span class="ne">KeyboardInterrupt</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="c1"># Detect keyboard interrupt and close down</span>
+            <span class="c1"># bleClient gracefully</span>
+            <span class="n">bleClient</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="n">e</span>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Lyudmil Vladimirov.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
