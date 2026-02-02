@@ -1,0 +1,16 @@
+stack_greedy: Paul's histology stack to MRI registration implementation
+Usage:
+  stack_greedy recon [cmd_options] <project_dir>
+Required Command Options:
+  -z <offset> <k> <eps>  : Parameters for the graph-theoretic algorithm. Offset is the 
+                           maximum distance in z when slices are considered neighbors.
+                           The weight in the registration graph is calculated as
+                             W = (1-metric)^k * hops * (1+eps)^hops
+                           Suggested values are k=4 and eps=0.1 for the NCC metric
+Options Shared with Greedy (see Greedy docs for more info):
+  -m metric              : Metric to use for slice matching
+  -n NxNxN               : Number of iterations per level of multi-res
+  -threads N             : Number of allowed concurrent threads
+  -gm-trim <radius>      : Generate mask for gradient computation 
+  -search N s_ang s_xyz  : Random search over rigid transforms 
+

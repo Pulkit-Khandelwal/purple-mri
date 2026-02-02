@@ -1,0 +1,35 @@
+stack_greedy: Paul's histology stack to MRI registration implementation
+Usage:
+  stack_greedy voliter [cmd_options] <project_dir>
+Command Options:
+  -na <iter>             : Total number of affine iterations [5]
+  -nd <iter>             : Total numer of deformable iterations [5]
+  -w <weight>            : Relative weight of the slice-to-volume metric
+                           vs. the slice-to-neighbors metric [4.0]
+  -wf <weight>           : Relative weight of the slice-to-volume metric
+                           for slides marked as 'followers' in the manifest. 
+                           Default: equal to -w
+  -wdp                   : Use z-distance proportional weighting for neighbor
+                           slices (default: neighbor slices have same weight)
+  -R <first> <last>      : Only run a subset of iterations. Iterations
+                           are counted starting with 1.
+  -k <iter>              : Use the results of iteration 'iter' to initialize the
+                           first registration. Use with -R to create a tree-like
+                           structure of registrations.
+  -i <name>              : Use an alternative image (registered via voladd) for
+                           the registration.
+  -M <manifest>          : Use an alternative set of slide images for this registration. The
+                           manifest is in the form ID,FILENAME and must contain images that
+                           match the input slides, although they are allowed to have different
+                           dimensions and voxel size.
+  -no-mask               : Do not use slide masks for this round of registration
+Options Shared with Greedy (see Greedy docs for more info):
+  -m metric              : Metric to use for slice matching
+  -n NxNxN               : Number of iterations per level of multi-res
+  -threads N             : Number of allowed concurrent threads
+  -gm-trim <radius>      : Generate mask for gradient computation 
+  -s <s1> <s2>           : Warp smoothing parameters
+  -e <eps>               : Optimization step size
+  -sv                    : Use Diffeomorphic Demons algorithm
+
+
