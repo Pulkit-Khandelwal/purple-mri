@@ -4,6 +4,12 @@
 #### Author: Pulkit Khandelwal
 
 ##### Change Logs
+02/01/2026:
+- Updated version v1.4.5 and added three new models
+  - model trained on flash mri for gm/wm segmentation
+  - model trained for postdoc topology-correction, i.e., it helps with the bridge sulcus problem
+  - strip the cerebellum from the UMC MRI
+  
 12/09/2025:
 - Fixed the numpy core module issue due to version mismatch (v1.4.4).
 
@@ -50,7 +56,13 @@
     - `${OPTION}=exvivo_flash_thalamus`: Flash model for thalamus segmentation.
     
     - `${OPTION}=invivo_flair_wmh`: White matter hyperintensities segmentation on invivio flair.
-    
+ 
+    - `${OPTION}=exvivo_flash_gm_wm_segm`: model trained on flash mri for gm/wm segmentation.
+ 
+    - `${OPTION}=exvivo_posthoc_topology`: model trained for postdoc topology-correction, i.e., it helps with the bridge sulcus problem.
+ 
+    - `${OPTION}=exvivo_umc_strip_cerebellum`: strip the cerebellum from the UMC MRI.
+
 
 - Replace ${LATEST_TAG} with the latest version of the Docker. See change logs above.
 
