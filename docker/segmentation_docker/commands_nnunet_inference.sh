@@ -25,6 +25,19 @@ SKIP
 elif [[ "$accepted_variable" == "invivo_flair_wmh" ]]; then
    nnUNet_predict -i /data/exvivo/data_for_inference/ -o /data/exvivo/data_for_inference/output_from_nnunet_inference -t 451 -tr nnUNetTrainerWMHV2 -m 3d_fullres --disable_mixed_precision -f all     
 
+elif [[ "$accepted_variable" == "exvivo_flash_thalamus" ]]; then
+   nnUNet_predict -i /data/exvivo/data_for_inference/ -o /data/exvivo/data_for_inference/output_from_nnunet_inference -t 276 -tr nnUNetTrainerV2 -m 3d_fullres --disable_mixed_precision -f all     
+
+######## Feb 1st 2026
+elif [[ "$accepted_variable" == "exvivo_posthoc_topology" ]]; then
+   nnUNet_predict -i /data/exvivo/data_for_inference/ -o /data/exvivo/data_for_inference/output_from_nnunet_inference -t 279 -tr nnUNetTrainerV2 -m 3d_fullres --disable_mixed_precision -f all     
+
+elif [[ "$accepted_variable" == "exvivo_flash_gm_wm_segm" ]]; then
+   nnUNet_predict -i /data/exvivo/data_for_inference/ -o /data/exvivo/data_for_inference/output_from_nnunet_inference -t 278 -tr nnUNetTrainerV2 -m 3d_fullres --disable_mixed_precision -f all     
+
+elif [[ "$accepted_variable" == "exvivo_umc_strip_cerebellum" ]]; then
+   nnUNet_predict -i /data/exvivo/data_for_inference/ -o /data/exvivo/data_for_inference/output_from_nnunet_inference -t 101 -tr nnUNetTrainerV2 -m 3d_fullres --disable_mixed_precision -f all     
+
 else
    echo "Please, select a valid option!"
 fi
