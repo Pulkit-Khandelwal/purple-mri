@@ -138,7 +138,13 @@ mri_surf2surf --hemi ${hemis} \
 ##### Economo-Koskinos atlas
 cd ${SUBJECTS_DIR}/${subj}/mri
 mris_ca_label -t ${external_atlases_path}/economo/${hemis}.colortable.txt ${subj} ${hemis} ../surf/${hemis}.sphere.reg ${external_atlases_path}/economo/${hemis}.economo.gcs \
-${SUBJECTS_DIR}/${subj}/label/${hemis}.economo.annot
+${SUBJECTS_DIR}/${subj}/label/${hemis}.aparc.economo.annot
+
+######### Brainnetome atlas
+cd ${SUBJECTS_DIR}/${subj}/mri
+mris_ca_label -t ${external_atlases_path}/brainnetome/BN_Atlas_210_LUT_1000_2000.txt ${subj} ${hemis} ../surf/${hemis}.sphere.reg \
+${external_atlases_path}/brainnetome/${hemis}.BN_Atlas.gcs \
+${SUBJECTS_DIR}/${subj}/label/${hemis}.aparc.brainnetome.annot
 
 ##### Glasser atlas
 cd ${SUBJECTS_DIR}/${subj}/mri
@@ -156,7 +162,6 @@ mri_surf2surf --hemi ${hemis} \
   --sval-annot ${external_atlases_path}/julich/siibra_${hemis}_fs.annot \
   --tval ${SUBJECTS_DIR}/${subj}/label/${hemis}.aparc.julich.annot
 
-
 SUBJECTS_DIR=${working_dir}
 ######## dummy left hemis needed for stats computation
 cp ${SUBJECTS_DIR}/${subj}/surf/${hemis}.white ${SUBJECTS_DIR}/${subj}/surf/${hemis_other}.white
@@ -166,9 +171,13 @@ cp ${SUBJECTS_DIR}/${subj}/label/${hemis}.cortex.label ${SUBJECTS_DIR}/${subj}/l
 cp ${SUBJECTS_DIR}/${subj}/label/${hemis}.aparc.annot ${SUBJECTS_DIR}/${subj}/label/${hemis_other}.aparc.annot 
 cp ${SUBJECTS_DIR}/${subj}/label/${hemis}.aparc.DKTatlas.annot ${SUBJECTS_DIR}/${subj}/label/${hemis_other}.aparc.DKTatlas.annot
 cp ${SUBJECTS_DIR}/${subj}/label/${hemis}.aparc.a2009s.annot ${SUBJECTS_DIR}/${subj}/label/${hemis_other}.aparc.a2009s.annot
+cp ${SUBJECTS_DIR}/${subj}/label/${hemis}.aparc.economo.annot ${SUBJECTS_DIR}/${subj}/label/${hemis_other}.aparc.economo.annot
+cp ${SUBJECTS_DIR}/${subj}/label/${hemis}.aparc.HCP-MMP1.glasser.annot ${SUBJECTS_DIR}/${subj}/label/${hemis_other}.aparc.HCP-MMP1.glasser.annot 
+cp ${SUBJECTS_DIR}/${subj}/label/${hemis}.aparc.julich.annot ${SUBJECTS_DIR}/${subj}/label/${hemis_other}.aparc.julich.annot 
+cp ${SUBJECTS_DIR}/${subj}/label/${hemis}.aparc.Schaefer2018_400Parcels_17Networks.annot ${SUBJECTS_DIR}/${subj}/label/${hemis_other}.aparc.Schaefer2018_400Parcels_17Networks.annot
+cp ${SUBJECTS_DIR}/${subj}/label/${hemis}.aparc.brainnetome.annot ${SUBJECTS_DIR}/${subj}/label/${hemis_other}.aparc.brainnetome.annot
 
 pctsurfcon --s ${subj} --${hemis}-only
-
 mri_brainvol_stats --subject ${subj}
 
 ######## AParc-to-ASeg aparc.DKTatlas
@@ -209,15 +218,67 @@ mri_surf2volseg --o aparc.a2009s+aseg.mgz \
 --rh-white ${SUBJECTS_DIR}/${subj}/surf/rh.white \
 --rh-pial ${SUBJECTS_DIR}/${subj}/surf/rh.pial
 
-######## AParc-to-ASeg aparc.DKTatlas
+######### Brainnetome
 cd ${SUBJECTS_DIR}/${subj}/mri
-mri_surf2volseg --o aparc.DKTatlas+aseg.mgz \
+mri_surf2volseg --o aparc.brainnetome.mgz \
 --label-cortex --i aseg.mgz --threads ${num_threads} \
---lh-annot ${SUBJECTS_DIR}/${subj}/label/lh.aparc.DKTatlas.annot 1000 \
+--lh-annot ${SUBJECTS_DIR}/${subj}/label/lh.aparc.brainnetome.annot 1000 \
 --lh-cortex-mask ${SUBJECTS_DIR}/${subj}/label/lh.cortex.label \
 --lh-white ${SUBJECTS_DIR}/${subj}/surf/lh.white \
 --lh-pial ${SUBJECTS_DIR}/${subj}/surf/lh.pial \
---rh-annot ${SUBJECTS_DIR}/${subj}/label/rh.aparc.DKTatlas.annot 2000 \
+--rh-annot ${SUBJECTS_DIR}/${subj}/label/rh.aparc.brainnetome.annot 2000 \
+--rh-cortex-mask ${SUBJECTS_DIR}/${subj}/label/rh.cortex.label \
+--rh-white ${SUBJECTS_DIR}/${subj}/surf/rh.white \
+--rh-pial ${SUBJECTS_DIR}/${subj}/surf/rh.pial
+
+######### HCP-MMP1.glasser
+cd ${SUBJECTS_DIR}/${subj}/mri
+mri_surf2volseg --o aparc.HCP-MMP1.glasser.mgz \
+--label-cortex --i aseg.mgz --threads ${num_threads} \
+--lh-annot ${SUBJECTS_DIR}/${subj}/label/lh.aparc.HCP-MMP1.glasser.annot 1000 \
+--lh-cortex-mask ${SUBJECTS_DIR}/${subj}/label/lh.cortex.label \
+--lh-white ${SUBJECTS_DIR}/${subj}/surf/lh.white \
+--lh-pial ${SUBJECTS_DIR}/${subj}/surf/lh.pial \
+--rh-annot ${SUBJECTS_DIR}/${subj}/label/rh.aparc.HCP-MMP1.glasser.annot 2000 \
+--rh-cortex-mask ${SUBJECTS_DIR}/${subj}/label/rh.cortex.label \
+--rh-white ${SUBJECTS_DIR}/${subj}/surf/rh.white \
+--rh-pial ${SUBJECTS_DIR}/${subj}/surf/rh.pial
+
+######### Schaefer2018_400Parcels_17Networks
+cd ${SUBJECTS_DIR}/${subj}/mri
+mri_surf2volseg --o aparc.Schaefer2018_400Parcels_17Networks.mgz \
+--label-cortex --i aseg.mgz --threads ${num_threads} \
+--lh-annot ${SUBJECTS_DIR}/${subj}/label/lh.aparc.Schaefer2018_400Parcels_17Networks.annot 1000 \
+--lh-cortex-mask ${SUBJECTS_DIR}/${subj}/label/lh.cortex.label \
+--lh-white ${SUBJECTS_DIR}/${subj}/surf/lh.white \
+--lh-pial ${SUBJECTS_DIR}/${subj}/surf/lh.pial \
+--rh-annot ${SUBJECTS_DIR}/${subj}/label/rh.aparc.Schaefer2018_400Parcels_17Networks.annot 2000 \
+--rh-cortex-mask ${SUBJECTS_DIR}/${subj}/label/rh.cortex.label \
+--rh-white ${SUBJECTS_DIR}/${subj}/surf/rh.white \
+--rh-pial ${SUBJECTS_DIR}/${subj}/surf/rh.pial
+
+######### Julich
+cd ${SUBJECTS_DIR}/${subj}/mri
+mri_surf2volseg --o aparc.julich.mgz \
+--label-cortex --i aseg.mgz --threads ${num_threads} \
+--lh-annot ${SUBJECTS_DIR}/${subj}/label/lh.aparc.julich.annot 1000 \
+--lh-cortex-mask ${SUBJECTS_DIR}/${subj}/label/lh.cortex.label \
+--lh-white ${SUBJECTS_DIR}/${subj}/surf/lh.white \
+--lh-pial ${SUBJECTS_DIR}/${subj}/surf/lh.pial \
+--rh-annot ${SUBJECTS_DIR}/${subj}/label/rh.aparc.julich.annot 2000 \
+--rh-cortex-mask ${SUBJECTS_DIR}/${subj}/label/rh.cortex.label \
+--rh-white ${SUBJECTS_DIR}/${subj}/surf/rh.white \
+--rh-pial ${SUBJECTS_DIR}/${subj}/surf/rh.pial
+
+######### Economo
+cd ${SUBJECTS_DIR}/${subj}/mri
+mri_surf2volseg --o aparc.economo.mgz \
+--label-cortex --i aseg.mgz --threads ${num_threads} \
+--lh-annot ${SUBJECTS_DIR}/${subj}/label/lh.aparc.economo.annot 1000 \
+--lh-cortex-mask ${SUBJECTS_DIR}/${subj}/label/lh.cortex.label \
+--lh-white ${SUBJECTS_DIR}/${subj}/surf/lh.white \
+--lh-pial ${SUBJECTS_DIR}/${subj}/surf/lh.pial \
+--rh-annot ${SUBJECTS_DIR}/${subj}/label/rh.aparc.economo.annot 2000 \
 --rh-cortex-mask ${SUBJECTS_DIR}/${subj}/label/rh.cortex.label \
 --rh-white ${SUBJECTS_DIR}/${subj}/surf/rh.white \
 --rh-pial ${SUBJECTS_DIR}/${subj}/surf/rh.pial
