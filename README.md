@@ -32,6 +32,10 @@ docker run --gpus all --privileged -v /your/working/directory/:/data/exvivo/ -it
 ```
 You will see the output in `/your/working/directory/data_for_inference/output_from_nnunet_inference`.
 
+### Deep learning-based topology correction
+Goal: adjoining gyri and sulci should be clearly separated.
+Follow detailed instructions [here](https://github.com/Pulkit-Khandelwal/purple-mri/blob/main/docker/topology_correction_notes.md)
+
 ### Surface-based modeling to obtain whole-hemisphere parcellations
 Once, you have obtained an initial 10-label topology-corrected volumetric segmentation, you can proceed to the surface-based pipeline to obtain parcellations based on your favorite atlas. This step will be on your local machine. No GPUs are required. To do this, you should have FreeSurfer installed locally. We have used FreeSurfer version 7.4.0 on linux obtained from [here](https://surfer.nmr.mgh.harvard.edu/fswiki/DownloadAndInstall). Moreover, there are some Python dependencies that can be found in the `dependencies.txt` file and installed using `pip`.
 
