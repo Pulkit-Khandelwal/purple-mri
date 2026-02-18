@@ -180,108 +180,24 @@ cp ${SUBJECTS_DIR}/${subj}/label/${hemis}.aparc.brainnetome.annot ${SUBJECTS_DIR
 pctsurfcon --s ${subj} --${hemis}-only
 mri_brainvol_stats --subject ${subj}
 
-######## AParc-to-ASeg aparc.DKTatlas
+atlases=(DKTatlas aparc a2009s brainnetome HCP-MMP1.glasser Schaefer2018_400Parcels_17Networks julich economo)
+for subj in "${atlas[@]}"
+do
+echo ${atlas}
+
 cd ${SUBJECTS_DIR}/${subj}/mri
-mri_surf2volseg --o aparc.DKTatlas+aseg.mgz \
+mri_surf2volseg --o ${atlas}.mgz \
 --label-cortex --i aseg.mgz --threads ${num_threads} \
---lh-annot ${SUBJECTS_DIR}/${subj}/label/lh.aparc.DKTatlas.annot 1000 \
+--lh-annot ${SUBJECTS_DIR}/${subj}/label/lh.aparc.${atlas}.annot 1000 \
 --lh-cortex-mask ${SUBJECTS_DIR}/${subj}/label/lh.cortex.label \
 --lh-white ${SUBJECTS_DIR}/${subj}/surf/lh.white \
 --lh-pial ${SUBJECTS_DIR}/${subj}/surf/lh.pial \
---rh-annot ${SUBJECTS_DIR}/${subj}/label/rh.aparc.DKTatlas.annot 2000 \
+--rh-annot ${SUBJECTS_DIR}/${subj}/label/rh.aparc.${atlas}.annot 2000 \
 --rh-cortex-mask ${SUBJECTS_DIR}/${subj}/label/rh.cortex.label \
 --rh-white ${SUBJECTS_DIR}/${subj}/surf/rh.white \
 --rh-pial ${SUBJECTS_DIR}/${subj}/surf/rh.pial
 
-######## AParc-to-ASeg aparc
-cd ${SUBJECTS_DIR}/${subj}/mri
-mri_surf2volseg --o aparc+aseg.mgz --label-cortex --i aseg.mgz --threads ${num_threads} \
---lh-annot ${SUBJECTS_DIR}/${subj}/label/lh.aparc.annot 1000 \
---lh-cortex-mask ${SUBJECTS_DIR}/${subj}/label/lh.cortex.label \
---lh-white ${SUBJECTS_DIR}/${subj}/surf/lh.white \
---lh-pial ${SUBJECTS_DIR}/${subj}/surf/lh.pial \
---rh-annot ${SUBJECTS_DIR}/${subj}/label/rh.aparc.annot 2000 \
---rh-cortex-mask ${SUBJECTS_DIR}/${subj}/label/rh.cortex.label \
---rh-white ${SUBJECTS_DIR}/${subj}/surf/rh.white \
---rh-pial ${SUBJECTS_DIR}/${subj}/surf/rh.pial
-
-######## AParc-to-ASeg aparc.a2009s
-cd ${SUBJECTS_DIR}/${subj}/mri
-mri_surf2volseg --o aparc.a2009s+aseg.mgz \
---label-cortex --i aseg.mgz --threads ${num_threads} \
---lh-annot ${SUBJECTS_DIR}/${subj}/label/lh.aparc.a2009s.annot 11100 \
---lh-cortex-mask ${SUBJECTS_DIR}/${subj}/label/lh.cortex.label \
---lh-white ${SUBJECTS_DIR}/${subj}/surf/lh.white \
---lh-pial ${SUBJECTS_DIR}/${subj}/surf/lh.pial \
---rh-annot ${SUBJECTS_DIR}/${subj}/label/rh.aparc.a2009s.annot 12100 \
---rh-cortex-mask ${SUBJECTS_DIR}/${subj}/label/rh.cortex.label \
---rh-white ${SUBJECTS_DIR}/${subj}/surf/rh.white \
---rh-pial ${SUBJECTS_DIR}/${subj}/surf/rh.pial
-
-######### Brainnetome
-cd ${SUBJECTS_DIR}/${subj}/mri
-mri_surf2volseg --o aparc.brainnetome.mgz \
---label-cortex --i aseg.mgz --threads ${num_threads} \
---lh-annot ${SUBJECTS_DIR}/${subj}/label/lh.aparc.brainnetome.annot 1000 \
---lh-cortex-mask ${SUBJECTS_DIR}/${subj}/label/lh.cortex.label \
---lh-white ${SUBJECTS_DIR}/${subj}/surf/lh.white \
---lh-pial ${SUBJECTS_DIR}/${subj}/surf/lh.pial \
---rh-annot ${SUBJECTS_DIR}/${subj}/label/rh.aparc.brainnetome.annot 2000 \
---rh-cortex-mask ${SUBJECTS_DIR}/${subj}/label/rh.cortex.label \
---rh-white ${SUBJECTS_DIR}/${subj}/surf/rh.white \
---rh-pial ${SUBJECTS_DIR}/${subj}/surf/rh.pial
-
-######### HCP-MMP1.glasser
-cd ${SUBJECTS_DIR}/${subj}/mri
-mri_surf2volseg --o aparc.HCP-MMP1.glasser.mgz \
---label-cortex --i aseg.mgz --threads ${num_threads} \
---lh-annot ${SUBJECTS_DIR}/${subj}/label/lh.aparc.HCP-MMP1.glasser.annot 1000 \
---lh-cortex-mask ${SUBJECTS_DIR}/${subj}/label/lh.cortex.label \
---lh-white ${SUBJECTS_DIR}/${subj}/surf/lh.white \
---lh-pial ${SUBJECTS_DIR}/${subj}/surf/lh.pial \
---rh-annot ${SUBJECTS_DIR}/${subj}/label/rh.aparc.HCP-MMP1.glasser.annot 2000 \
---rh-cortex-mask ${SUBJECTS_DIR}/${subj}/label/rh.cortex.label \
---rh-white ${SUBJECTS_DIR}/${subj}/surf/rh.white \
---rh-pial ${SUBJECTS_DIR}/${subj}/surf/rh.pial
-
-######### Schaefer2018_400Parcels_17Networks
-cd ${SUBJECTS_DIR}/${subj}/mri
-mri_surf2volseg --o aparc.Schaefer2018_400Parcels_17Networks.mgz \
---label-cortex --i aseg.mgz --threads ${num_threads} \
---lh-annot ${SUBJECTS_DIR}/${subj}/label/lh.aparc.Schaefer2018_400Parcels_17Networks.annot 1000 \
---lh-cortex-mask ${SUBJECTS_DIR}/${subj}/label/lh.cortex.label \
---lh-white ${SUBJECTS_DIR}/${subj}/surf/lh.white \
---lh-pial ${SUBJECTS_DIR}/${subj}/surf/lh.pial \
---rh-annot ${SUBJECTS_DIR}/${subj}/label/rh.aparc.Schaefer2018_400Parcels_17Networks.annot 2000 \
---rh-cortex-mask ${SUBJECTS_DIR}/${subj}/label/rh.cortex.label \
---rh-white ${SUBJECTS_DIR}/${subj}/surf/rh.white \
---rh-pial ${SUBJECTS_DIR}/${subj}/surf/rh.pial
-
-######### Julich
-cd ${SUBJECTS_DIR}/${subj}/mri
-mri_surf2volseg --o aparc.julich.mgz \
---label-cortex --i aseg.mgz --threads ${num_threads} \
---lh-annot ${SUBJECTS_DIR}/${subj}/label/lh.aparc.julich.annot 1000 \
---lh-cortex-mask ${SUBJECTS_DIR}/${subj}/label/lh.cortex.label \
---lh-white ${SUBJECTS_DIR}/${subj}/surf/lh.white \
---lh-pial ${SUBJECTS_DIR}/${subj}/surf/lh.pial \
---rh-annot ${SUBJECTS_DIR}/${subj}/label/rh.aparc.julich.annot 2000 \
---rh-cortex-mask ${SUBJECTS_DIR}/${subj}/label/rh.cortex.label \
---rh-white ${SUBJECTS_DIR}/${subj}/surf/rh.white \
---rh-pial ${SUBJECTS_DIR}/${subj}/surf/rh.pial
-
-######### Economo
-cd ${SUBJECTS_DIR}/${subj}/mri
-mri_surf2volseg --o aparc.economo.mgz \
---label-cortex --i aseg.mgz --threads ${num_threads} \
---lh-annot ${SUBJECTS_DIR}/${subj}/label/lh.aparc.economo.annot 1000 \
---lh-cortex-mask ${SUBJECTS_DIR}/${subj}/label/lh.cortex.label \
---lh-white ${SUBJECTS_DIR}/${subj}/surf/lh.white \
---lh-pial ${SUBJECTS_DIR}/${subj}/surf/lh.pial \
---rh-annot ${SUBJECTS_DIR}/${subj}/label/rh.aparc.economo.annot 2000 \
---rh-cortex-mask ${SUBJECTS_DIR}/${subj}/label/rh.cortex.label \
---rh-white ${SUBJECTS_DIR}/${subj}/surf/rh.white \
---rh-pial ${SUBJECTS_DIR}/${subj}/surf/rh.pial
+done
 
 ######## WMParc
 cd ${SUBJECTS_DIR}/${subj}/mri
