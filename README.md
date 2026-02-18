@@ -20,7 +20,7 @@ In particular, `purple-mri` allows you to do the following:
 Perform bias correction and image normalization/standardization. We use `N4BiasFieldCorrection` as part of the CLI tool [ANTs](https://github.com/ANTsX/ANTs) and [`c3d`](http://www.itksnap.org/pmwiki/pmwiki.php?n=Convert3D.Convert3D). We highly recommend using the option of an input mask in `N4BiasFieldCorrection` which can be obtained via corase threhsolding.
 [Here](https://github.com/Pulkit-Khandelwal/upenn-picsl-brain-ex-vivo/tree/main/misc_scripts/perform_bias_correction.sh) is a sample script.
 
-### Deep learning-based initial labeling and CRUISE-based post-hoc topology correction
+### Deep learning-based initial labeling
 Currently, we have two Docker images. The first image provides the segmentation and the second employs [Nighres/CRUISE](https://nighres.readthedocs.io/en/latest/installation.html) for post-hoc topology correction. 
 Please follow the [link](https://github.com/Pulkit-Khandelwal/upenn-picsl-brain-ex-vivo/blob/main/exvivo-segm-demo-docker.md) for detailed instructions on how to use Docker to get the segmentations. For this, we also have the singularity image at the same link. Some key commands are emphasized here:
 
@@ -31,17 +31,6 @@ docker pull pulks/docker_hippogang_exvivo_segm:v${LATEST_TAG}
 docker run --gpus all --privileged -v /your/working/directory/:/data/exvivo/ -it pulks/docker_hippogang_exvivo_segm:v${LATEST_TAG} /bin/bash -c "bash /src/commands_nnunet_inference.sh ${OPTION}" >> logs.txt
 ```
 You will see the output in `/your/working/directory/data_for_inference/output_from_nnunet_inference`.
-
-
-IMPORTANT NOTE: You don't need to run the following topology correction step and skip directly to the surface-based pipeline below. This is because CRUISE correction introduces a lot of "cracks" in the medial area which mess up the surface pipeline. Therefore, we use FreeSurfer's topology correction instead in the surface-based pipeline. However, for the sake of completeness and for user-dependent application, we mention it here, and correct for topology so that adjoining gyri and sulci are clearly separated. Copy the segmentations from `output_from_nnunet_inference` to a folder `data_for_topology_correction` in your working directory.
-```
-docker pull pulks/docker_nighres:v1.0.0
-
-docker run -v /your/working/directory/:/data/cruise_files/ -it pulks/docker_nighres:v1.0.0 /bin/bash -c "bash /data/prepare_cruise_files.sh"
-
-# Locally run the file to get the final combined label file.
-bash clean_labels_final.sh
-```
 
 ### Surface-based modeling to obtain whole-hemisphere parcellations
 Once, you have obtained an initial 10-label topology-corrected volumetric segmentation, you can proceed to the surface-based pipeline to obtain parcellations based on your favorite atlas. This step will be on your local machine. No GPUs are required. To do this, you should have FreeSurfer installed locally. We have used FreeSurfer version 7.4.0 on linux obtained from [here](https://surfer.nmr.mgh.harvard.edu/fswiki/DownloadAndInstall). Moreover, there are some Python dependencies that can be found in the `dependencies.txt` file and installed using `pip`.
