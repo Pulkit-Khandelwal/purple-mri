@@ -102,7 +102,7 @@ We perform vertex-wise analysis in `fsaverage` space to fit a generalized linear
 
 ## Introductory video
 <div align="center">
-      <a href="https://youtu.be/0BOeUtlWlYw?si=7NeNDsoePOW3_J4Y">
+      <a href="https://youtu.be/DBdzbIAJBw4">
          <img src="https://github.com/Pulkit-Khandelwal/purple-mri/blob/main/images/thumbnail.png" style="width:75%;">
       </a>
 </div>
