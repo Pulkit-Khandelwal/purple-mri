@@ -32,10 +32,11 @@ Key capabilities
    :caption: Workflows
 
    segmentation
-   topology_and_surfaces
+   posthoc_correction
    parcellation
    registration
-   qc
+   template_construction
+   group_analysis
 
 .. toctree::
    :maxdepth: 2
