@@ -43,4 +43,5 @@ Key capabilities
 
    cli
    api
+   citations
    faq
