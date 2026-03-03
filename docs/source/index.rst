@@ -7,7 +7,7 @@ The toolkit is designed for ex vivo whole-hemisphere MRI acquired at submillimet
 
 purple-mri integrates deep learning–based voxel segmentation with classical surface-based modeling to produce topology-stable cortical reconstructions and native-space atlas parcellations suitable for vertex-wise and group-level morphometric analysis.
 
-.. image:: _static/your_gif_name.gif
+.. image:: _static/animation.gif
    :width: 900px
    :align: center
 
