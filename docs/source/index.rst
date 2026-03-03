@@ -11,6 +11,18 @@ purple-mri integrates deep learning–based voxel segmentation with classical su
    :width: 900px
    :align: center
 
+Introductory Video
+------------------
+.. raw:: html
+
+   <div style="text-align: center; margin-top: 20px;">
+     <a href="https://youtu.be/DBdzbIAJBw4" target="_blank">
+       <img src="https://github.com/Pulkit-Khandelwal/purple-mri/blob/main/images/thumbnail.png?raw=true"
+            style="width:75%; max-width:900px; border-radius:8px;">
+     </a>
+   </div>
+
+
 Core Capabilities
 -----------------
 purple-mri enables:
