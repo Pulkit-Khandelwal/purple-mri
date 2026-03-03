@@ -18,7 +18,8 @@ Introductory Video
    <div style="text-align: center; margin-top: 20px;">
      <a href="https://youtu.be/DBdzbIAJBw4" target="_blank">
        <img src="https://github.com/Pulkit-Khandelwal/purple-mri/blob/main/images/thumbnail.png?raw=true"
-            style="width:75%; max-width:900px; border-radius:8px;">
+            width="900"
+            style="border-radius:8px;">
      </a>
    </div>
 
