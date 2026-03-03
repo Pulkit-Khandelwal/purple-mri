@@ -28,14 +28,14 @@ Scientific Context
 We have applied our tools across a spectrum of high-resolution multi-modal ex vivo MRI spanning from neurodegenerative (Alzheimer’s disease and related dementias) and developmental (Sudden Infant Death Syndrome). Our toolkit purple-mri has enabled systematic analysis of high-resolution postmortem MRI linking pathology to in vivo MRI via ex vivo MRI to allow discovery of region-specific morphometry–pathology signatures that can inform the development of disease-specific in vivo biomarkers.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Getting Started
 
    overview
    installation
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Workflows
 
    segmentation
@@ -46,7 +46,7 @@ We have applied our tools across a spectrum of high-resolution multi-modal ex vi
    group_analysis
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Reference
 
    citations
