@@ -23,9 +23,11 @@ Introductory Video
      </a>
    </div>
 
+
 Core Capabilities
 -----------------
 purple-mri enables:
+
 * Automated multi-label tissue segmentation of postmortem MRI
 * Topology-aware cortical ribbon refinement
 * Native-space surface reconstruction
