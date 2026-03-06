@@ -77,13 +77,19 @@ We have applied our tools across a spectrum of ultra-high-resolution multi-modal
    <img src="https://img.shields.io/badge/ITK--SNAP-integrated-orange">
    </div>
 
-.. raw:: html
+.. list-table::
+   :align: center
+   :widths: 16 16 16 16 16 16
 
-   <div style="display:flex; gap:35px; align-items:center; margin-top:20px; margin-bottom:25px;">
-   <img src="_static/python.png" width="55">
-   <img src="_static/pip.png" width="55">
-   <img src="_static/docker.png" width="55">
-   <img src="_static/singularity.png" width="55">
-   <img src="_static/fs.png" width="55">
-   <img src="_static/itksnap.png" width="55">
-   </div>
+   * - .. image:: _static/python.png
+          :width: 55px
+     - .. image:: _static/pip.png
+          :width: 55px
+     - .. image:: _static/docker.png
+          :width: 55px
+     - .. image:: _static/singularity.png
+          :width: 55px
+     - .. image:: _static/fs.png
+          :width: 55px
+     - .. image:: _static/itksnap.png
+          :width: 55px
