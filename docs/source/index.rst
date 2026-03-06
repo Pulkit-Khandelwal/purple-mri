@@ -26,7 +26,6 @@ Introductory Video
 Core Capabilities
 -----------------
 purple-mri enables:
-
 * Automated multi-label tissue segmentation of postmortem MRI
 * Topology-aware cortical ribbon refinement
 * Native-space surface reconstruction
@@ -41,7 +40,7 @@ purple-mri enables:
 
 Scientific Context
 ------------------
-We have applied our tools across a spectrum of high-resolution multi-modal ex vivo MRI spanning from neurodegenerative (Alzheimer’s disease and related dementias) and developmental (Sudden Infant Death Syndrome). Our toolkit purple-mri has enabled systematic analysis of high-resolution postmortem MRI linking pathology to in vivo MRI via ex vivo MRI to allow discovery of region-specific morphometry–pathology signatures that can inform the development of disease-specific in vivo biomarkers.
+We have applied our tools across a spectrum of ultra-high-resolution multi-modal ex vivo MRI spanning from developmental disorders (Sudden Infant Death Syndrome) in infants to neurodegenerative diseases (Alzheimer’s disease and related dementias) in adults. Our toolkit purple-mri has enabled systematic analysis of ultra-high-resolution postmortem MRI linking pathology to in vivo MRI via ex vivo MRI to allow discovery of region-specific morphometry–pathology signatures that can inform the development of disease-specific in vivo biomarkers.
 
 .. toctree::
    :maxdepth: 1
