@@ -11,6 +11,7 @@ purple-mri integrates deep learning–based voxel segmentation with classical su
    :width: 900px
    :align: center
 
+
 Introductory Video
 ------------------
 .. raw:: html
@@ -39,6 +40,7 @@ purple-mri enables:
 .. image:: _static/purple_flowchart_UPDATED.png
    :width: 900px
    :align: center
+
 
 Scientific Context
 ------------------
@@ -83,14 +85,14 @@ We have applied our tools across a spectrum of ultra-high-resolution multi-modal
    :widths: 16 16 16 16 16 16
 
    * - .. image:: _static/python.png
-          :width: 55px
+          :height: 55px
      - .. image:: _static/pip.png
-          :width: 55px
+          :height: 55px
      - .. image:: _static/docker.png
-          :width: 55px
+          :height: 55px
      - .. image:: _static/singularity.png
-          :width: 55px
+          :height: 55px
      - .. image:: _static/fs.png
-          :width: 55px
+          :height: 55px
      - .. image:: _static/itksnap.png
-          :width: 55px
+          :height: 55px
