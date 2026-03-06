@@ -23,7 +23,6 @@ Introductory Video
      </a>
    </div>
 
-
 Core Capabilities
 -----------------
 purple-mri enables:
@@ -35,6 +34,10 @@ purple-mri enables:
 * Ex vivo ↔ in vivo volumetric registration using classical optimization methods and modern deep learning-based ones
 * Intensity-based population-specific volumetric template construction
 * Vertex-wise statistical modeling (e.g., GLM analyses in template space) allowing the integration of morphometric measures with external biological variables
+
+.. image:: _static/purple_flowchart_UPDATED.png
+   :width: 900px
+   :align: center
 
 Scientific Context
 ------------------
