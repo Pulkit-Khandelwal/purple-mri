@@ -64,6 +64,16 @@ We have applied our tools across a spectrum of high-resolution multi-modal ex vi
 
    citations
 
+.. raw:: html
+
+   <div style="margin-top:10px; margin-bottom:20px;">
+   <img src="https://img.shields.io/badge/python-3.9+-blue?logo=python&logoColor=white">
+   <img src="https://img.shields.io/badge/pip-install-blue?logo=pypi&logoColor=white">
+   <img src="https://img.shields.io/badge/docker-supported-2496ED?logo=docker&logoColor=white">
+   <img src="https://img.shields.io/badge/singularity-supported-1f425f">
+   <img src="https://img.shields.io/badge/freesurfer-required-blue">
+   <img src="https://img.shields.io/badge/ITK--SNAP-integrated-orange">
+   </div>
 
 
 
