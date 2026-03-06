@@ -74,6 +74,17 @@ We have applied our tools across a spectrum of high-resolution multi-modal ex vi
    <img src="https://img.shields.io/badge/freesurfer-required-blue">
    <img src="https://img.shields.io/badge/ITK--SNAP-integrated-orange">
    </div>
+.. raw:: html
 
+   <div style="display:flex; gap:35px; align-items:center; margin-top:20px; margin-bottom:25px;">
+
+   <img src="_static/python.png" width="55">
+   <img src="_static/pip.png" width="55">
+   <img src="_static/docker.png" width="55">
+   <img src="_static/singularity.png" width="55">
+   <img src="_static/fs.png" width="55">
+   <img src="_static/itksnap.png" width="55">
+
+   </div>
 
 
