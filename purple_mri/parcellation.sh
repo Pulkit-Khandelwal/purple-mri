@@ -202,7 +202,7 @@ done
 ######## WMParc
 cd ${SUBJECTS_DIR}/${subj}/mri
 mri_surf2volseg --o wmparc.mgz \
---label-wm --i aparc.mgz --threads ${num_threads} \
+--label-wm --i aseg.mgz --threads ${num_threads} \
 --lh-annot ${SUBJECTS_DIR}/${subj}/label/lh.aparc.annot 3000 \
 --lh-cortex-mask ${SUBJECTS_DIR}/${subj}/label/lh.cortex.label \
 --lh-white ${SUBJECTS_DIR}/${subj}/surf/lh.white \
