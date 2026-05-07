@@ -55,6 +55,18 @@ mris_place_surface --adgws-in ${working_dir}/autodet.gw.stats.binary.dat \
 --seg aseg.presurf.mgz --threads ${num_threads} --wm wm.mgz --invol aseg.presurf_100.mgz --${hemis} --i ../surf/${hemis}.white.preaparc --o ../surf/${hemis}.white --white --nsmooth 5 \
 --rip-label ../label/${hemis}.cortex.label --rip-bg --rip-surf ../surf/${hemis}.white.preaparc --aparc ../label/${hemis}.aparc.annot
 
+############ IMPORTANT ############
+# For the pial surface placement, we have our own compiled version of mris_place_surface_docker
+# So use that, see below of how it is used only for the pial surface placement
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+mris_place_surface_docker() {
+  docker run --rm \
+    -v "$(pwd)":/work \
+    -v "${SCRIPT_DIR}":/script_dir \
+    -w /work \
+    purple-mris-place-surface:ubuntu24 "$@"
+}
+
 num_iters=10
 input_surf="../surf/${hemis}.smoothwm"
 for ((iter=1; iter<=num_iters; iter++)); do
@@ -66,7 +78,7 @@ for ((iter=1; iter<=num_iters; iter++)); do
     input_surf="../surf/${hemis}.pial.T1.iter$((iter-1))"
   fi
 
-  mris_place_surface \
+  mris_place_surface_docker \
     --adgws-in ${working_dir}/autodet.gw.stats.binary.${hemis}.dat \
     --seg aseg.presurf_100.mgz \
     --threads ${num_threads} \
