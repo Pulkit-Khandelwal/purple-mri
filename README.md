@@ -55,9 +55,7 @@ Make sure your mri images and segmentation files have the same names ending with
 Place the `fsaverage` in the `working_dir` folder.
 
 **IMPORTANT NOTE ON PIAL SURFACE PLACEMENT:**
-For the pial surface placement only in the `purple-mri` parcellation workflow uses a custom compiled FreeSurfer `mris_place_surface` binary. To avoid requiring users to compile this binary locally, we provide it as a Docker image archive through the GitHub release: https://github.com/Pulkit-Khandelwal/purple-mri/releases/tag/v0.1.0-fs-binary-docker. Download the release asset `purple-mris-place-surface_ubuntu24.tar.gz` and place it inside the `purple_mri` folder of this repository.
-
-Then from inside the `purple_mri` folder, run: `docker load < purple-mris-place-surface_ubuntu24.tar.gz` and then confirm that the image loaded correctly `docker images | grep purple-mris-place-surface`. You should see an image named `purple-mris-place-surface:ubuntu24`. The, test the image `docker run --rm purple-mris-place-surface:ubuntu24`. If the command prints a FreeSurfer usage message or an argument-related error, the image is loaded and runnable. This Dockerized binary is called from inside `parcellation.sh`. See the wrapper and usage beginning here: https://github.com/Pulkit-Khandelwal/purple-mri/blob/main/purple_mri/parcellation.sh#L58
+For the pial surface placement only in the `purple-mri` parcellation workflow uses a custom compiled FreeSurfer `mris_place_surface` binary. To avoid requiring users to compile this binary locally, we provide it as a Docker image archive through the GitHub release: https://github.com/Pulkit-Khandelwal/purple-mri/releases/tag/v0.1.0-fs-binary-docker. Please follow the instructions [here](https://github.com/Pulkit-Khandelwal/purple-mri/blob/main/docker/pial_surface_binary_docker_singularity.md) and then continue below.
 
 ```
 cd purple_mri
