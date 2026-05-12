@@ -67,6 +67,15 @@ mris_place_surface_docker() {
     purple-mris-place-surface:ubuntu24 "$@"
 }
 
+mris_place_surface_singularity() {
+  singularity exec \
+    --bind "$(pwd)":/work \
+    --bind "${SCRIPT_DIR}":/script_dir \
+    --pwd /work \
+    "${SCRIPT_DIR}/purple-mris-place-surface_ubuntu24.sif" \
+    mris_place_surface "$@"
+}
+
 num_iters=10
 input_surf="../surf/${hemis}.smoothwm"
 for ((iter=1; iter<=num_iters; iter++)); do
@@ -78,6 +87,7 @@ for ((iter=1; iter<=num_iters; iter++)); do
     input_surf="../surf/${hemis}.pial.T1.iter$((iter-1))"
   fi
 
+  # or mris_place_surface_singularity
   mris_place_surface_docker \
     --adgws-in ${working_dir}/autodet.gw.stats.binary.${hemis}.dat \
     --seg aseg.presurf_100.mgz \
