@@ -96,11 +96,6 @@ Script `exvivo_invivo_greedy_registration.sh` to register in vivo (t1w) and ex v
 ### Perform GLM analyses
 We perform vertex-wise analysis in `fsaverage` space to fit a generalized linear model (GLM) between cortical thickness (mm) and with global ratings of amyloid-β, Braak staging, CERAD, and semiquantitative ratings of the medial temporal lobe (MTL) neuronal loss and tau pathology, with age, sex and postmortem interval (PMI) as covariates. You can follow the steps detailed [here](https://github.com/Pulkit-Khandelwal/purple-mri/tree/main/glm). The same can be repeated for the Deformation-based morphometry.
 
-## Notes
-+ Our method has been developed to work on a single exvivo hemisphere.
-+ The deep learning-based segmentation was primarily trained on 7T T2w MRI. We are currently working on a 7T T2* FLASH segmentation model.
-
-
 ## Introductory video
 <div align="center">
       <a href="https://youtu.be/DBdzbIAJBw4">
