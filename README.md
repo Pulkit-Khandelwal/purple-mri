@@ -5,8 +5,7 @@ We provide a set of tools packaged as `purple-mri` for segmentation, parcellatio
 Check out the [project page](https://pulkit-khandelwal.github.io/exvivo-brain-upenn/) and documentation [here](https://purple-mri.readthedocs.io/en/latest/).
 
 In particular, `purple-mri` allows you to do the following:
-+ obtain an initial 10 label segmentation: cortical GM, normal appearing WM, WMH, medial temporal lobe, corpus callosum, ventricles, caudate, putamen, globus pallidus and thalamus
-+ obtain surface-based native subject-space parcellation based on different brain atlases such as: DKT, Economo, Schaeffer etc
++ obtain surface-based cortical reconstruction and native subject-space parcellation based on different brain atlases
 + create population specific volumetric and surface-based templates
 + perform exvivo to invivo registration in volumetric intensity space
 + perform surface-to-surface registration between exvivo or invivo
