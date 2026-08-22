@@ -159,12 +159,12 @@ mri_surf2surf --hemi ${hemis} \
 
 ##### Economo-Koskinos atlas
 cd ${SUBJECTS_DIR}/${subj}/mri
-mris_ca_label -t ${external_atlases_path}/economo/${hemis}.colortable.txt ${subj} ${hemis} ../surf/${hemis}.sphere.reg ${external_atlases_path}/economo/${hemis}.economo.gcs \
+mris_ca_label -l "../label/${hemis}.cortex.label" -t ${external_atlases_path}/economo/${hemis}.colortable.txt ${subj} ${hemis} ../surf/${hemis}.sphere.reg ${external_atlases_path}/economo/${hemis}.economo.gcs \
 ${SUBJECTS_DIR}/${subj}/label/${hemis}.aparc.economo.annot
 
 ######### Brainnetome atlas
 cd ${SUBJECTS_DIR}/${subj}/mri
-mris_ca_label -t ${external_atlases_path}/brainnetome/BN_Atlas_210_LUT_1000_2000.txt ${subj} ${hemis} ../surf/${hemis}.sphere.reg \
+mris_ca_label -l "../label/${hemis}.cortex.label" -t ${external_atlases_path}/brainnetome/BN_Atlas_210_LUT_1000_2000.txt ${subj} ${hemis} ../surf/${hemis}.sphere.reg \
 ${external_atlases_path}/brainnetome/${hemis}.BN_Atlas.gcs \
 ${SUBJECTS_DIR}/${subj}/label/${hemis}.aparc.brainnetome.annot
 
