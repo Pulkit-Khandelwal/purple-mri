@@ -149,14 +149,6 @@ mris_ca_label -l ../label/${hemis}.cortex.label -aseg ../mri/aseg.presurf.mgz ${
 ln -sf ${hemis}.sphere.reg ${hemis}.fsaverage.sphere.reg 
 SUBJECTS_DIR=${working_dir}
 
-##### Cortical Parc Schaefer atlas: 7 and 17 networks
-cd ${SUBJECTS_DIR}/${subj}/mri
-mri_surf2surf --hemi ${hemis} \
-  --srcsubject fsaverage \
-  --trgsubject ${subj} \
-  --sval-annot ${external_atlases_path}/schaefer/${hemis}.Schaefer2018_400Parcels_17Networks_order.annot \
-  --tval ${SUBJECTS_DIR}/${subj}/label/${hemis}.aparc.Schaefer2018_400Parcels_17Networks.annot
-
 ##### Economo-Koskinos atlas
 cd ${SUBJECTS_DIR}/${subj}/mri
 mris_ca_label -l "../label/${hemis}.cortex.label" -t ${external_atlases_path}/economo/${hemis}.colortable.txt ${subj} ${hemis} ../surf/${hemis}.sphere.reg ${external_atlases_path}/economo/${hemis}.economo.gcs \
@@ -168,13 +160,23 @@ mris_ca_label -l "../label/${hemis}.cortex.label" -t ${external_atlases_path}/br
 ${external_atlases_path}/brainnetome/${hemis}.BN_Atlas.gcs \
 ${SUBJECTS_DIR}/${subj}/label/${hemis}.aparc.brainnetome.annot
 
+##### Cortical Parc Schaefer atlas: 7 and 17 networks
+cd ${SUBJECTS_DIR}/${subj}/mri
+mri_surf2surf --hemi ${hemis} \
+  --srcsubject fsaverage \
+  --trgsubject ${subj} \
+  --sval-annot ${external_atlases_path}/schaefer/${hemis}.Schaefer2018_400Parcels_17Networks_order.annot \
+  --tval ${SUBJECTS_DIR}/${subj}/label/${hemis}.aparc.Schaefer2018_400Parcels_17Networks.annot \
+  --cortex
+
 ##### Glasser atlas
 cd ${SUBJECTS_DIR}/${subj}/mri
 mri_surf2surf --hemi ${hemis} \
   --srcsubject fsaverage \
   --trgsubject ${subj} \
   --sval-annot ${external_atlases_path}/glasser/${hemis}.HCP-MMP1.annot \
-  --tval ${SUBJECTS_DIR}/${subj}/label/${hemis}.aparc.HCP-MMP1.glasser.annot
+  --tval ${SUBJECTS_DIR}/${subj}/label/${hemis}.aparc.HCP-MMP1.glasser.annot \
+  --cortex
 
 ##### Julich_v3 atlas
 cd ${SUBJECTS_DIR}/${subj}/mri
@@ -182,7 +184,8 @@ mri_surf2surf --hemi ${hemis} \
   --srcsubject fsaverage \
   --trgsubject ${subj} \
   --sval-annot ${external_atlases_path}/julich/siibra_${hemis}_fs.annot \
-  --tval ${SUBJECTS_DIR}/${subj}/label/${hemis}.aparc.julich.annot
+  --tval ${SUBJECTS_DIR}/${subj}/label/${hemis}.aparc.julich.annot \
+  --cortex
 
 SUBJECTS_DIR=${working_dir}
 ######## dummy left hemis needed for stats computation
