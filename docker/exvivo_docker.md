@@ -1,5 +1,5 @@
 # Docker/Singularity for postmortem imaging
-## Voxel-level deep learning-based segmentation of 7T postmortem T2w human brain hemisphere MRI.
+## Voxel-level deep learning-based segmentation of 7T postmortem human brain hemisphere MRI.
 
 #### Author: Pulkit Khandelwal
 
