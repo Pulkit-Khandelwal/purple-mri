@@ -24,14 +24,10 @@
     
     - `${OPTION}=exvivo_multi_sequence_subcortical`: Subcortical structures trained on ciss/t2w/flash
 
-
 - Replace ${LATEST_TAG} with the latest version of the Docker. See change logs below.
 
 # Docker image
 My docker image is located at `https://hub.docker.com/r/pulks/docker_hippogang_exvivo_segm`
-
-# Docker files
-I have provided some files in the folder `docker_files` for your reference only but we do not need those for running the demo.
 
 # Steps
 
@@ -57,7 +53,8 @@ If, you want to run the WMH for `in vivo` flair data then run the following comm
 It takes around 1 minute to get the WMH segmentations in the `in vivo` FALIR image.
 
 # Post-hoc topology correction
-After that, run the new docker for post-hoc topology correction. This solves the buried sulci and adjoining gyri problem.
+After that, run the new docker for post-hoc correction. This solves the buried sulci and adjoining gyri problem:
+https://github.com/Pulkit-Khandelwal/purple-mri/blob/main/docker/topology_correction_notes.md
 
 ##### Change Logs
 09/30/2026:
