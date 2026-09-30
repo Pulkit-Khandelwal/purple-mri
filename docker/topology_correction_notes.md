@@ -60,13 +60,4 @@ c3d subj_corrected_gm.nii.gz segm_no_gm.nii.gz \
 
 That's it! Use this ```final_segm.nii.gz``` as the segmentation file. You can proceed to the surface-based pipeline.
 
-# CRUISE-based post-hoc topology correction (archived and not to be used)
-The CRUISE-based topoogy correction is now archived in favor of the above deep learning-based one. This is because CRUISE correction introduces a lot of "cracks" in the medial area which mess up the surface pipeline. Copy the segmentations from `output_from_nnunet_inference` to a folder `data_for_topology_correction` in your working directory.
-```
-docker pull pulks/docker_nighres:v1.0.0
 
-docker run -v /your/working/directory/:/data/cruise_files/ -it pulks/docker_nighres:v1.0.0 /bin/bash -c "bash /data/prepare_cruise_files.sh"
-
-# Locally run the file to get the final combined label file.
-bash clean_labels_final.sh
-```
