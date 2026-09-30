@@ -29,6 +29,9 @@ elif [[ "$accepted_variable" == "exvivo_multi_sequence_mtl_amygdala_subfields" ]
 elif [[ "$accepted_variable" == "exvivo_multi_sequence_subcortical" ]]; then
    nnUNet_predict -i /data/exvivo/data_for_inference/ -o /data/exvivo/data_for_inference/output_from_nnunet_inference -t 273 -tr nnUNetTrainerV2 -m 3d_fullres --disable_mixed_precision -f all     
 
+elif [[ "$accepted_variable" == "exvivo_flash_more_subcort" ]]; then
+   nnUNet_predict -i /data/exvivo/data_for_inference/ -o /data/exvivo/data_for_inference/output_from_nnunet_inference -t 289 -tr nnUNetTrainerV2 -m 3d_fullres --disable_mixed_precision -f all
+
 else
    echo "Please, select a valid option!"
 fi
