@@ -1,126 +1,113 @@
 Post-hoc Topology Correction
 ============================
 
-Goal
-----
+Overview
+--------
 
-Ensure adjoining gyri and sulci are clearly separated prior to surface reconstruction.
+Post-hoc topology correction removes predicted buried-sulcus regions from the
+``purple-mri`` segmentation before downstream cortical surface reconstruction
+and anatomical parcellation.
 
-Deep learning–based voxel-wise segmentation of high-resolution postmortem MRI
-can introduce spurious gray-matter (GM) bridges between opposing sulcal banks.
-These bridges violate cortical ribbon topology and destabilize surface extraction.
+Deep learning-based voxel-wise segmentation can occasionally introduce
+erroneous cortical gray-matter connections between opposing sulcal banks.
+The topology-correction model identifies regions that should be removed from
+the original segmentation.
 
-This page describes the recommended **deep learning–based post-hoc topology correction**
-workflow used in purple-mri.
 
-Inputs
-------
+Where This Fits in the Workflow
+-------------------------------
 
-* ``segm.nii.gz`` — original multi-label segmentation (all labels present)
+Topology correction can be run as part of the complete ``purple-mri`` workflow
+or independently on an existing segmentation.
 
-The workflow generates an intermediate topology-specific input volume and then
-fuses the corrected cortical GM back into the full segmentation.
+When running:
 
-Step 1 — Create topology input (collapse labels)
------------------------------------------------
+.. code-block:: text
 
-Goal: produce ``segm_input_for_topo_0000.nii.gz`` with:
+   exvivo_all
 
-* Cortical GM → label 3
-* Other tissue → label 2
-* Background → label 0
+the topology-correction stage is included in the complete ex vivo processing
+workflow.
 
-.. code-block:: bash
+For standalone topology correction, use:
 
-   c3d segm.nii.gz \
-     -replace \
-       1 3 \
-       2 2 \
-       3 2 \
-       4 2 \
-       5 2 \
-       6 2 \
-       7 2 \
-       8 0 \
-       9 2 \
-       10 2 \
-     -o segm_input_for_topo_0000.nii.gz
+.. code-block:: text
 
-Step 2 — Run post-hoc topology correction (Docker)
----------------------------------------------------
+   exvivo_posthoc_topology
 
-Follow the Docker instructions in:
 
-``docker/exvivo_docker.md``
+Standalone Workflow
+-------------------
 
-Use:
+The standalone procedure takes the original ``purple-mri`` segmentation,
+creates a topology-model input, runs the topology-correction model, and removes
+the predicted buried-sulcus regions from the original multi-label
+segmentation.
 
-* Input file: ``segm_input_for_topo_0000.nii.gz``
-* Option: ``${OPTION}=exvivo_posthoc_topology``
+Conceptually:
 
-Assume the topology-corrected output produced by the pipeline is:
+.. code-block:: text
 
-``segm_input_for_topo.nii.gz``
+   original purple segmentation
+              |
+              v
+     topology-model input
+              |
+              v
+    exvivo_posthoc_topology
+              |
+              v
+   predicted buried-sulcus regions
+              |
+              v
+     topology-corrected segmentation
+              |
+              v
+        foreground mask
 
-Step 3 — Convert corrected cortical GM back to label=1
-------------------------------------------------------
 
-Extract cortical GM (label 3) from the corrected output
-and remap it back to GM=1:
-
-.. code-block:: bash
-
-   c3d segm_input_for_topo.nii.gz \
-     -retain-labels 3 \
-     -replace 3 1 \
-     -type uchar \
-     -o subj_corrected_gm.nii.gz
-
-This produces a GM-only volume where:
-
-* 1 = corrected cortical GM
-* 0 = elsewhere
-
-Step 4 — Remove original cortical GM from full segmentation
-------------------------------------------------------------
-
-Zero out original cortical GM (label 1) so the corrected GM
-can be inserted cleanly.
-
-.. code-block:: bash
-
-   c3d segm.nii.gz \
-     -replace 1 0 \
-     -type uchar \
-     -o segm_no_gm.nii.gz
-
-Step 5 — Fuse corrected GM back into segmentation
---------------------------------------------------
-
-Overlay corrected GM onto the GM-removed segmentation:
-
-.. code-block:: bash
-
-   c3d subj_corrected_gm.nii.gz segm_no_gm.nii.gz \
-     -add \
-     -type uchar \
-     -o final_segm.nii.gz
-
-Output
-------
-
-Use:
-
-``final_segm.nii.gz``
-
-as the segmentation file for downstream surface-based reconstruction and parcellation.
-
-Summary
+Outputs
 -------
 
-This workflow:
+The main outputs are:
 
-1. Collapses labels to create topology input.
-2. Applies learned post-hoc correction.
-3. Restores corrected cortical GM.
-4. Produces a topology-consistent segmentation suitable for surface extraction.
+.. code-block:: text
+
+   final_segm.nii.gz
+   foreground_mask.nii.gz
+
+where:
+
+* ``final_segm.nii.gz`` is the topology-corrected ``purple-mri`` segmentation.
+* ``foreground_mask.nii.gz`` is the corrected anatomical foreground mask used
+  in downstream processing.
+
+If atlas parcellations have already been generated, the corrected foreground
+mask can also be applied to the parcellation outputs.
+
+See:
+
+:doc:`parcellation`
+
+
+Detailed Instructions
+---------------------
+
+The complete standalone procedure, including the exact ``c3d`` commands,
+topology-model input preparation, Docker inference, keep-mask generation, and
+output creation, is maintained in:
+
+`Topology correction notes <https://github.com/Pulkit-Khandelwal/purple-mri/blob/main/docker/topology_correction_notes.md>`_
+
+For general Docker usage and available segmentation options, see:
+
+`Ex vivo Docker documentation <https://github.com/Pulkit-Khandelwal/purple-mri/blob/main/docker/exvivo_docker.md>`_
+
+
+Next Steps
+----------
+
+After topology correction, proceed to cortical surface reconstruction and
+anatomical parcellation:
+
+:doc:`parcellation`
