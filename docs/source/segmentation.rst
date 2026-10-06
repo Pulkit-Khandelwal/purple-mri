@@ -4,140 +4,199 @@ Segmentation
 Overview
 --------
 
-The segmentation stage produces an initial volumetric labeling for high-resolution postmortem MRI.
-These outputs are used for downstream post-hoc correction, surface reconstruction, and parcellation.
+The segmentation stage produces volumetric anatomical label maps from high-resolution
+postmortem MRI. These segmentations are used for downstream correction, cortical surface
+reconstruction, anatomical parcellation, and quantitative analysis.
 
-The workflow consists of:
+The recommended workflow consists of:
 
-1. Pre-processing (bias correction and normalization)
-2. Deep learning–based inference via Docker
-3. Generation of label maps for the requested task
+1. Pre-processing the MRI using bias-field correction and intensity normalization.
+2. Running the ``purple-mri`` deep learning segmentation pipeline using Docker.
+3. Using the generated label maps for downstream processing.
+
+The complete ex vivo segmentation pipeline can be run using the ``exvivo_all`` option.
+Individual segmentation models can also be run separately; see the detailed Docker
+documentation for the complete list of available models and options.
+
+Current Docker version: ``v1.4.6``.
+
 
 Pre-processing
 --------------
 
-Prior to inference, perform bias correction and intensity normalization/standardization.
+Before segmentation, perform bias-field correction and intensity
+normalization/standardization of the MRI.
 
-Recommended tools:
+Recommended tools include:
 
-* ``N4BiasFieldCorrection`` (ANTs)
-* ``c3d`` (Convert3D)
+* ``N4BiasFieldCorrection`` from ANTs
+* ``c3d`` from Convert3D
 
 We strongly recommend providing an input mask to ``N4BiasFieldCorrection``.
-A coarse mask can be obtained via thresholding.
+A coarse mask can be generated using intensity thresholding.
 
-Example reference script:
+An example bias-correction script is available here:
+
 https://github.com/Pulkit-Khandelwal/upenn-picsl-brain-ex-vivo/tree/main/misc_scripts/perform_bias_correction.sh
+
 
 Input Naming Convention
 -----------------------
 
-Place preprocessed image(s) inside a folder named:
-
-``data_for_inference``
-
-Each image must end with:
-
-``_0000.nii.gz``
-
-Example:
-
-``subject01_0000.nii.gz``
-
-Deep Learning Inference (Docker)
---------------------------------
-
-Docker image:
-https://hub.docker.com/r/pulks/docker_hippogang_exvivo_segm
-
-Step 1 — Prepare the data
--------------------------
-
-Create the following folder structure:
+Place the preprocessed MRI inside a directory named:
 
 .. code-block:: text
 
-   /data/username/data_for_inference/
+   data_for_inference
 
-Place your preprocessed image(s) in ``data_for_inference`` (do not rename this folder).
+Do **not** rename this directory.
 
-Step 2 — Pull the Docker image
+Each input image must end with:
+
+.. code-block:: text
+
+   _0000.nii.gz
+
+For example:
+
+.. code-block:: text
+
+   data_for_inference/
+   └── 100085R_reslice_0000.nii.gz
+
+
+Deep Learning Inference
+-----------------------
+
+The ``purple-mri`` segmentation models are distributed as a Docker image:
+
+https://hub.docker.com/r/pulks/docker_hippogang_exvivo_segm
+
+The recommended approach is to run the complete ex vivo pipeline using
+``exvivo_all``.
+
+
+Step 1 - Prepare the Data
+-------------------------
+
+Place ``data_for_inference`` inside a directory that will be mounted into the
+Docker container.
+
+For example:
+
+.. code-block:: text
+
+   /data/pulkit/docker_stuff/data_for_inference_v146/
+   └── data_for_inference/
+       └── 100085R_reslice_0000.nii.gz
+
+In this example, the directory:
+
+.. code-block:: text
+
+   /data/pulkit/docker_stuff/data_for_inference_v146/
+
+will be mounted to ``/data/exvivo`` inside the Docker container.
+
+
+Step 2 - Pull the Docker Image
 ------------------------------
 
-Replace ``${LATEST_TAG}`` with the latest available version (see Docker changelog).
+Pull version ``v1.4.6`` of the Docker image:
 
 .. code-block:: bash
 
-   docker pull pulks/docker_hippogang_exvivo_segm:v${LATEST_TAG}
+   docker pull pulks/docker_hippogang_exvivo_segm:v1.4.6
 
-Step 3 — Run the Docker container
----------------------------------
 
-Run the following command to start inference. The volume mount should point to the directory
-that contains ``data_for_inference`` (here: ``/data/username/``).
+Step 3 - Run the Complete Ex Vivo Pipeline
+------------------------------------------
+
+The following is an example command for running the complete ex vivo segmentation
+pipeline:
 
 .. code-block:: bash
 
-   docker run --gpus all --privileged \
-     -v /data/username/:/data/exvivo/ \
-     -it pulks/docker_hippogang_exvivo_segm:v${LATEST_TAG} \
-     /bin/bash -c "bash /src/commands_nnunet_inference.sh ${OPTION}" >> logs.txt
+   docker run --rm --gpus all --shm-size=8g 
+     -v /data/pulkit/docker_stuff/data_for_inference_v146:/data/exvivo 
+     pulks/docker_hippogang_exvivo_segm:v1.4.6 
+     /bin/bash /src/commands_nnunet_inference.sh exvivo_all
 
-Replace:
+Here:
 
-* ``${LATEST_TAG}`` with the Docker version
-* ``${OPTION}`` with one of the options listed below
+* ``--rm`` removes the Docker container automatically after the run finishes.
+* ``--gpus all`` makes the available NVIDIA GPU(s) accessible to the container.
+* ``--shm-size=8g`` provides additional shared memory for inference.
+* ``-v`` mounts the host directory containing ``data_for_inference`` to
+  ``/data/exvivo`` inside the container.
+* ``v1.4.6`` specifies the Docker image version.
+* ``exvivo_all`` runs the complete ex vivo segmentation pipeline.
 
-Model / Task Options
---------------------
 
-Choose one of the following options depending on the segmentation or utility you need:
+Running Individual Segmentation Models
+--------------------------------------
 
-* ``${OPTION}=exvivo_t2w``  
-  Model trained on ex vivo T2w MRI to produce the 10-label segmentation.  
-  **Note:** use this option for **FLASH MRI as well** (current recommendation; dt: 05/05/2025).
+The example above uses ``exvivo_all`` because this is the recommended option for
+running the complete segmentation workflow.
 
-* ``${OPTION}=exvivo_flash_more_subcort``  
-  FLASH (T2*) model that adds four additional labels: hypothalamus, optic chiasm,
-  anterior commissure, fornix.
+Individual segmentation models can also be run separately by replacing
+``exvivo_all`` with the corresponding model option.
 
-* ``${OPTION}=exvivo_ciss_t2w``  
-  Multi-input model intended to address anterior/posterior missing segmentation issues.
+Available models include segmentation of cortical and subcortical structures,
+MTL and amygdala subfields, thalamus, additional FLASH structures, and other
+specialized tasks.
 
-* ``${OPTION}=exvivo_flash_thalamus``  
-  FLASH model for thalamus segmentation.
+For the complete list of available ``${OPTION}`` values and instructions for
+running individual models, see:
 
-* ``${OPTION}=invivo_flair_wmh``  
-  White matter hyperintensity segmentation for in vivo FLAIR MRI. The image should be
-  skull-stripped and normalized/standardized.
+`Detailed Docker documentation <https://github.com/Pulkit-Khandelwal/purple-mri/blob/main/docker/exvivo_docker.md>`_
 
-* ``${OPTION}=exvivo_flash_gm_wm_segm``  
-  FLASH model trained for GM/WM segmentation.
-
-* ``${OPTION}=exvivo_posthoc_topology``  
-  Model for post-hoc topology correction (bridge/sulcal-GM connection mitigation).
-
-* ``${OPTION}=exvivo_umc_strip_cerebellum``  
-  Utility to strip cerebellum from UMC MRI.
 
 Output
 ------
 
-The output is written to:
+Segmentation outputs are written back to the mounted ``data_for_inference``
+directory on the host machine.
 
-``/your/path/to/data_for_inference/output_from_nnunet_inference``
+The main output directory is:
+
+.. code-block:: text
+
+   data_for_inference/
+   └── output_from_nnunet_inference/
+
+The exact contents of ``output_from_nnunet_inference`` depend on whether the
+complete ``exvivo_all`` pipeline or an individual segmentation model is run.
+
+Because the input directory is mounted into the Docker container, all generated
+outputs remain available on the host machine after the container exits.
+
 
 Notes
 -----
 
-* You may see warnings printed during inference; these can typically be ignored.
-* Expected runtime is approximately ~15 minutes for ex vivo whole-hemisphere inference
-  (hardware dependent).
-* For in vivo FLAIR WMH, inference typically completes in ~1 minute.
+* Input NIfTI files must follow the ``*_0000.nii.gz`` naming convention.
+* The input directory must be named ``data_for_inference``.
+* The current documented Docker version is ``v1.4.6``.
+* Warnings may appear in the terminal during inference; if the pipeline continues
+  normally, these can generally be ignored.
+* Runtime depends on the selected model, image size, and available GPU hardware.
+* Use ``exvivo_all`` when the complete ex vivo segmentation workflow is desired.
+* Use an individual model option when only a particular segmentation task is needed.
 
-Next Step
----------
 
-For topology stabilization prior to surface reconstruction, see:
+Additional Docker Documentation
+-------------------------------
+
+Detailed documentation for the Docker image, including all available model options
+and the Docker version change log, is available here:
+
+`Ex vivo Docker documentation <https://github.com/Pulkit-Khandelwal/purple-mri/blob/main/docker/exvivo_docker.md>`_
+
+
+Post-hoc Topology Correction
+----------------------------
+
+Documentation for standalone post-hoc topology correction is available here:
 
 :doc:`posthoc_correction`
