@@ -1,7 +1,7 @@
 purple-mri
 ==========
 
-``purple-mri`` (**PURPLE-MRI**; Penn Utilities for Registration and Parcellation of Ex vivo MRI)
+``purple-mri`` (Penn Utilities for Registration and Parcellation of Ex vivo MRI)
 is a computational framework for segmentation, registration, cortical surface
 reconstruction, anatomical parcellation, and group-level analysis of
 ultra-high-resolution postmortem human brain MRI.
@@ -226,14 +226,15 @@ Software Ecosystem
    :align: center
 
 
+
+
 Development and Collaborating Institutions
 ------------------------------------------
 
-``purple-mri`` was initiated at Penn and has continued to evolve through
+``purple-mri`` was developed at the University of Pennsylvania and has continued to evolve through
 collaborative research at Penn Medicine, the PATCH Lab, Harvard Medical School,
 the Athinoula A. Martinos Center for Biomedical Imaging, and Mass General
-Brigham.
-
+Brigham. It is maintained by Pulkit Khandelwal.
 
 .. raw:: html
 
