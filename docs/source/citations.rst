@@ -47,4 +47,4 @@ In *International Workshop on Simulation and Synthesis in Medical Imaging
 Khandelwal, P., et al. (2026).
 Cortical reconstruction and anatomical parcellation of high-resolution
 multi-modal postmortem ex vivo MRI of the human infant brain.
-In *PIPPI Workshop, MICCAI 2026*.
+In *Preterm, Perinatal and Paediatric Image Analysis (PIPPI) Workshop, MICCAI 2026*.
