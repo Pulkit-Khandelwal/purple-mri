@@ -248,6 +248,10 @@ Brigham. It is maintained by Pulkit Khandelwal.
         margin-bottom:25px;
    ">
 
+     <img src="_static/p9.png"
+          alt="Penn Medicine"
+          style="max-width:180px; max-height:85px; object-fit:contain;">
+
      <img src="_static/p2.png"
           alt="Penn Medicine"
           style="max-width:180px; max-height:85px; object-fit:contain;">
