@@ -1,111 +1,330 @@
-# purple-mri: **P**enn **U**tilities for **R**egistration and **P**arcel**L**ation of **E**x vivo **MRI**
+# purple-mri
 
-We provide a set of tools packaged as `purple-mri` for segmentation, parcellation and registration of ultra high-resolution (< 300 microns) postmortem human brain hemisphere at 7 tesla t2w MRI at native subject-space resolution. This pipeline leverages advances in both deep learning and classical surface-based modeling techniques to produce parcellations in any atlas used in neuroimaging. The developed method allows us to perform vertex-wise analysis in the template space and thereby link morphometry measures with pathology measurements derived from histology.
+**Penn Utilities for Registration and Parcellation of Ex vivo MRI**
 
-Check out the [project page](https://pulkit-khandelwal.github.io/exvivo-brain-upenn/) and documentation [here](https://purple-mri.readthedocs.io/en/latest/).
+`purple-mri` is a computational framework for segmentation, registration,
+cortical surface reconstruction, anatomical parcellation, template
+construction, and group-level analysis of ultra-high-resolution postmortem
+human brain MRI.
 
-In particular, `purple-mri` allows you to do the following:
-+ obtain surface-based cortical reconstruction and native subject-space parcellation based on different brain atlases
-+ create population specific volumetric and surface-based templates
-+ perform exvivo to invivo registration in volumetric intensity space
-+ perform surface-to-surface registration between exvivo or invivo
-+ perform intensity-based registration between 9.4 tesla MTL to 7 tesla whole hemsiphere registration
-+ perform vertex-wise and group-wise generalized linear modeling analysis for exvivo subject population for morphometry and histology
+The framework combines deep learning-based volumetric segmentation with
+classical registration and surface-based modeling methods to enable
+native-space anatomical parcellation and quantitative morphometric analysis of
+postmortem MRI.
 
-## Steps (for segmentation and parcellation)
-`purple-mri` follows a series of steps making use of bash scripts and Docker.
+📖 **Documentation:** https://purple-mri.readthedocs.io/en/latest/
 
-### Pre-processing
-Perform bias correction and image normalization/standardization. We use `N4BiasFieldCorrection` as part of the CLI tool [ANTs](https://github.com/ANTsX/ANTs) and [`c3d`](http://www.itksnap.org/pmwiki/pmwiki.php?n=Convert3D.Convert3D). We highly recommend using the option of an input mask in `N4BiasFieldCorrection` which can be obtained via corase threhsolding.
-[Here](https://github.com/Pulkit-Khandelwal/upenn-picsl-brain-ex-vivo/tree/main/misc_scripts/perform_bias_correction.sh) is a sample script.
+🌐 **Project page:** https://pulkit-khandelwal.github.io/exvivo-brain-upenn/
 
-### Deep learning-based initial labeling
-Currently, we have two Docker images. The first image provides the segmentation and the second employs [Nighres/CRUISE](https://nighres.readthedocs.io/en/latest/installation.html) for post-hoc topology correction. 
-Please follow the [link](https://github.com/Pulkit-Khandelwal/upenn-picsl-brain-ex-vivo/blob/main/exvivo-segm-demo-docker.md) for detailed instructions on how to use Docker to get the segmentations. For this, we also have the singularity image at the same link. Some key commands are emphasized here:
 
-Place the pre-processed image(s) (with a suffix _0000.nii.gz to your filenames) in a folder named `data_for_inference` within your working directory as `/your/working/directory`.
-```
-docker pull pulks/docker_hippogang_exvivo_segm:v${LATEST_TAG}
+## Capabilities
 
-docker run --gpus all --privileged -v /your/working/directory/:/data/exvivo/ -it pulks/docker_hippogang_exvivo_segm:v${LATEST_TAG} /bin/bash -c "bash /src/commands_nnunet_inference.sh ${OPTION}" >> logs.txt
-```
-You will see the output in `/your/working/directory/data_for_inference/output_from_nnunet_inference`.
+`purple-mri` supports:
 
-### Deep learning-based topology correction
-Goal: adjoining gyri and sulci should be clearly separated.
-Follow detailed instructions [here](https://github.com/Pulkit-Khandelwal/purple-mri/blob/main/docker/topology_correction_notes.md)
+- automated multi-label segmentation of postmortem MRI;
+- deep learning-based post-hoc topology correction;
+- cortical white- and pial-surface reconstruction;
+- native-space anatomical parcellation;
+- multiple cortical atlases, including DKT, Destrieux, Schaefer,
+  HCP-MMP1/Glasser, Jülich, Brainnetome, and von Economo-Koskinas;
+- infant-specific cortical reconstruction and parcellation, including M-CRIB-S;
+- ex vivo to in vivo volumetric registration;
+- population-specific volumetric template construction;
+- cortical thickness, area, curvature, and regional morphometry;
+- ROI-wise, vertex-wise, and deformation-based group analyses.
 
-### Surface-based modeling to obtain whole-hemisphere parcellations
-Once, you have obtained an initial 10-label topology-corrected volumetric segmentation, you can proceed to the surface-based pipeline to obtain parcellations based on your favorite atlas. This step will be on your local machine. No GPUs are required. To do this, you should have FreeSurfer installed locally. We have used FreeSurfer version 7.4.0 on linux obtained from [here](https://surfer.nmr.mgh.harvard.edu/fswiki/DownloadAndInstall). Moreover, there are some Python dependencies that can be found in the `dependencies.txt` file and installed using `pip`.
 
-Run the following file which calls in several bash scripts which prepare the data, computes appropriate transformations and re-orients the images, corrects surface topology, and perform the parcellation into Desikan-Killiany-Tourville (DKT), Schaefer, Glasser, Jülich, Brainnetome, MCRIBS, Von Economo-Koskinos atlases.
+## Workflow
 
-Clone the current repository and then run the following script `run_surface_pipeline.sh` from within the `purple_mri` folder which takes the following mandatory arguments:
-`freesurfer_path`: path to the FreeSurfer installation
-`working_dir`: directory which will have the outputs for each subject stored
-`mri_path`: mri images path
-`segm_path`: 10-label segmentation path
-`external_atlases_path`: directory with files for other atlases
-`num_threads`: number of threads
-`hemis`: rh or lh
+A typical workflow is:
 
-Place your t2w MRI in a folder `mri_path` and the initial deep learning-based segmentations in `segm_path`.
-Make sure your mri images and segmentation files have the same names ending with `.nii.gz`.
-Place the `fsaverage` in the `working_dir` folder.
-
-**IMPORTANT NOTE ON PIAL SURFACE PLACEMENT:**
-For the pial surface placement only in the `purple-mri` parcellation workflow uses a custom compiled FreeSurfer `mris_place_surface` binary. To avoid requiring users to compile this binary locally, we provide it as a Docker image archive through the GitHub release: https://github.com/Pulkit-Khandelwal/purple-mri/releases/tag/v0.1.0-fs-binary-docker. Please follow the instructions [here](https://github.com/Pulkit-Khandelwal/purple-mri/blob/main/docker/pial_surface_binary_docker_singularity.md) and then continue below.
-
-```
-cd purple_mri
-
-bash run_surface_pipeline.sh freesurfer_path working_dir mri_path segm_path external_atlases_path num_threads rh
-```
-
-### Installation using `pip`
-This might not be up-to-date, so please use the bash scripts directly. You have the option to run the surface-based pipeline as a `pip` package available at [PyPI](https://pypi.org/project/purple-mri/0.0.1/) and can be installed as:
-
-```
-pip3 install purple-mri
+```text
+Postmortem MRI
+      |
+      v
+Pre-processing
+      |
+      v
+Deep learning segmentation
+      |
+      v
+Post-hoc topology correction
+      |
+      v
+Cortical surface reconstruction
+      |
+      v
+Anatomical parcellation
+      |
+      v
+Registration / morphometry
+      |
+      v
+Group and pathology analyses
 ```
 
-Or, using the latest development code:
 
-```
+## Installation
+
+Clone the repository:
+
+```bash
 git clone https://github.com/Pulkit-Khandelwal/purple-mri.git
 cd purple-mri
-pip3 install pkg_src
 ```
 
-Place the `fsaverage` in the `working_dir` folder. The CLI options remain the same as above but this time you have to pass in the last argument as the path to `autodet.gw.stats.binary.rh.dat`.
+Install the Python dependencies:
 
-Once, installed you can run, `purple_mri` as:
+```bash
+pip install -r dependencies.txt
 ```
-python3 -m purple_mri freesurfer_path working_dir mri_path segm_path external_atlases_path num_threads /path/to/autodet.gw.stats.binary.rh.dat
+
+Different workflows require additional software such as Docker, FreeSurfer,
+`c3d`, ANTs, and `greedy`.
+
+See the full installation guide:
+
+https://purple-mri.readthedocs.io/en/latest/installation.html
+
+
+## Segmentation
+
+Input NIfTI images should be placed inside a directory named:
+
+```text
+data_for_inference/
 ```
 
-## Other scripts
-### Intensity-based volumetric template building
-We build intensity-based volumetric templates using the [greedy](https://sites.google.com/view/greedyreg/about?authuser=0) tool. The required binaries (for Linux) and the scripts are located in the `intensity_template` within the `scripts` directory. Follow the instructions [here](https://github.com/Pulkit-Khandelwal/purple-mri/blob/main/scripts/intensity_template/README.md).
+with filenames ending in:
+
+```text
+_0000.nii.gz
+```
+
+The currently documented Docker image is:
+
+```bash
+docker pull pulks/docker_hippogang_exvivo_segm:v1.4.6
+```
+
+The recommended complete workflow uses:
+
+```text
+exvivo_all
+```
+
+Example:
+
+```bash
+docker run --rm --gpus all --shm-size=8g \
+  -v /path/to/working_directory:/data/exvivo \
+  pulks/docker_hippogang_exvivo_segm:v1.4.6 \
+  /bin/bash /src/commands_nnunet_inference.sh exvivo_all
+```
+
+Individual segmentation models can also be run separately.
+
+Detailed Docker documentation:
+
+https://github.com/Pulkit-Khandelwal/purple-mri/blob/main/docker/exvivo_docker.md
+
+Segmentation documentation:
+
+https://purple-mri.readthedocs.io/en/latest/segmentation.html
 
 
-### Ex vivo and in vivo registration
-Script `exvivo_invivo_greedy_registration.sh` to register in vivo (t1w) and ex vivo (t2w) MRI is located in the folder `scripts`. We use [greedy](https://sites.google.com/view/greedyreg/about?authuser=0) to register the segmentations of in vivo aseg+aparc labels derived from FreeSurfer and 10-label initial deep learning segmentation of postmortem MRI. The warps are then used to register the MRIs.
+## Post-hoc Topology Correction
 
-### Perform GLM analyses
-We perform vertex-wise analysis in `fsaverage` space to fit a generalized linear model (GLM) between cortical thickness (mm) and with global ratings of amyloid-β, Braak staging, CERAD, and semiquantitative ratings of the medial temporal lobe (MTL) neuronal loss and tau pathology, with age, sex and postmortem interval (PMI) as covariates. You can follow the steps detailed [here](https://github.com/Pulkit-Khandelwal/purple-mri/tree/main/glm). The same can be repeated for the Deformation-based morphometry.
+The topology-correction model identifies buried-sulcus regions that should be
+removed from the original `purple-mri` segmentation.
 
-## Introductory video
+Standalone topology correction uses:
+
+```text
+exvivo_posthoc_topology
+```
+
+Detailed instructions:
+
+https://github.com/Pulkit-Khandelwal/purple-mri/blob/main/docker/topology_correction_notes.md
+
+Documentation:
+
+https://purple-mri.readthedocs.io/en/latest/posthoc_correction.html
+
+
+## Cortical Surface Reconstruction and Parcellation
+
+Once a topology-corrected segmentation has been obtained, use the
+surface-based pipeline to reconstruct the cortex and generate anatomical
+parcellations.
+
+The user-facing entry point is:
+
+```text
+purple_mri/run_surface_pipeline.sh
+```
+
+Run:
+
+```bash
+cd purple_mri
+
+bash run_surface_pipeline.sh \
+  freesurfer_path \
+  working_dir \
+  mri_path \
+  segm_path \
+  external_atlases_path \
+  num_threads \
+  rh
+```
+
+The final argument can be either:
+
+```text
+rh
+```
+
+or:
+
+```text
+lh
+```
+
+The MRI and segmentation files must have matching `.nii.gz` filenames.
+
+Place `fsaverage` inside the working directory.
+
+
+### Pial Surface Placement
+
+Pial-surface placement uses a custom compiled FreeSurfer
+`mris_place_surface` binary distributed as a Docker/Singularity container.
+
+Setup instructions:
+
+https://github.com/Pulkit-Khandelwal/purple-mri/blob/main/docker/pial_surface_binary_docker_singularity.md
+
+Release:
+
+https://github.com/Pulkit-Khandelwal/purple-mri/releases/tag/v0.1.0-fs-binary-docker
+
+Once configured, it is called automatically by the surface pipeline.
+
+
+### Cortical Atlases
+
+The standard postmortem surface pipeline supports atlases including:
+
+- Desikan-Killiany
+- Destrieux
+- DKT
+- Brainnetome
+- HCP-MMP1 / Glasser
+- Schaefer2018 400 parcels / 17 networks
+- Jülich
+- von Economo-Koskinas
+
+The repository also contains a dedicated infant workflow with support for
+M-CRIB-S:
+
+https://github.com/Pulkit-Khandelwal/purple-mri/tree/main/purple_mri/infant_scripts
+
+Full parcellation documentation:
+
+https://purple-mri.readthedocs.io/en/latest/parcellation.html
+
+
+## Ex vivo to In vivo Registration
+
+The paired ex vivo/in vivo registration workflow uses `greedy` to register
+postmortem MRI to matched antemortem MRI.
+
+The current implementation is:
+
+```text
+scripts/registration_exvivo_invivo_greedy_v2.sh
+```
+
+Documentation:
+
+https://purple-mri.readthedocs.io/en/latest/registration.html
+
+
+## Population Template Construction
+
+Population-specific ex vivo MRI templates are constructed using iterative
+registration with `greedy`.
+
+Scripts are located in:
+
+```text
+scripts/intensity_template/
+```
+
+Documentation:
+
+https://purple-mri.readthedocs.io/en/latest/template_construction.html
+
+
+## Group Analysis
+
+The repository includes workflows for:
+
+- vertex-wise cortical morphometry;
+- generalized linear modeling;
+- deformation-based morphometry;
+- ROI-wise statistical analysis;
+- integration of morphometry with neuropathological measurements.
+
+Surface GLM scripts are located in:
+
+```text
+glm/
+```
+
+Documentation:
+
+https://purple-mri.readthedocs.io/en/latest/group_analysis.html
+
+
+## Development
+
+`purple-mri` was conceived by **Pulkit Khandelwal and Paul A. Yushkevich**
+and originated from doctoral research in the PATCH Lab within the Penn Image
+Computing and Science Laboratory (PICSL) at the University of Pennsylvania.
+
+The framework was developed through collaborations with the Penn Alzheimer's
+Disease Research Center and Penn Frontotemporal Degeneration Center and has
+subsequently expanded at Massachusetts General Hospital, Harvard Medical
+School, and the Athinoula A. Martinos Center for Biomedical Imaging toward
+high-resolution multimodal postmortem imaging of the developing human brain,
+including collaborative work with Boston Children's Hospital.
+
+See the documentation homepage for additional background:
+
+https://purple-mri.readthedocs.io/en/latest/
+
+
+## Introductory Video
+
 <div align="center">
-      <a href="https://youtu.be/DBdzbIAJBw4">
-         <img src="https://github.com/Pulkit-Khandelwal/purple-mri/blob/main/images/thumbnail.png" style="width:75%;">
-      </a>
+  <a href="https://youtu.be/DBdzbIAJBw4">
+    <img src="https://github.com/Pulkit-Khandelwal/purple-mri/blob/main/images/thumbnail.png"
+         style="width:75%;">
+  </a>
 </div>
 
-## Citations
-+ Khandelwal, P., 2025. Postmortem Image Analysis of the Human Brain to Characterize Alzheimer’s Disease and Related Dementias (Doctoral dissertation, University of Pennsylvania).
-+ Khandelwal, P., Duong, M. T., Sadaghiani, S., Lim, S., Denning, A. E., Chung, E., ... & Yushkevich, P. A. (2024). Automated deep learning segmentation of high-resolution 7 tesla postmortem MRI for quantitative analysis of structure-pathology correlations in neurodegenerative diseases. Imaging Neuroscience, 2, 1-30. 2024.
-+ Khandelwal, Pulkit, et al. "Surface-Based Parcellation and Vertex-wise Analysis of Ultra High-resolution ex vivo 7 tesla MRI in Alzheimer’s disease and related dementias." International Workshop on Machine Learning in Clinical Neuroimaging. Springer, Cham, MICCAI 2024.
-+ Khandelwal, Pulkit, et al. "VIOLET: Volumetric Image registration via Optimization and Learning for Efficient image Translation." International Workshop on Simulation and Synthesis in Medical Imaging. Cham: Springer Nature Switzerland, 2025.
-+ Khandelwal, P., Duong, M.T., Levorse, L.M., Trotman, W., Bahena, A., Lim, S.A., Denning, A.E., Chung, E., Olm, C.A., Radhakrishnan, H. and Ittyerah, R., 2026. Postmortem brain MRI reveals differential associations of subcortical and limbic volumes with cortical thinning and neurodegenerative pathologies. Alzheimer's & Dementia, 22(7), p.e71649.
-+ Khandelwal, Pulkit, et al. "Cortical reconstruction and anatomical parcellation of high-resolution multi-modal postmortem ex vivo MRI of the human infant brain." PIPPI Workshop. MICCAI (2026)
+
+## Citation
+
+If you use `purple-mri` in academic work, please cite the relevant publications
+listed here:
+
+https://purple-mri.readthedocs.io/en/latest/citations.html
+
+
+## License
+
+Please see the repository license for terms of use.
