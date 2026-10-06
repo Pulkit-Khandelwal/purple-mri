@@ -4,19 +4,24 @@ Segmentation
 Overview
 --------
 
-The segmentation stage produces volumetric anatomical label maps from high-resolution
-postmortem MRI. These segmentations are used for downstream correction, cortical surface
-reconstruction, anatomical parcellation, and quantitative analysis.
+The segmentation stage produces volumetric anatomical label maps from
+high-resolution postmortem MRI. These segmentations are used for downstream
+topology correction, cortical surface reconstruction, anatomical parcellation,
+and quantitative analysis.
 
 The recommended workflow consists of:
 
 1. Pre-processing the MRI using bias-field correction and intensity normalization.
 2. Running the ``purple-mri`` deep learning segmentation pipeline using Docker.
-3. Using the generated label maps for downstream processing.
+3. Performing post-hoc topology correction.
+4. Using the corrected segmentation for downstream surface reconstruction and
+   anatomical parcellation.
 
-The complete ex vivo segmentation pipeline can be run using the ``exvivo_all`` option.
-Individual segmentation models can also be run separately; see the detailed Docker
-documentation for the complete list of available models and options.
+The complete ex vivo segmentation pipeline can be run using the
+``exvivo_all`` option.
+
+Individual segmentation models can also be run separately. See the detailed
+Docker documentation for the complete list of available models and options.
 
 Current Docker version: ``v1.4.6``.
 
@@ -72,8 +77,12 @@ The ``purple-mri`` segmentation models are distributed as a Docker image:
 
 https://hub.docker.com/r/pulks/docker_hippogang_exvivo_segm
 
-The recommended approach is to run the complete ex vivo pipeline using
-``exvivo_all``.
+The recommended approach is to run the complete ex vivo segmentation pipeline
+using:
+
+.. code-block:: text
+
+   exvivo_all
 
 
 Step 1 - Prepare the Data
@@ -112,8 +121,8 @@ Pull version ``v1.4.6`` of the Docker image:
 Step 3 - Run the Complete Ex Vivo Pipeline
 ------------------------------------------
 
-The following is an example command for running the complete ex vivo segmentation
-pipeline:
+The following is an example command for running the complete ex vivo
+segmentation pipeline:
 
 .. code-block:: bash
 
@@ -136,8 +145,8 @@ Here:
 Running Individual Segmentation Models
 --------------------------------------
 
-The example above uses ``exvivo_all`` because this is the recommended option for
-running the complete segmentation workflow.
+The example above uses ``exvivo_all`` because this is the recommended option
+for running the complete segmentation workflow.
 
 Individual segmentation models can also be run separately by replacing
 ``exvivo_all`` with the corresponding model option.
@@ -155,8 +164,8 @@ running individual models, see:
 Output
 ------
 
-Segmentation outputs are written back to the mounted ``data_for_inference``
-directory on the host machine.
+Segmentation outputs are written back to the mounted
+``data_for_inference`` directory on the host machine.
 
 The main output directory is:
 
@@ -172,31 +181,55 @@ Because the input directory is mounted into the Docker container, all generated
 outputs remain available on the host machine after the container exits.
 
 
+Post-hoc Topology Correction
+----------------------------
+
+Post-hoc topology correction identifies and removes predicted buried-sulcus
+regions from the original ``purple-mri`` segmentation.
+
+When using the complete ``exvivo_all`` workflow, topology correction forms part
+of the complete ex vivo processing pipeline.
+
+Topology correction can also be run independently using:
+
+.. code-block:: text
+
+   exvivo_posthoc_topology
+
+The complete standalone procedure, including creation of the topology-model
+input, removal of predicted buried-sulcus regions, and generation of the
+corrected foreground mask, is described here:
+
+:doc:`posthoc_correction`
+
+
 Notes
 -----
 
 * Input NIfTI files must follow the ``*_0000.nii.gz`` naming convention.
 * The input directory must be named ``data_for_inference``.
 * The current documented Docker version is ``v1.4.6``.
-* Warnings may appear in the terminal during inference; if the pipeline continues
-  normally, these can generally be ignored.
+* Warnings may appear in the terminal during inference; if the pipeline
+  continues normally, these can generally be ignored.
 * Runtime depends on the selected model, image size, and available GPU hardware.
 * Use ``exvivo_all`` when the complete ex vivo segmentation workflow is desired.
-* Use an individual model option when only a particular segmentation task is needed.
+* Use an individual model option when only a particular segmentation task is
+  needed.
 
 
 Additional Docker Documentation
 -------------------------------
 
-Detailed documentation for the Docker image, including all available model options
-and the Docker version change log, is available here:
+Detailed documentation for the Docker image, including all available model
+options and the Docker version change log, is available here:
 
 `Ex vivo Docker documentation <https://github.com/Pulkit-Khandelwal/purple-mri/blob/main/docker/exvivo_docker.md>`_
 
 
-Post-hoc Topology Correction
-----------------------------
+Next Steps
+----------
 
-Documentation for standalone post-hoc topology correction is available here:
+After segmentation and topology correction, proceed to cortical surface
+reconstruction and anatomical parcellation:
 
-:doc:`posthoc_correction`
+:doc:`parcellation`
