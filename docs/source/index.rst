@@ -225,7 +225,9 @@ Software Ecosystem
    :width: 900px
    :align: center
 
+.. raw:: html
 
+   <div style="height: 40px;"></div>
 
 
 Development and Collaborating Institutions
