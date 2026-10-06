@@ -8,17 +8,18 @@ RUN apt update \
 RUN apt install -y python3-pip
 RUN python3.8 -m pip install --upgrade pip
 RUN pip3 install virtualenv setuptools wheel
-RUN virtualenv -p python3.8 ml
-RUN mkdir -p /data/exvivo
+RUN virtualenv -p python3.8 /ml
+RUN mkdir -p /data/exvivo /src
 
-COPY ./commands_nnunet_inference.sh src/
-COPY ./requirements.txt src/
-
-RUN /bin/bash -c "cd src \
-    && source /ml/bin/activate \
-    && pip3 install -r requirements.txt --use-pep517"
+# Install dependencies before copying scripts so script edits reuse this layer.
+COPY ./requirements.txt /src/requirements.txt
+RUN /bin/bash -c "source /ml/bin/activate \
+    && python -m pip install -r /src/requirements.txt --use-pep517"
 
 COPY sitecustomize.py /usr/lib/python3.8/sitecustomize.py
 COPY ./network_architecture/* /ml/src/nnunet/nnunet/network_architecture/
 COPY ./network_trainer/* /ml/src/nnunet/nnunet/training/network_training/
 COPY ./nnunet_paths_that_it_requires/ /src/nnunet_paths_that_it_requires/
+
+COPY ./commands_nnunet_inference.sh /src/
+COPY ./merge_exvivo.py /src/merge_exvivo.py
