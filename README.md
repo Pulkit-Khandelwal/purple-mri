@@ -14,9 +14,6 @@ postmortem MRI.
 
 📖 **Documentation:** https://purple-mri.readthedocs.io/en/latest/
 
-🌐 **Project page:** https://pulkit-khandelwal.github.io/exvivo-brain-upenn/
-
-
 ## Capabilities
 
 `purple-mri` supports:
