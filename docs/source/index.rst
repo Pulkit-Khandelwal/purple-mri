@@ -229,49 +229,50 @@ Software Ecosystem
 
    <div style="height: 40px;"></div>
 
-
 Development and Collaborating Institutions
 ------------------------------------------
 
-``purple-mri`` was developed at the University of Pennsylvania and has continued to evolve through
-collaborative research at Penn Medicine, the PATCH Lab, Harvard Medical School,
-the Athinoula A. Martinos Center for Biomedical Imaging, and Mass General
-Brigham. It is maintained by Pulkit Khandelwal.
+``purple-mri`` was initiated at Penn and has continued to evolve through
+collaborative research at the University of Pennsylvania, Penn Medicine, the
+PATCH Lab, Harvard Medical School, the Athinoula A. Martinos Center for
+Biomedical Imaging, and Mass General Brigham. It is maintained by Pulkit
+Khandelwal.
 
 .. raw:: html
 
    <div style="
         display:flex;
-        flex-wrap:wrap;
+        flex-wrap:nowrap;
         justify-content:center;
         align-items:center;
-        gap:28px 38px;
-        margin-top:25px;
-        margin-bottom:25px;
+        gap:28px;
+        margin-top:30px;
+        margin-bottom:20px;
+        overflow-x:auto;
    ">
 
      <img src="_static/p9.png"
-          alt="Penn Medicine"
-          style="max-width:180px; max-height:85px; object-fit:contain;">
+          alt="University of Pennsylvania"
+          style="height:72px; width:auto; object-fit:contain; flex:0 0 auto;">
 
      <img src="_static/p2.png"
           alt="Penn Medicine"
-          style="max-width:180px; max-height:85px; object-fit:contain;">
+          style="height:72px; width:auto; object-fit:contain; flex:0 0 auto;">
 
      <img src="_static/p7.png"
           alt="PATCH Lab"
-          style="max-width:145px; max-height:120px; object-fit:contain;">
+          style="height:72px; width:auto; object-fit:contain; flex:0 0 auto;">
 
      <img src="_static/p5.png"
           alt="Harvard Medical School"
-          style="max-width:255px; max-height:85px; object-fit:contain;">
+          style="height:72px; width:auto; object-fit:contain; flex:0 0 auto;">
 
      <img src="_static/p6.jpg"
           alt="Athinoula A. Martinos Center for Biomedical Imaging"
-          style="max-width:180px; max-height:105px; object-fit:contain;">
+          style="height:72px; width:auto; object-fit:contain; flex:0 0 auto;">
 
      <img src="_static/p4.png"
           alt="Mass General Brigham"
-          style="max-width:260px; max-height:80px; object-fit:contain;">
+          style="height:72px; width:auto; object-fit:contain; flex:0 0 auto;">
 
    </div>
