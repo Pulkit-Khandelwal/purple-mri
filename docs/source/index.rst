@@ -1,10 +1,10 @@
 purple-mri
 ==========
 
-``purple-mri`` (**P**enn **U**tilities for **R**egistration and **P**arce**L**ation
-of **E**x vivo **MRI**) is a computational framework for segmentation,
-registration, cortical surface reconstruction, anatomical parcellation, and
-group-level analysis of ultra-high-resolution postmortem human brain MRI.
+``purple-mri`` (**PURPLE-MRI**; Penn Utilities for Registration and Parcellation of Ex vivo MRI)
+is a computational framework for segmentation, registration, cortical surface
+reconstruction, anatomical parcellation, and group-level analysis of
+ultra-high-resolution postmortem human brain MRI.
 
 The toolkit was originally developed for ex vivo whole-hemisphere MRI acquired
 at submillimeter resolution, including approximately 300 µm isotropic 7 Tesla
@@ -49,8 +49,7 @@ Core Capabilities
 * surface-based anatomical parcellation using multiple established cortical
   atlases, including DKT, Destrieux, Schaefer, HCP-MMP1/Glasser, Jülich,
   Brainnetome, and von Economo-Koskinas;
-* infant-specific cortical reconstruction and parcellation, including
-  M-CRIB-S;
+* infant-specific cortical reconstruction and parcellation, including M-CRIB-S;
 * ex vivo to in vivo volumetric registration using classical optimization and
   learning-based methods;
 * population-specific volumetric template construction;
@@ -75,27 +74,30 @@ Development and Evolution
 <https://www.med.upenn.edu/sbia/>`_.
 
 The framework was conceived by **Pulkit Khandelwal and Paul A. Yushkevich**
-and grew out of Pulkit Khandelwal's doctoral research at Penn on computational
+and grew out of Khandelwal's doctoral research at Penn on the computational
 analysis of ultra-high-resolution postmortem MRI in Alzheimer's disease and
-related dementias. The initial work focused on developing methods for
-segmentation, image registration, cortical surface reconstruction, anatomical
-parcellation, and quantitative morphometric analysis of high-resolution
-postmortem human brain MRI.
+related dementias.
+
+The initial development focused on segmentation, image registration, cortical
+surface reconstruction, anatomical parcellation, spatial normalization, and
+quantitative morphometric analysis of high-resolution postmortem human brain
+MRI.
 
 The development of ``purple-mri`` was closely integrated with Penn's broader
-neurodegeneration research ecosystem. In particular, collaborations with the
+neurodegeneration research ecosystem. Collaborations with the
 `Penn Alzheimer's Disease Research Center (ADRC)
 <https://www.med.upenn.edu/adrc/>`_ and the
 `Penn Frontotemporal Degeneration Center (FTDC)
-<https://www.med.upenn.edu/ftd/>`_ provided access to deeply characterized
-postmortem brain specimens spanning Alzheimer's disease, Lewy body disease,
-frontotemporal lobar degeneration, and related neuropathologies.
+<https://www.med.upenn.edu/ftd/>`_ enabled the methods to be developed and
+evaluated across deeply characterized postmortem brain specimens spanning
+Alzheimer's disease, Lewy body disease, frontotemporal lobar degeneration,
+and related neuropathologies.
 
 Through the PATCH Lab, these efforts brought together computational
-neuroimaging at PICSL with neuropathology, clinical characterization, and
-postmortem imaging from the Penn ADRC, Penn FTDC, and collaborating research
-programs. This environment enabled ``purple-mri`` to evolve from individual
-image-processing methods into an integrated framework for studying
+neuroimaging at PICSL with postmortem MRI, neuropathology, and clinical
+characterization from the Penn ADRC, Penn FTDC, and collaborating Penn
+research programs. This environment enabled ``purple-mri`` to evolve from
+individual image-processing methods into an integrated framework for studying
 structure-pathology relationships across the postmortem human brain.
 
 The framework has subsequently expanded beyond its original focus on adult
@@ -138,8 +140,8 @@ In adult neurodegenerative disease, the framework enables whole-hemisphere
 morphometric analyses and spatial association of cortical and subcortical
 anatomy with neuropathological measurements.
 
-In developmental applications, the same general computational framework is
-being extended to high-resolution multimodal postmortem infant MRI, allowing
+In developmental applications, the same computational framework is being
+extended to high-resolution multimodal postmortem infant MRI, allowing
 cortical anatomy and developmental patterns to be compared with normative
 in vivo imaging.
 
@@ -216,6 +218,53 @@ parcellation, registration, template construction, and group analysis.
    citations
 
 
+Software Ecosystem
+------------------
+
 .. image:: _static/purple_ecosystem.png
    :width: 900px
    :align: center
+
+
+Development and Collaborating Institutions
+------------------------------------------
+
+``purple-mri`` was initiated at Penn and has continued to evolve through
+collaborative research at Penn Medicine, the PATCH Lab, Harvard Medical School,
+the Athinoula A. Martinos Center for Biomedical Imaging, and Mass General
+Brigham.
+
+
+.. raw:: html
+
+   <div style="
+        display:flex;
+        flex-wrap:wrap;
+        justify-content:center;
+        align-items:center;
+        gap:28px 38px;
+        margin-top:25px;
+        margin-bottom:25px;
+   ">
+
+     <img src="_static/p2.png"
+          alt="Penn Medicine"
+          style="max-width:180px; max-height:85px; object-fit:contain;">
+
+     <img src="_static/p7.png"
+          alt="PATCH Lab"
+          style="max-width:145px; max-height:120px; object-fit:contain;">
+
+     <img src="_static/p5.png"
+          alt="Harvard Medical School"
+          style="max-width:255px; max-height:85px; object-fit:contain;">
+
+     <img src="_static/p6.jpg"
+          alt="Athinoula A. Martinos Center for Biomedical Imaging"
+          style="max-width:180px; max-height:105px; object-fit:contain;">
+
+     <img src="_static/p4.png"
+          alt="Mass General Brigham"
+          style="max-width:260px; max-height:80px; object-fit:contain;">
+
+   </div>
