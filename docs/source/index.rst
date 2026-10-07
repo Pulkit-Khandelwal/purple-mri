@@ -241,38 +241,50 @@ Khandelwal.
 .. raw:: html
 
    <div style="
-        display:flex;
-        flex-wrap:nowrap;
-        justify-content:center;
+        display:grid;
+        grid-template-columns:repeat(6, 1fr);
         align-items:center;
-        gap:28px;
-        margin-top:30px;
-        margin-bottom:20px;
-        overflow-x:auto;
+        justify-items:center;
+        column-gap:10px;
+        width:100%;
+        margin-top:28px;
+        margin-bottom:28px;
    ">
 
-     <img src="_static/p9.png"
-          alt="University of Pennsylvania"
-          style="height:72px; width:auto; object-fit:contain; flex:0 0 auto;">
+     <div style="width:105px; height:65px; display:flex; align-items:center; justify-content:center;">
+       <img src="_static/p9.png"
+            alt="University of Pennsylvania"
+            style="max-width:105px; max-height:65px; width:auto; height:auto; object-fit:contain;">
+     </div>
 
-     <img src="_static/p2.png"
-          alt="Penn Medicine"
-          style="height:72px; width:auto; object-fit:contain; flex:0 0 auto;">
+     <div style="width:105px; height:65px; display:flex; align-items:center; justify-content:center;">
+       <img src="_static/p2.png"
+            alt="Penn Medicine"
+            style="max-width:105px; max-height:65px; width:auto; height:auto; object-fit:contain;">
+     </div>
 
-     <img src="_static/p7.png"
-          alt="PATCH Lab"
-          style="height:72px; width:auto; object-fit:contain; flex:0 0 auto;">
+     <div style="width:105px; height:65px; display:flex; align-items:center; justify-content:center;">
+       <img src="_static/p7.png"
+            alt="PATCH Lab"
+            style="max-width:105px; max-height:65px; width:auto; height:auto; object-fit:contain;">
+     </div>
 
-     <img src="_static/p5.png"
-          alt="Harvard Medical School"
-          style="height:72px; width:auto; object-fit:contain; flex:0 0 auto;">
+     <div style="width:105px; height:65px; display:flex; align-items:center; justify-content:center;">
+       <img src="_static/p5.png"
+            alt="Harvard Medical School"
+            style="max-width:105px; max-height:65px; width:auto; height:auto; object-fit:contain;">
+     </div>
 
-     <img src="_static/p6.jpg"
-          alt="Athinoula A. Martinos Center for Biomedical Imaging"
-          style="height:72px; width:auto; object-fit:contain; flex:0 0 auto;">
+     <div style="width:105px; height:65px; display:flex; align-items:center; justify-content:center;">
+       <img src="_static/p6.jpg"
+            alt="Athinoula A. Martinos Center for Biomedical Imaging"
+            style="max-width:105px; max-height:65px; width:auto; height:auto; object-fit:contain;">
+     </div>
 
-     <img src="_static/p4.png"
-          alt="Mass General Brigham"
-          style="height:72px; width:auto; object-fit:contain; flex:0 0 auto;">
+     <div style="width:105px; height:65px; display:flex; align-items:center; justify-content:center;">
+       <img src="_static/p4.png"
+            alt="Mass General Brigham"
+            style="max-width:105px; max-height:65px; width:auto; height:auto; object-fit:contain;">
+     </div>
 
    </div>
