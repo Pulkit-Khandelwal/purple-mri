@@ -63,6 +63,9 @@ Core Capabilities
    :width: 900px
    :align: center
 
+.. raw:: html
+
+   <div style="height: 40px;"></div>
 
 Development and Evolution
 -------------------------
@@ -74,7 +77,7 @@ Development and Evolution
 <https://www.med.upenn.edu/sbia/>`_.
 
 The framework was conceived by **Pulkit Khandelwal and Paul A. Yushkevich**
-and grew out of Khandelwal's doctoral research at Penn on the computational
+and grew out of Pulkit's doctoral research at Penn on the computational
 analysis of ultra-high-resolution postmortem MRI in Alzheimer's disease and
 related dementias.
 
@@ -232,10 +235,8 @@ Software Ecosystem
 Development and Collaborating Institutions
 ------------------------------------------
 
-``purple-mri`` was initiated at Penn and has continued to evolve through
-collaborative research at the University of Pennsylvania, Penn Medicine, the
-PATCH Lab, Harvard Medical School, the Athinoula A. Martinos Center for
-Biomedical Imaging, and Mass General Brigham. It is maintained by Pulkit
+``purple-mri`` was developed at Penn and has continued to evolve through
+collaborative research at the University of Pennsylvania and Harvard Medical School. It is maintained by Pulkit
 Khandelwal.
 
 .. raw:: html
