@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 """Topology helpers and merge for exvivo_all; inference is run by the Bash script.
 
-Raw Task279 label 1 removes voxels from the original Purple segmentation.
+Mandatory component cleanup follows Task283, before topology preparation.
+Labels 1-5, 7, 9, 10 keep their largest 6-connected component; label 6 (WMH)
+is preserved; label 8 keeps components of at least 1 mm^3. Removed voxels
+become background. Raw Task279 label 1 then removes voxels from this cleaned
+Purple segmentation. The original Task283 prediction is saved unchanged.
 Merge priority: Task269 > selected Task273 > corrected Purple.
 The merge preserves the supplied finalizer: model overlays can refill removed
 voxels. No additional global topology mask is applied to the final merge.
@@ -14,7 +18,7 @@ from pathlib import Path
 
 import nibabel as nib
 import numpy as np
-from scipy.ndimage import distance_transform_edt, convolve
+from scipy.ndimage import distance_transform_edt, convolve, label, generate_binary_structure
 
 SUBCORT = {
     2: ('Putamen', 3, 203),
@@ -28,6 +32,13 @@ SUBCORT_MAP = {1: 201, 2: 202, 3: 203, 4: 204, 7: 207}
 
 
 ALLOWED = set(range(1, 22)) | {101, 106, 107, 108, 109, 201, 202, 203, 204, 207}
+
+VENTRICLE_MIN_MM3 = 1.0
+PURPLE_NAMES = {
+    1: 'Cortical gray matter', 2: 'Putamen', 3: 'Caudate', 4: 'Pallidum',
+    5: 'Thalamus', 6: 'WMH', 7: 'White matter', 8: 'Ventricle',
+    9: 'Corpus callosum', 10: 'MTL',
+}
 
 
 def load_seg(path):
@@ -64,6 +75,60 @@ def check_labels(x, allowed, name):
     unexpected = sorted(set(np.unique(x).tolist()) - set(allowed))
     if unexpected:
         raise RuntimeError('{} has unexpected labels: {}'.format(name, unexpected))
+
+
+def clean_purple_components(ref, purple):
+    """Mandatory pre-topology cleanup; preserve label values and all WMH voxels.
+
+    Components use face connectivity (6 neighbors in 3-D). For equal largest
+    components, retain the first in array scan order. Unknown NIfTI spatial
+    units are treated as mm, consistent with this pipeline's MRI convention.
+    The 1 mm^3 ventricular cutoff is a small-island heuristic, not a learned
+    threshold; every ventricular component below it is removed.
+    """
+    check_labels(purple, range(11), 'Task283')
+    units = ref.header.get_xyzt_units()[0]
+    mm_per_unit = {'unknown': 1.0, 'mm': 1.0, 'meter': 1000.0, 'micron': 0.001}[units]
+    spacing_mm = np.asarray(ref.header.get_zooms()[:3], dtype=float) * mm_per_unit
+    voxel_mm3 = float(np.prod(spacing_mm))
+    if not np.isfinite(spacing_mm).all() or np.any(spacing_mm <= 0):
+        raise RuntimeError('Invalid voxel spacing for component cleanup')
+    cleaned = np.zeros_like(purple)
+    structure = generate_binary_structure(3, 1)
+    rows = []
+    for value, name in PURPLE_NAMES.items():
+        components, count = label(purple == value, structure=structure)
+        sizes = np.bincount(components.ravel(), minlength=count + 1)
+        sizes[0] = 0
+        keep = np.zeros(count + 1, dtype=bool)
+        if value == 6:
+            policy = 'preserve_all'
+            keep[1:] = True
+        elif value == 8:
+            policy = 'minimum_volume'
+            # Tolerance avoids deleting a component exactly on the threshold
+            # due to NIfTI float32 voxel-spacing roundoff.
+            keep[1:] = sizes[1:] * voxel_mm3 >= VENTRICLE_MIN_MM3 * (1.0 - 1e-6)
+        else:
+            policy = 'largest_component'
+            if count:
+                keep[int(np.argmax(sizes))] = True
+        cleaned[keep[components]] = value
+        original_voxels = int(sizes.sum())
+        kept_voxels = int(sizes[keep].sum())
+        removed_voxels = original_voxels - kept_voxels
+        rows.append({
+            'label': value, 'structure': name, 'policy': policy,
+            'connectivity': 6, 'components_before': int(count),
+            'components_kept': int(keep.sum()),
+            'original_voxels': original_voxels, 'kept_voxels': kept_voxels,
+            'removed_voxels': removed_voxels,
+            'removed_mm3': round(removed_voxels * voxel_mm3, 6),
+            'voxel_volume_mm3': voxel_mm3,
+            'ventricle_min_mm3': VENTRICLE_MIN_MM3 if value == 8 else '',
+            'spatial_units': units,
+        })
+    return cleaned, rows
 
 
 def bbox(mask, pad=0):
@@ -224,7 +289,8 @@ def discover_cases(input_dir):
 
 
 FOLDERS = [
-    '01_purple_original', '02_topology_input', '03_topology_prediction',
+    '01_purple_original', '01b_purple_component_cleaned',
+    '02_topology_input', '03_topology_prediction',
     '04_buried_sulcus_mask', '05_purple_corrected', '06_mtl',
     '07_subcortical', '08_initial_merge', '09_purple_residuals',
     '10_cleanup_map', '11_final_merged',
@@ -242,7 +308,7 @@ def checked_seg(path, mri, allowed=None):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('action', choices=['init', 'prepare-topology', 'apply-topology', 'merge'])
+    parser.add_argument('action', choices=['init', 'clean-components', 'prepare-topology', 'apply-topology', 'merge'])
     parser.add_argument('--input-dir', required=True, type=Path)
     parser.add_argument('--output-dir', required=True, type=Path)
     args = parser.parse_args()
@@ -265,15 +331,27 @@ def main():
     for case, mri in cases.items():
         name = case + '.nii.gz'
         original = root / '01_purple_original' / name
+        component_cleaned = root / '01b_purple_component_cleaned' / name
         topology = root / '03_topology_prediction' / name
         corrected = root / '05_purple_corrected' / name
-        if args.action == 'prepare-topology':
+        if args.action == 'clean-components':
             ref, purple = checked_seg(original, mri, range(11))
+            cleaned, component_rows = clean_purple_components(ref, purple)
+            save_like(ref, cleaned, component_cleaned)
+            report = root / 'reports' / (case + '_component_cleanup_report.tsv')
+            with report.open('w', newline='') as f:
+                writer = csv.DictWriter(f, fieldnames=['case'] + list(component_rows[0]), delimiter='\t')
+                writer.writeheader()
+                writer.writerows(dict(case=case, **row) for row in component_rows)
+            removed = sum(row['removed_voxels'] for row in component_rows)
+            print('{}: component cleanup removed {} voxels; all WMH preserved'.format(case, removed), flush=True)
+        elif args.action == 'prepare-topology':
+            ref, purple = checked_seg(component_cleaned, mri, range(11))
             # Simultaneous remapping of original anatomical labels.
             lut = np.array([0, 3, 2, 2, 2, 2, 2, 2, 0, 2, 2], dtype=np.int16)
             save_like(ref, lut[purple], root / '02_topology_input' / (case + '_0000.nii.gz'))
         elif args.action == 'apply-topology':
-            ref, purple = checked_seg(original, mri, range(11))
+            ref, purple = checked_seg(component_cleaned, mri, range(11))
             _, topo = checked_seg(topology, mri, range(4))
             removal = topo == 1
             save_like(ref, removal, root / '04_buried_sulcus_mask' / name)

@@ -25,21 +25,24 @@ if [[ "$accepted_variable" == "exvivo_all" ]]; then
 
    command -v nnUNet_predict >/dev/null
    helper init
-   echo "[1/7] Original Purple 10-label segmentation"
+   echo "[1/8] Original Purple 10-label segmentation"
    predict 283 "$INPUT_DIR" "$OUT_DIR/01_purple_original"
-   echo "[2/7] Prepare topology input"
+   echo "[2/8] Component cleanup: largest per tissue, all WMH, ventricles >= 1 mm^3"
+   helper clean-components
+   echo "[3/8] Prepare topology input"
    helper prepare-topology
-   echo "[3/7] Post-hoc topology prediction"
+   echo "[4/8] Post-hoc topology prediction"
    predict 279 "$OUT_DIR/02_topology_input" "$OUT_DIR/03_topology_prediction"
-   echo "[4/7] Save buried sulcus mask and corrected Purple segmentation"
+   echo "[5/8] Save buried sulcus mask and corrected Purple segmentation"
    helper apply-topology
-   echo "[5/7] MTL and amygdala subfields"
+   echo "[6/8] MTL and amygdala subfields"
    predict 269 "$INPUT_DIR" "$OUT_DIR/06_mtl"
-   echo "[6/7] Subcortical structures"
+   echo "[7/8] Subcortical structures"
    predict 273 "$INPUT_DIR" "$OUT_DIR/07_subcortical"
-   echo "[7/7] Merge and clean residual labels"
+   echo "[8/8] Merge and clean residual labels"
    helper merge
    echo "Complete. All intermediate NIfTI files: $OUT_DIR"
+   echo "Component-cleaned Purple: $OUT_DIR/01b_purple_component_cleaned"
    echo "Corrected Purple: $OUT_DIR/05_purple_corrected"
    echo "Final merge:      $OUT_DIR/11_final_merged"
 
