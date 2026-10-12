@@ -137,24 +137,11 @@ runtime, not embedded in the image.
 After validating a rebuild, publish explicitly:
 
 ```bash
-docker login -u pulks
+docker login -u username
 docker push pulks/docker_purple_mri:v1.1.0
 ```
 
 The build scripts do not push images automatically.
-
-## Apply this folder to the GitHub repository
-
-In your local clone, rename the existing folder:
-
-```bash
-git mv docker/segmentation_docker docker/docker_files
-```
-
-Then copy this archive's `docker/docker_files/` contents into that renamed folder,
-including `.dockerignore` and `.gitignore`. Review `git diff` before committing.
-Update any repository links referencing `docker/segmentation_docker/` to the new
-`docker/docker_files/` path. This archive does not change the remote repository.
 
 [Project](https://github.com/Pulkit-Khandelwal/purple-mri) ·
 [Documentation](https://purple-mri.readthedocs.io/en/latest/)
