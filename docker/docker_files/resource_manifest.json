@@ -1,0 +1,213 @@
+{
+  "revision": "b52482450a091b821ea298e24d50a6d338585992",
+  "files": [
+    {
+      "path": "freesurfer_atlases/brainnetome/BN_Atlas_210_LUT.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "24261be49db62b7526bdf7e6d0ffb1ddc69cce18",
+      "size": 11394,
+      "url": "https://api.github.com/repos/Pulkit-Khandelwal/purple-mri/git/blobs/24261be49db62b7526bdf7e6d0ffb1ddc69cce18"
+    },
+    {
+      "path": "freesurfer_atlases/brainnetome/BN_Atlas_210_LUT_1000_2000.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0855440774d6fecbdcd42fdd6b35bd42137c5806",
+      "size": 11394,
+      "url": "https://api.github.com/repos/Pulkit-Khandelwal/purple-mri/git/blobs/0855440774d6fecbdcd42fdd6b35bd42137c5806"
+    },
+    {
+      "path": "freesurfer_atlases/brainnetome/lh.BN_Atlas.gcs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d8d91034232a2a664afd2b514bcd2831f9ad47aa",
+      "size": 38128439,
+      "url": "https://api.github.com/repos/Pulkit-Khandelwal/purple-mri/git/blobs/d8d91034232a2a664afd2b514bcd2831f9ad47aa"
+    },
+    {
+      "path": "freesurfer_atlases/brainnetome/rh.BN_Atlas.gcs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "116a5d1dfb94703810c89187f2e7954498f1a33a",
+      "size": 39433521,
+      "url": "https://api.github.com/repos/Pulkit-Khandelwal/purple-mri/git/blobs/116a5d1dfb94703810c89187f2e7954498f1a33a"
+    },
+    {
+      "path": "freesurfer_atlases/economo/economoLUT.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1c5f7e3165d2a9841c68fea970fa7b6df0b3be9b",
+      "size": 5260,
+      "url": "https://api.github.com/repos/Pulkit-Khandelwal/purple-mri/git/blobs/1c5f7e3165d2a9841c68fea970fa7b6df0b3be9b"
+    },
+    {
+      "path": "freesurfer_atlases/economo/economoMNI152volume.nii.gz",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "dacbcb692ab72ef65184b015b7752694b96bd18f",
+      "size": 355521,
+      "url": "https://api.github.com/repos/Pulkit-Khandelwal/purple-mri/git/blobs/dacbcb692ab72ef65184b015b7752694b96bd18f"
+    },
+    {
+      "path": "freesurfer_atlases/economo/lh.colortable.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "045e7b4d40ceaca1facefdc3df1c402363c432ce",
+      "size": 2250,
+      "url": "https://api.github.com/repos/Pulkit-Khandelwal/purple-mri/git/blobs/045e7b4d40ceaca1facefdc3df1c402363c432ce"
+    },
+    {
+      "path": "freesurfer_atlases/economo/lh.economo.gcs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c415ac45802278ec178b08220f6bc83fa443b7be",
+      "size": 22175934,
+      "url": "https://api.github.com/repos/Pulkit-Khandelwal/purple-mri/git/blobs/c415ac45802278ec178b08220f6bc83fa443b7be"
+    },
+    {
+      "path": "freesurfer_atlases/economo/license.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b5b3635598dd1c0bc02dc79ae5351ef72225e13e",
+      "size": 281,
+      "url": "https://api.github.com/repos/Pulkit-Khandelwal/purple-mri/git/blobs/b5b3635598dd1c0bc02dc79ae5351ef72225e13e"
+    },
+    {
+      "path": "freesurfer_atlases/economo/rh.colortable.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "045e7b4d40ceaca1facefdc3df1c402363c432ce",
+      "size": 2250,
+      "url": "https://api.github.com/repos/Pulkit-Khandelwal/purple-mri/git/blobs/045e7b4d40ceaca1facefdc3df1c402363c432ce"
+    },
+    {
+      "path": "freesurfer_atlases/economo/rh.economo.gcs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2713d114db87a064efd0135d6c11f0eb607aed80",
+      "size": 22208969,
+      "url": "https://api.github.com/repos/Pulkit-Khandelwal/purple-mri/git/blobs/2713d114db87a064efd0135d6c11f0eb607aed80"
+    },
+    {
+      "path": "freesurfer_atlases/glasser/lh.HCP-MMP1.annot",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "13e5f17582554f8dbabe5916253e4ba583e37a79",
+      "size": 1316983,
+      "url": "https://api.github.com/repos/Pulkit-Khandelwal/purple-mri/git/blobs/13e5f17582554f8dbabe5916253e4ba583e37a79"
+    },
+    {
+      "path": "freesurfer_atlases/glasser/rh.HCP-MMP1.annot",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3f9b776bb7fb11716d75b774589cd7b051c27775",
+      "size": 1316984,
+      "url": "https://api.github.com/repos/Pulkit-Khandelwal/purple-mri/git/blobs/3f9b776bb7fb11716d75b774589cd7b051c27775"
+    },
+    {
+      "path": "freesurfer_atlases/julich/siibra_lh_fs.annot",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "acf721fbc757f55523e487ea91a42d8c4e64e606",
+      "size": 1317799,
+      "url": "https://api.github.com/repos/Pulkit-Khandelwal/purple-mri/git/blobs/acf721fbc757f55523e487ea91a42d8c4e64e606"
+    },
+    {
+      "path": "freesurfer_atlases/julich/siibra_lh_lut.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ef52b18f471b1ce04b168fbabfc894b7c2bfacf5",
+      "size": 9056,
+      "url": "https://api.github.com/repos/Pulkit-Khandelwal/purple-mri/git/blobs/ef52b18f471b1ce04b168fbabfc894b7c2bfacf5"
+    },
+    {
+      "path": "freesurfer_atlases/julich/siibra_rh_fs.annot",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1f7e1758400511124eb78ec53f11e216bc620160",
+      "size": 1317799,
+      "url": "https://api.github.com/repos/Pulkit-Khandelwal/purple-mri/git/blobs/1f7e1758400511124eb78ec53f11e216bc620160"
+    },
+    {
+      "path": "freesurfer_atlases/julich/siibra_rh_lut.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ef52b18f471b1ce04b168fbabfc894b7c2bfacf5",
+      "size": 9056,
+      "url": "https://api.github.com/repos/Pulkit-Khandelwal/purple-mri/git/blobs/ef52b18f471b1ce04b168fbabfc894b7c2bfacf5"
+    },
+    {
+      "path": "freesurfer_atlases/mcribs/lh.aparc+DKTatlas.gcs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "aa97baea1d214ea72465d22103ecfff2ccc5285b",
+      "size": 15924160,
+      "url": "https://api.github.com/repos/Pulkit-Khandelwal/purple-mri/git/blobs/aa97baea1d214ea72465d22103ecfff2ccc5285b"
+    },
+    {
+      "path": "freesurfer_atlases/mcribs/lh.template2.tif",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "93006d21a0f2519eb2d472f0cf60141b2302fed5",
+      "size": 2844236,
+      "url": "https://api.github.com/repos/Pulkit-Khandelwal/purple-mri/git/blobs/93006d21a0f2519eb2d472f0cf60141b2302fed5"
+    },
+    {
+      "path": "freesurfer_atlases/mcribs/rh.aparc+DKTatlas.gcs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a16032111193756573532ca6e925ba361f750aae",
+      "size": 15826064,
+      "url": "https://api.github.com/repos/Pulkit-Khandelwal/purple-mri/git/blobs/a16032111193756573532ca6e925ba361f750aae"
+    },
+    {
+      "path": "freesurfer_atlases/mcribs/rh.template2.tif",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6a0356b0e0aff82fc66cd230b56d8e1e92a68126",
+      "size": 2849372,
+      "url": "https://api.github.com/repos/Pulkit-Khandelwal/purple-mri/git/blobs/6a0356b0e0aff82fc66cd230b56d8e1e92a68126"
+    },
+    {
+      "path": "freesurfer_atlases/mcribs/template-40_brain.mgz",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "841389b483661a69c66459e7d45f4a877c270471",
+      "size": 2520896,
+      "url": "https://api.github.com/repos/Pulkit-Khandelwal/purple-mri/git/blobs/841389b483661a69c66459e7d45f4a877c270471"
+    },
+    {
+      "path": "freesurfer_atlases/schaefer/lh.Schaefer2018_400Parcels_17Networks_order.annot",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3a17eec80c13d9a324ab40be64ca325fe9d09b24",
+      "size": 1321612,
+      "url": "https://api.github.com/repos/Pulkit-Khandelwal/purple-mri/git/blobs/3a17eec80c13d9a324ab40be64ca325fe9d09b24"
+    },
+    {
+      "path": "freesurfer_atlases/schaefer/rh.Schaefer2018_400Parcels_17Networks_order.annot",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d56c3df61531643a9df882858f1ba1f14d02ddbc",
+      "size": 1321589,
+      "url": "https://api.github.com/repos/Pulkit-Khandelwal/purple-mri/git/blobs/d56c3df61531643a9df882858f1ba1f14d02ddbc"
+    },
+    {
+      "path": "fsaverage/surf/rh.orig",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f17d52c96f277adf6f2068a21304f511ce93beae",
+      "size": 5898808,
+      "url": "https://api.github.com/repos/Pulkit-Khandelwal/purple-mri/git/blobs/f17d52c96f277adf6f2068a21304f511ce93beae"
+    },
+    {
+      "path": "fsaverage/surf/rh.sphere.reg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "80cda721137c5c78434bf27dedb483bfd87dd4b6",
+      "size": 5898546,
+      "url": "https://api.github.com/repos/Pulkit-Khandelwal/purple-mri/git/blobs/80cda721137c5c78434bf27dedb483bfd87dd4b6"
+    }
+  ]
+}
