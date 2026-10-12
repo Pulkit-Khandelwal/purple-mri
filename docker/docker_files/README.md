@@ -137,8 +137,12 @@ runtime, not embedded in the image.
 After validating a rebuild, publish explicitly:
 
 ```bash
-docker login -u username
-docker push pulks/docker_purple_mri:v1.1.0
+docker login -u YOUR_DOCKERHUB_USERNAME
+
+docker tag pulks/docker_purple_mri:v1.1.0 \
+  YOUR_DOCKERHUB_USERNAME/docker_purple_mri:v1.1.0
+
+docker push YOUR_DOCKERHUB_USERNAME/docker_purple_mri:v1.1.0
 ```
 
 The build scripts do not push images automatically.
