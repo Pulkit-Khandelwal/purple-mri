@@ -1,4 +1,4 @@
-# Docker for postmortem brain MRI
+# Docker and Singularity for postmortem brain MRI
 
 **Author: Pulkit Khandelwal**
 
@@ -38,7 +38,7 @@ See [input preprocessing](https://purple-mri.readthedocs.io/en/latest/segmentati
 docker pull pulks/docker_purple_mri:v1.1.0
 ```
 
-The published image is for **Linux AMD64**. This release has the same image contents as the previous `docker_hippogang_exvivo_segm:v1.4.7`, published under the new repository and version name.
+The published image is for **Linux AMD64**. The current `v1.1.0` image selects the updated Task2732 subcortical model in both the combined and standalone workflows.
 
 ## 3. Run the complete workflow
 
@@ -66,7 +66,7 @@ For a left hemisphere, change `EXVIVO_HEMI=rh` to `EXVIVO_HEMI=lh`. Adjust `EXVI
 4. Run the post-hoc bridged-sulcus model (Task279).
 5. Use **label `1` from the raw topology prediction** as the buried-sulcus removal mask. Zero those voxels in the component-cleaned Purple segmentation, preserving all surviving anatomical label values. Raw topology labels `2` and `3` do not mark removal regions.
 6. Predict MTL and amygdala subfields (Task269).
-7. Predict subcortical structures (Task273).
+7. Predict subcortical structures (Task2732: `Task2732_exvivo_supersynth_lisa_deepgray_flipfixed`).
 8. Merge the anatomical predictions and clean residual labels to produce the final merged segmentation.
 
 **Post-hoc topology correction is included automatically in `exvivo_dl`.** It addresses buried sulci and adjoining/bridged gyri; no separate topology command is required for this workflow. For the standalone procedure and remapping details, see [topology correction notes](https://github.com/Pulkit-Khandelwal/purple-mri/blob/main/docker/topology_correction_notes.md).
@@ -210,6 +210,140 @@ Individual model outputs default to `data_for_inference/output_from_nnunet_infer
 ## Note on WMH segmentation in in vivo FLAIR MRI
 
 Use `invivo_flair_wmh` as the option in the individual-model command above. The input must be skull-stripped and normalized/standardized. Inference has typically taken approximately one minute; runtime depends on the GPU and input volume.
+
+## Singularity / Apptainer (Linux AMD64)
+
+Use the same `purple_mri_v1.1.0.sif` file with Singularity or Apptainer. Docker is not required to run the SIF. The Python `purple-mri` CLI currently launches Docker; invoke Singularity/Apptainer directly for these examples.
+
+The SIF distribution target is **`pulks/singularity_purple_mri:v1.1.0`** on Docker Hub. Publication and a fresh pull must be confirmed before announcing this URL as available. The existing Docker image stays at `pulks/docker_purple_mri:v1.1.0`.
+
+### Download the SIF
+
+After the maintainer publishes the artifact:
+
+```bash
+singularity pull purple_mri_v1.1.0.sif \
+  oras://registry-1.docker.io/pulks/singularity_purple_mri:v1.1.0
+```
+
+For Apptainer, replace `singularity` with `apptainer`. This downloads the prebuilt SIF (approximately 18 GB). Do not use `docker pull` for this artifact. If a release checksum file is provided, verify it with `sha256sum -c purple_mri_v1.1.0.sif.sha256`.
+
+Alternatively, build a SIF from the Docker image; this requires downloading and converting its layers:
+
+```bash
+singularity pull purple_mri_v1.1.0.sif \
+  docker://pulks/docker_purple_mri:v1.1.0
+```
+
+The converted file need not have the same checksum as the distributed SIF.
+
+### Example: complete adult DL, then surfaces
+
+Edit the four paths below and choose `HEMI=lh` or `rh`. Input files must be named `subject_0000.nii.gz`. Use a new output directory for each run. The commands run actual MRI processing; they are not preflight checks.
+
+DL uses an NVIDIA GPU via `--nv`. Surfaces run in a separate CPU invocation **without `--nv`**. This avoids importing host OpenGL libraries that can conflict with the container's glibc and break VTK.
+
+The per-model writable `fold_0` mounts are required because nnU-Net initializes these directories even when loading the packaged `all` checkpoint. They contain runtime scratch files; the model weights remain inside the SIF.
+
+```bash
+(
+set -euo pipefail
+RUNTIME=singularity   # or: apptainer
+SIF="/absolute/path/purple_mri_v1.1.0.sif"
+INPUT="/absolute/path/data_for_inference"
+OUTPUT="/absolute/path/new_purple_results"
+LICENSE="/absolute/path/license.txt"
+HEMI=lh
+THREADS=20
+
+# Prevent inherited runtime flags from adding GPU libraries to the CPU stage.
+unset SINGULARITY_NV APPTAINER_NV
+[[ -s "$SIF" && -d "$INPUT" && -s "$LICENSE" ]]
+if [[ -e "$OUTPUT" ]]; then
+  echo "Choose a new OUTPUT directory: $OUTPUT" >&2
+  exit 2
+fi
+mkdir -p "$OUTPUT"
+
+MODEL_ROOT=/src/nnunet_paths_that_it_requires/nnUNet/3d_fullres
+TRAINER=nnUNetTrainerV2__nnUNetPlansv2.1
+MODEL_BINDS=()
+for TASK in \
+  Task283_exvivo_cuts_prediction_medial_cleaned_single_channel \
+  Task279_exvivo_flash_mri_gm_wm_sulcus_patches_posthoc_topology_correction \
+  Task269_exvivo_mtl_hemis_subfields_fmv2_multi_sequence \
+  Task2732_exvivo_supersynth_lisa_deepgray_flipfixed; do
+  mkdir -p "$OUTPUT/nnunet_runtime/$TASK/fold_0"
+  MODEL_BINDS+=(--bind "$OUTPUT/nnunet_runtime/$TASK/fold_0:$MODEL_ROOT/$TASK/$TRAINER/fold_0:rw")
+done
+
+"$RUNTIME" exec --cleanenv --nv \
+  --bind "$INPUT:/inputs:ro" --bind "$OUTPUT:/outputs:rw" \
+  "${MODEL_BINDS[@]}" --pwd /outputs \
+  --env EXVIVO_INPUT_DIR=/inputs \
+  --env EXVIVO_DL_OUTPUT_DIR=/outputs/exvivo_dl \
+  --env EXVIVO_TIMING_DIR=/outputs/timings_dl \
+  "$SIF" /bin/bash /src/commands_nnunet_inference.sh exvivo_dl \
+  2>&1 | tee "$OUTPUT/dl.log"
+
+"$RUNTIME" exec --cleanenv \
+  --bind "$INPUT:/inputs:ro" --bind "$OUTPUT:/outputs:rw" \
+  --bind "$LICENSE:/license.txt:ro" --pwd /outputs \
+  --env EXVIVO_INPUT_DIR=/inputs \
+  --env EXVIVO_SEGM_DIR=/outputs/exvivo_dl/05_purple_corrected \
+  --env EXVIVO_SURFACE_OUTPUT_DIR=/outputs/exvivo_surface \
+  --env EXVIVO_TIMING_DIR=/outputs/timings_surface \
+  --env "EXVIVO_HEMI=$HEMI" --env "EXVIVO_THREADS=$THREADS" \
+  --env FS_LICENSE=/license.txt --env NO_FSFAST=1 \
+  "$SIF" /bin/bash /src/commands_nnunet_inference.sh exvivo_surface \
+  2>&1 | tee "$OUTPUT/surface.log"
+)
+```
+
+For DL only, omit the second runtime invocation. For surfaces only, use the second invocation with a fresh surface output directory, and bind an existing corrected-label directory at `/segmentations:ro`, setting `EXVIVO_SEGM_DIR=/segmentations`. Match `subject.nii.gz` labels to `subject_0000.nii.gz` MRI files. Use the corrected 10-label result, not `11_final_merged`.
+
+Outputs under `OUTPUT`:
+
+- `exvivo_dl/05_purple_corrected/`: corrected Purple 10-label NIfTI segmentations used for surfaces.
+- `exvivo_dl/11_final_merged/`: merged DL NIfTI segmentations.
+- `exvivo_surface/<subject>/`: FreeSurfer-style surfaces, annotations, statistics and parcellation volumes.
+- `exvivo_surface/COMPLETE`: successful surface-stage completion marker.
+- `timings_dl/`, `timings_surface/`, `dl.log`, `surface.log`: timings and logs.
+
+### Example: subcortical segmentation only (Task2732)
+
+```bash
+(
+set -euo pipefail
+RUNTIME=singularity
+SIF="/absolute/path/purple_mri_v1.1.0.sif"
+INPUT="/absolute/path/data_for_inference"
+OUTPUT="/absolute/path/new_subcortical_results"
+MODEL=/src/nnunet_paths_that_it_requires/nnUNet/3d_fullres/Task2732_exvivo_supersynth_lisa_deepgray_flipfixed/nnUNetTrainerV2__nnUNetPlansv2.1
+[[ ! -e "$OUTPUT" ]] || { echo "Choose a new OUTPUT directory" >&2; exit 2; }
+mkdir -p "$OUTPUT/fold_0"
+"$RUNTIME" exec --cleanenv --nv \
+  --bind "$INPUT:/inputs:ro" --bind "$OUTPUT:/outputs:rw" \
+  --bind "$OUTPUT/fold_0:$MODEL/fold_0:rw" --pwd /outputs \
+  --env EXVIVO_INPUT_DIR=/inputs \
+  --env EXVIVO_MODEL_OUTPUT_DIR=/outputs/predictions \
+  --env EXVIVO_TIMING_DIR=/outputs/timings \
+  "$SIF" /bin/bash /src/commands_nnunet_inference.sh \
+  exvivo_multi_sequence_subcortical 2>&1 | tee "$OUTPUT/run.log"
+)
+```
+
+### Runtime requirements and tested scope
+
+- NVIDIA GPU and compatible host driver for DL; a user-supplied FreeSurfer license for surfaces.
+- A working Singularity/Apptainer installation. Some unprivileged installations require `squashfuse` on `PATH` to mount SIF images. This is a host runtime dependency, not a missing file inside the SIF.
+- If the runtime reports `Read-only file system` at a model's `fold_0`, check the writable model mounts above.
+- If VTK reports `GLIBC_2.38 not found` from `/.singularity.d/libs/libGLdispatch.so.0`, run surfaces without `--nv`; do not combine both stages into one GPU-enabled SIF invocation.
+- The Task2732 package lacks nnU-Net automatic postprocessing metadata. Inference can finish successfully while reporting that automatic postprocessing was skipped.
+
+Validation on 2026-10-21: Docker standalone Task2732, full DL, and LH surface/parcellation runs completed successfully. Singularity Task2732 GPU inference completed successfully; all four checkpoints were CPU-readable; GPU computation and LH surface dependency/input/conversion preflights passed. **Full Singularity DL plus surface reconstruction has not been run end to end.** Apptainer commands use the equivalent interface but have not been live-tested for this release.
+
+Maintainer reference: [Singularity SIF push](https://docs.sylabs.io/guides/3.8/user-guide/cli/singularity_push.html) and [Docker Hub OCI artifacts](https://docs.docker.com/docker-hub/repos/manage/hub-images/oci-artifacts/).
 
 ## Change Logs
 
