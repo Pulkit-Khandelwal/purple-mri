@@ -12,6 +12,19 @@ postmortem human brain MRI.
 [Singularity SIF](https://purple-mri.readthedocs.io/en/latest/singularity.html) ·
 [Release notes](https://purple-mri.readthedocs.io/en/latest/release_notes.html)
 
+## Workflow overview
+
+![purple-mri workflows: segmentation, topology correction, cortical reconstruction, atlas parcellation and morphometry; registration across modalities; and group studies in template space.](docs/source/_static/purple_flowchart_UPDATED.png)
+
+The figure summarizes the broader research workflows. For the adult segmentation
+and surface pipeline, follow the processing instructions below; see
+[other workflows](#documentation-and-other-workflows) for registration, templates,
+and group analysis.
+
+## Software ecosystem
+
+![purple-mri software ecosystem showing interfaces, container and package distribution, ITK-SNAP, documentation, core dependencies, and research applications.](docs/source/_static/purple_ecosystem.png)
+
 ## Choose how to run adult processing
 
 | Route | Install on the host | Instructions |
