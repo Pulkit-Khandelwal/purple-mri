@@ -1,6 +1,9 @@
 Inputs and hemisphere selection
 =======================================
 
+This page describes local Docker and Python CLI inputs. For GUI image assignment
+and the registered service's hemisphere restrictions, see :doc:`itksnap`.
+
 Input files
 -------------------
 

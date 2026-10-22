@@ -11,6 +11,10 @@ and pial surfaces, spherical registration, annotations, regional statistics,
 and atlas volumes. The working directory contains MRI copies and intermediates;
 keep enough space for them. The surface script requires a fresh output directory.
 
+For results returned by the ITK-SNAP service, see :doc:`itksnap` for the three
+parcellation ZIP files containing converted NIfTIs. The local Docker output and
+conversion instructions below describe the full processing directories.
+
 Atlas volumes
 ---------------------
 

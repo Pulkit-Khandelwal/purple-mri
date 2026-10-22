@@ -63,7 +63,8 @@ removed by topology correction. Use the corrected 10-label result for surfaces.
 
 Surface atlas volumes are MGZ files under ``SUBJECT/mri``; see
 :doc:`parcellation` for their exact names and conversion. The standalone CLI does
-not package or upload DSS attachments or create an ITK-SNAP workspace. It preserves the full processing output, including MRI working copies.
+not package or upload DSS attachments or create an ITK-SNAP workspace.
+The remote service's separate download workflow is documented in :doc:`itksnap`. It preserves the full processing output, including MRI working copies.
 
 Check completion
 ----------------

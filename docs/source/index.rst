@@ -37,6 +37,11 @@ Then use :doc:`quickstart` or :doc:`docker` for complete examples, and :doc:`out
 to find results. Inputs are named ``SUBJECT_0000.nii.gz``; select the actual
 hemisphere and a fresh output directory. Task2732 is the subcortical model.
 
+Prefer remote processing? Follow :doc:`itksnap` to submit through the ITK-SNAP
+DSS interface and retrieve result attachments. It needs no local Docker or GPU;
+the illustrated ``purple 0.1.0`` registration is an RH-only test service and
+requires an available provider.
+
 The broader research workflows described below are separate from the adult CLI.
 Infant container stages are not implemented. See :doc:`release_notes` for the
 reported validation scope.
@@ -230,6 +235,7 @@ parcellation, registration, template construction, and group analysis.
 
    installation
    quickstart
+   itksnap
    docker
    inputs
    outputs

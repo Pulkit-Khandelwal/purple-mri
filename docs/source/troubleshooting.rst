@@ -112,6 +112,16 @@ themselves proof of a fatal failure or of good geometry. Check stage completion
 and inspect the generated surfaces. Opposite-hemisphere filenames can be
 compatibility copies; see :doc:`parcellation` before interpreting them.
 
+ITK-SNAP submissions and attachments
+------------------------------------
+
+Use :doc:`itksnap` for connection, image-tag assignment, hemisphere restrictions,
+and ticket downloads. The attachment-based provider returns six bundles via
+paperclips in the ticket log; it does not return another MRI or an automatically
+opened result workspace. Keep the ticket until delivery is complete and retain
+the original MRI for viewing. Remote DSS availability is separate from whether
+``purple-mri doctor`` succeeds on your local Docker host.
+
 Singularity startup
 ---------------------------
 
