@@ -6,6 +6,15 @@ trained weights, FreeSurfer, Convert3D, and the custom pial tools. Installing th
 package does not download the image. A Singularity SIF is a separate distribution
 and is not needed to install or use this Docker CLI.
 
+Remote processing through ITK-SNAP
+----------------------------------
+
+For the GUI-based DSS route, install ITK-SNAP with DSS support and follow
+:doc:`itksnap`. You do not need this Python package, Docker, a local NVIDIA GPU,
+or a local FreeSurfer installation. You do need access to a compatible service
+and an available provider. The illustrated ``purple 0.1.0`` service is an RH-only
+test; its version and requirements are separate from the local release below.
+
 Choose how to launch Docker
 ---------------------------
 
@@ -26,8 +35,8 @@ Both routes use the same published Docker image and stage names. The input/outpu
 layout is explicit in each guide. For separate host-based research workflows,
 see their individual guides and :doc:`legacy`.
 
-Requirements
---------------------
+Local Docker requirements
+-------------------------
 
 * Python 3.9 or newer for the CLI (Python 3.12 is a suitable choice).
 * A Linux Docker host with permission to access its Docker daemon.

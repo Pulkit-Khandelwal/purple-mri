@@ -6,6 +6,12 @@ Run adult ex vivo MRI segmentation, post-hoc topology correction, cortical surfa
 
 [Docker Hub](https://hub.docker.com/r/pulks/docker_purple_mri) · [GitHub](https://github.com/Pulkit-Khandelwal/purple-mri) · [Read the Docs](https://purple-mri.readthedocs.io/en/latest/)
 
+For remote processing through the ITK-SNAP GUI, use the
+[ITK-SNAP/DSS walkthrough](https://purple-mri.readthedocs.io/en/latest/itksnap.html).
+That route requires access to an available provider and does not require Docker
+on the submitting computer. Its service version and hemisphere restrictions
+are separate from this local Docker interface.
+
 ## Choose how to run Docker
 
 The [Python CLI quick start](https://purple-mri.readthedocs.io/en/latest/quickstart.html)

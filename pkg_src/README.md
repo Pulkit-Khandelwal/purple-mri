@@ -14,6 +14,10 @@ Documentation: https://purple-mri.readthedocs.io/en/latest/
 Start with the [quick start](https://purple-mri.readthedocs.io/en/latest/quickstart.html).
 For commands without the Python launcher, see
 [direct Docker usage](https://purple-mri.readthedocs.io/en/latest/docker.html).
+For remote processing without this package, see the
+[ITK-SNAP/DSS guide](https://purple-mri.readthedocs.io/en/latest/itksnap.html).
+The illustrated service is an RH-only test registration; availability depends
+on an active provider and account access.
 This repository README receives documentation corrections after release; it does
 not replace the metadata embedded in the already published 1.1.0 distributions.
 

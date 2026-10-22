@@ -30,6 +30,15 @@ This is a documentation-only update. It does not replace the PyPI distributions,
 change package version or runtime code, rebuild the Docker image, or move the
 existing ``v1.1.0`` Git tag.
 
+ITK-SNAP user guide
+-------------------
+
+An illustrated :doc:`itksnap` walkthrough documents the RH ``purple 0.1.0``
+registration, InputMRI assignment, ticket monitoring, six result attachments,
+and QC with the original local MRI. It distinguishes the proposed ``0.2.0``
+hemisphere tags from the illustrated service and local Docker/PyPI ``1.1.0``.
+This documentation does not change provider code or register a new service.
+
 Validation reported through 2026-10-22
 ---------------------------------------
 

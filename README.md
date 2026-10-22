@@ -11,14 +11,15 @@ postmortem human brain MRI.
 [Docker image](https://hub.docker.com/r/pulks/docker_purple_mri) ·
 [Release notes](https://purple-mri.readthedocs.io/en/latest/release_notes.html)
 
-## Start with the adult container workflow
+## Choose how to run adult processing
 
 | Route | Install on the host | Instructions |
 | --- | --- | --- |
+| ITK-SNAP / remote DSS | ITK-SNAP, internet access, and an available provider; no local Docker or GPU | [Illustrated ITK-SNAP guide](https://purple-mri.readthedocs.io/en/latest/itksnap.html) |
 | Python CLI with Docker | Python 3.9+, Docker, and GPU access for DL | [Installation](https://purple-mri.readthedocs.io/en/latest/installation.html) and [quick start](https://purple-mri.readthedocs.io/en/latest/quickstart.html) |
 | Docker directly | Docker and GPU access for DL | [Direct Docker examples](https://purple-mri.readthedocs.io/en/latest/docker.html) |
 
-Both routes use **`pulks/docker_purple_mri:v1.1.0`**. The image contains the
+The two local Docker routes use **`pulks/docker_purple_mri:v1.1.0`**. The image contains the
 trained models, FreeSurfer, Convert3D, atlas resources, and custom pial binary.
 Provide a FreeSurfer license for surfaces. Installing the pip package installs
 the launcher; `purple-mri pull` downloads the scientific environment separately.
@@ -26,7 +27,21 @@ the launcher; `purple-mri pull` downloads the scientific environment separately.
 The CLI is Docker-only; the SIF is separate. Final SIF validation is tracked
 separately in the [container guide](docker/exvivo_docker.md#singularity--apptainer-linux-amd64).
 
-### Install and run
+### Submit through ITK-SNAP
+
+Open a prepared MRI, select **Tools → Distributed Segmentation Service**, connect
+to `https://dss.itksnap.org`, and choose the purple service available to your account.
+The illustrated **purple 0.1.0** registration uses the **InputMRI** tag and is an
+**RH-only test service**. It is separate from Docker/PyPI version `1.1.0`.
+
+Follow the [illustrated walkthrough](https://purple-mri.readthedocs.io/en/latest/itksnap.html)
+for input assignment, ticket tracking, and the **six attachment downloads**:
+segmentations, surfaces, reports, and three parcellation ZIP files. Use the
+paperclips in the ticket log. This delivery returns results without an MRI copy
+or a result workspace; keep your original MRI for viewing and QC. Provider access
+and availability are required. See the guide before submitting a left hemisphere.
+
+### Install and run locally
 
 Use a Linux host with an NVIDIA GPU configured for Docker. For CPU-only surface
 processing, see the surface-only example below. Prepare one excised hemisphere

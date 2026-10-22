@@ -7,6 +7,7 @@ new or empty and separate from the input. See :doc:`inputs` for full requirement
 
 This page uses the Python CLI and the published Docker image. For equivalent
 container commands without installing the Python package, see :doc:`docker`.
+For remote processing through the ITK-SNAP GUI, use :doc:`itksnap`.
 Complete :doc:`installation`, including ``purple-mri pull``, before running.
 
 Segmentation and surfaces
