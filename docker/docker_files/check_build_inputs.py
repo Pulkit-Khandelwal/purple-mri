@@ -6,7 +6,7 @@ import sys
 root = Path(__file__).resolve().parent
 models = root / 'assets/nnunet_paths_that_it_requires/nnUNet/3d_fullres'
 errors = []
-for task in (101, 269, 273, 276, 279, 283, 289, 451):
+for task in (101, 269, 2732, 276, 279, 283, 289, 451):
     matches = sorted(p for p in models.glob('Task{:03d}_*'.format(task)) if p.is_dir())
     if len(matches) != 1:
         errors.append('Expected one Task{:03d}_* folder, found {}'.format(task, len(matches)))

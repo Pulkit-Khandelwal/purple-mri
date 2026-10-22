@@ -341,7 +341,7 @@ mkdir -p "$OUTPUT/fold_0"
 - If VTK reports `GLIBC_2.38 not found` from `/.singularity.d/libs/libGLdispatch.so.0`, run surfaces without `--nv`; do not combine both stages into one GPU-enabled SIF invocation.
 - The Task2732 package lacks nnU-Net automatic postprocessing metadata. Inference can finish successfully while reporting that automatic postprocessing was skipped.
 
-Validation on 2026-10-21: Docker standalone Task2732, full DL, and LH surface/parcellation runs completed successfully. Singularity Task2732 GPU inference completed successfully; all four checkpoints were CPU-readable; GPU computation and LH surface dependency/input/conversion preflights passed. **Full Singularity DL plus surface reconstruction has not been run end to end.** Apptainer commands use the equivalent interface but have not been live-tested for this release.
+Validation through 2026-10-22: Docker standalone Task2732, full DL, and LH surface/parcellation runs completed successfully. The published Python 1.1.0 wheel also passed Task2732 inference (2:31). The original SIF passed Task2732 GPU inference and setup checks with the workarounds above. A newer native SIF candidate completed full DL; its surface run required a corrected writable transform directory and then completed in a resumed test (2:13:29 for steps 04–06). **The rebuilt final SIF has not yet been reported as passing an uninterrupted full run, and the registry tag should not be assumed to contain the candidate fixes.** Apptainer has not been live-tested for this release.
 
 Maintainer reference: [Singularity SIF push](https://docs.sylabs.io/guides/3.8/user-guide/cli/singularity_push.html) and [Docker Hub OCI artifacts](https://docs.docker.com/docker-hub/repos/manage/hub-images/oci-artifacts/).
 

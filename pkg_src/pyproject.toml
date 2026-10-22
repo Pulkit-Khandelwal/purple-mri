@@ -1,25 +1,37 @@
 [build-system]
-    requires = ["setuptools"]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
 
 [project]
-name = "purple_mri"
-version = "0.0.1"
-authors = [
-  { name="Pulkit Khandelwal", email="kpulkit95@gmail.com" },
-]
-description = "purple_mri: Penn Utilities for Registration and ParcelLation of Ex vivo MRI"
-dependencies = [
-  'numpy',
-  'torch',
-  'pykeops',
-  'pymeshlab',
-  'vtk',
-  'SimpleITK',
-  'geomloss'
-]
+name = "purple-mri"
+version = "1.1.0"
+description = "Command-line interface for Purple ex vivo MRI workflows"
 readme = "README.md"
+requires-python = ">=3.9"
+authors = [{name = "Pulkit Khandelwal", email = "pkhandelwal1@mgh.harvard.edu"}]
+dependencies = []
+
+[project.optional-dependencies]
+legacy = ["numpy", "torch", "pykeops", "pymeshlab", "vtk", "SimpleITK", "geomloss", "pandas"]
+dev = ["build", "twine"]
+
+[project.scripts]
+purple-mri = "purple_mri.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/Pulkit-Khandelwal/purple-mri"
+Documentation = "https://purple-mri.readthedocs.io/en/latest/"
+Issues = "https://github.com/Pulkit-Khandelwal/purple-mri/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["purple_mri*"]
+
+[tool.setuptools.package-data]
+purple_mri = ["scripts/*.sh"]
+
 [tool.setuptools]
-    script-files = [
+script-files = [
   "purple_mri/scripts/run_surface_pipeline.sh",
   "purple_mri/scripts/do_mni_txs.sh",
   "purple_mri/scripts/prepare_segm_files.sh",
@@ -27,7 +39,5 @@ readme = "README.md"
   "purple_mri/scripts/make_fs_directories.sh",
   "purple_mri/scripts/parcellation.sh",
   "purple_mri/scripts/topology_correction.sh",
-  "purple_mri/scripts/decimate_mesh.py"]
-
-[project.urls]
-Homepage = "https://github.com/Pulkit-Khandelwal/purple_mri"
+  "purple_mri/scripts/decimate_mesh.py",
+]

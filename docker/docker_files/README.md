@@ -52,9 +52,13 @@ Task283_<original-task-name>/
       postprocessing.json               # if provided by the trained model
 ```
 
-Include Tasks **101, 269, 273, 276, 279, 283, 289, and 451** to support every
+Include Tasks **101, 269, 2732, 276, 279, 283, 289, and 451** to support every
 launcher option. Task451 uses `nnUNetTrainerWMHV2__nnUNetPlansv2.1`; the other
 tasks use `nnUNetTrainerV2__nnUNetPlansv2.1`.
+
+Subcortical inference now uses
+`Task2732_exvivo_supersynth_lisa_deepgray_flipfixed` instead of Task273, with
+the same label mapping. Supply its `plans.pkl` and `all/` final checkpoint pair.
 
 The launcher selects `-f all` and the final checkpoint. Numbered folds, training
 images, validation outputs, and training logs are not required by these commands.

@@ -1,0 +1,8 @@
+include pkg_src/pyproject.toml
+include pkg_src/MANIFEST.in
+include pkg_src/CHANGELOG.md
+include docker/docker_files/commands_nnunet_inference.sh
+include docker/docker_files/check_build_inputs.py
+recursive-include tests *.py
+prune docs
+exclude .readthedocs.yaml readthedocs.yaml

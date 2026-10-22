@@ -14,6 +14,31 @@ postmortem MRI.
 
 📖 **Documentation:** https://purple-mri.readthedocs.io/en/latest/
 
+## Adult CLI release 1.1.0
+
+The Python launcher runs the combined Docker image `pulks/docker_purple_mri:v1.1.0`.
+The subcortical selection is **Task2732**. Install the published [PyPI release](https://pypi.org/project/purple-mri/1.1.0/):
+
+```bash
+python3 -m venv ~/venvs/purple-mri
+source ~/venvs/purple-mri/bin/activate
+python -m pip install 'purple-mri==1.1.0'
+purple-mri pull
+purple-mri doctor
+purple-mri run exvivo_dl exvivo_surface \
+  --input /path/to/inputs --output /path/to/new_results \
+  --hemi rh --license /path/to/license.txt --threads 20
+```
+
+Inputs use `SUBJECT_0000.nii.gz`; choose the actual hemisphere and a new output
+directory. See [the package guide](pkg_src/README.md) and the Read the Docs
+installation, quick-start, output, and troubleshooting pages for complete usage.
+The CLI is Docker-only; the SIF is separate. Infant processing and other research
+workflows listed below are not all exposed by this adult CLI. Docker full DL and LH surfaces completed successfully; the published 1.1.0
+wheel also passed Task2732 GPU inference. Final SIF validation is tracked
+separately. See the [release notes](https://purple-mri.readthedocs.io/en/latest/release_notes.html)
+for the tested scope; process completion does not replace anatomical QC.
+
 ## Capabilities
 
 `purple-mri` supports:
@@ -70,7 +95,18 @@ git clone https://github.com/Pulkit-Khandelwal/purple-mri.git
 cd purple-mri
 ```
 
-Install the Python dependencies:
+Install the lightweight Python command-line package:
+
+```bash
+python -m pip install .
+purple-mri --help
+```
+
+See [package usage and migration notes](pkg_src/README.md) for the combined
+Docker workflow and compatibility with the original native surface launcher.
+Model weights and external neuroimaging tools are not installed by pip.
+
+For other repository analysis scripts, install their Python dependencies:
 
 ```bash
 pip install -r dependencies.txt
@@ -101,7 +137,7 @@ _0000.nii.gz
 The currently documented Docker image is:
 
 ```bash
-docker pull pulks/docker_hippogang_exvivo_segm:v1.4.6
+docker pull pulks/docker_purple_mri:v1.1.0
 ```
 
 The recommended complete workflow uses:
@@ -115,7 +151,7 @@ Example:
 ```bash
 docker run --rm --gpus all --shm-size=8g \
   -v /path/to/working_directory:/data/exvivo \
-  pulks/docker_hippogang_exvivo_segm:v1.4.6 \
+  pulks/docker_purple_mri:v1.1.0 \
   /bin/bash /src/commands_nnunet_inference.sh exvivo_all
 ```
 

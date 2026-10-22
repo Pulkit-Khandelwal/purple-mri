@@ -190,6 +190,11 @@ A typical ``purple-mri`` analysis follows the sequence:
 Getting Started
 ---------------
 
+The **1.1.0 Python CLI** provides the adult Docker segmentation and surface
+workflow. The broader research capabilities below also include separate
+repository workflows; infant container stages are not implemented in this CLI.
+
+
 Start with the installation instructions and then follow the individual
 workflow pages for segmentation, topology correction, surface reconstruction,
 parcellation, registration, template construction, and group analysis.
@@ -200,6 +205,8 @@ parcellation, registration, template construction, and group analysis.
    :caption: Getting Started
 
    installation
+   quickstart
+   inputs
 
 
 .. toctree::
@@ -218,6 +225,16 @@ parcellation, registration, template construction, and group analysis.
    :maxdepth: 1
    :caption: Reference
 
+   cli
+   outputs
+   qc
+   troubleshooting
+   containers
+   legacy
+   release_notes
+   publishing
+   api
+   usage
    citations
 
 

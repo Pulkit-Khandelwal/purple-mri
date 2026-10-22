@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import os
 import sys
 import numpy as np
@@ -284,13 +285,20 @@ def closure():
     L.backward()
     return L
 
-print("decimating the mesh............")
-src_path=str(sys.argv[1])
-tgt_path=str(sys.argv[2])
+def main(argv=None):
+    args = list(sys.argv[1:] if argv is None else argv)
+    if len(args) != 4:
+        print("Usage: decimate_mesh.py SOURCE_DIR TARGET_DIR INPUT_VTK OUTPUT_VTK", file=sys.stderr)
+        return 2
+    src_path, tgt_path, input_name, output_name = args
+    print("decimating the mesh............")
+    md_src = load_mesh(os.path.join(src_path, input_name))
+    print(md_src.keys(), len(md_src['f']), len(md_src['v']))
+    v_dec, f_dec = decimate(md_src['v'], md_src['f'], 300000)
+    print(len(v_dec), len(f_dec))
+    save_vtk(vtk_make_pd(v_dec, f_dec), os.path.join(tgt_path, output_name))
+    return 0
 
-md_src = load_mesh(os.path.join(src_path, sys.argv[3]))
-print(md_src.keys(), len(md_src['f']), len(md_src['v']))
 
-v_dec, f_dec = decimate(md_src['v'], md_src['f'], 300000)
-print(len(v_dec), len(f_dec))
-save_vtk(vtk_make_pd(v_dec, f_dec), os.path.join(tgt_path, sys.argv[4]))
+if __name__ == "__main__":
+    raise SystemExit(main())
