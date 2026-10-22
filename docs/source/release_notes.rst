@@ -39,6 +39,23 @@ and QC with the original local MRI. It distinguishes the proposed ``0.2.0``
 hemisphere tags from the illustrated service and local Docker/PyPI ``1.1.0``.
 This documentation does not change provider code or register a new service.
 
+Published native SIF update: 2026-10-22
+---------------------------------------
+
+The fixed ``purple_mri_v1.1.0.sif`` is published at
+``oras://registry-1.docker.io/pulks/singularity_purple_mri:v1.1.0``. It redirects
+inference bookkeeping into prediction outputs, selects container CPU libraries
+for surface tools within a GPU-enabled invocation, and runs transform scratch
+work in a writable subject directory. Model selections and the stage interface
+are retained. See :doc:`singularity` for complete commands.
+
+.. literalinclude:: _static/releases/purple_mri_v1.1.0.sif.sha256
+   :language: text
+
+This file checksum identifies the tested and published artifact. The SIF registry
+tag previously referred to an older build; verify the checksum of existing
+copies. Docker/PyPI ``1.1.0`` and the Git release tag are separate artifacts.
+
 Validation reported through 2026-10-22
 ---------------------------------------
 
@@ -57,22 +74,24 @@ The release CLI launches Docker; it does not expose a Singularity/Apptainer back
      - Exit 0; 23:31.
    * - Development CLI, Docker LH surfaces/parcellation
      - Exit 0; COMPLETE marker; 2:17:06.
-   * - Original SIF, Task2732 GPU inference
-     - Exit 0; 1:46, using a writable model bookkeeping mount.
-   * - Native SIF candidate setup
-     - All four real trainers/weights loaded, GPU calculation and surface imports passed.
-   * - Native SIF candidate full run
-     - DL and surface steps 01–03 passed; transform step failed on a read-only scratch path.
-   * - Candidate continuation with corrected transform script
-     - Surface steps 04–06 passed; COMPLETE marker; 2:13:29.
-   * - Rebuilt final SIF, uninterrupted DL and surfaces
-     - Final result not yet reported; not marked validated or published here.
+   * - Published native SIF, full DL/merge
+     - Exit 0; 22:58.
+   * - Published native SIF, LH surfaces/parcellation
+     - Exit 0; COMPLETE marker and core LH files checked; 2:14:14.
+   * - Published native SIF, uninterrupted combined run
+     - Exit 0; corrected and merged NIfTIs checked; 2:37:13 overall.
+   * - Published native SIF, registry round trip
+     - Upload completed; downloaded SIF exactly matched the tested file with cmp.
 
-These runs used one LH case on clam. They do not establish multi-host, RH,
-Apptainer, or general anatomical validation. The native SIF continuation required
-a temporary corrected-script mount, so it is not an uninterrupted test of the
-published SIF. The original registry SIF was downloaded and compared byte-for-byte;
-that check does not establish runtime equivalence of later candidates.
+The final SIF run completed on 2026-10-22 at 15:36:29 EDT on clam using one LH
+case, an NVIDIA RTX A6000, and 20 surface threads. These are observed runtimes,
+not performance guarantees. They do not establish multi-host, RH, Apptainer,
+Docker/SIF numerical equivalence, or general anatomical validation.
+
+Earlier development SIFs required writable model mounts, separate surface
+invocations, or a mounted transform-script correction. Those tests are
+superseded for release use by the uninterrupted run of the rebuilt SIF.
+The final run used one combined launcher invocation without those workarounds.
 
 Package unit tests, clean installation and documentation builds are separate from
 MRI processing and specimen-level scientific QC.

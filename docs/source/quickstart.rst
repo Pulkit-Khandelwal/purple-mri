@@ -6,7 +6,8 @@ Prepare one excised hemisphere per scan, with one hemisphere per batch. Name eac
 new or empty and separate from the input. See :doc:`inputs` for full requirements.
 
 This page uses the Python CLI and the published Docker image. For equivalent
-container commands without installing the Python package, see :doc:`docker`.
+container commands without installing the Python package, see :doc:`docker`
+or :doc:`singularity`.
 For remote processing through the ITK-SNAP GUI, use :doc:`itksnap`.
 Complete :doc:`installation`, including ``purple-mri pull``, before running.
 

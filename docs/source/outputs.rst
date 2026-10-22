@@ -1,10 +1,10 @@
 Outputs and provenance
 ==============================
 
-Paths are relative to the CLI's ``--output`` directory. The :doc:`docker`
-examples explicitly choose the same processing-output layout, but direct Docker
-does not create the Python CLI's ``purple_run.json``. The repository's
-project-folder examples use ``data_for_inference/output_from_nnunet_inference``
+Paths are relative to the CLI's ``--output`` directory. The :doc:`docker` and
+:doc:`singularity` examples explicitly choose the same processing-output layout.
+Direct runtime commands do not create the Python CLI's ``purple_run.json``;
+the SIF examples instead save ``run.log`` and ``sif.sha256`` beside the results. The repository's project-folder examples use ``data_for_inference/output_from_nnunet_inference``
 and timestamped timing directories instead. A single model writes
 ``predictions/SUBJECT.nii.gz``; the combined DL workflow retains its intermediates.
 
@@ -64,7 +64,9 @@ removed by topology correction. Use the corrected 10-label result for surfaces.
 Surface atlas volumes are MGZ files under ``SUBJECT/mri``; see
 :doc:`parcellation` for their exact names and conversion. The standalone CLI does
 not package or upload DSS attachments or create an ITK-SNAP workspace.
-The remote service's separate download workflow is documented in :doc:`itksnap`. It preserves the full processing output, including MRI working copies.
+Local processing retains the full output, including MRI working copies. The
+remote service's separate attachment download workflow is documented in
+:doc:`itksnap`.
 
 Check completion
 ----------------
@@ -81,6 +83,10 @@ For CLI runs, replace ``OUTPUT`` below with the host output directory:
    cat OUTPUT/timings/run_summary.tsv
    cat OUTPUT/exvivo_surface/COMPLETE
    python -m json.tool OUTPUT/purple_run.json
+
+For direct Docker or SIF runs, read the same timing and completion files; omit
+the ``purple_run.json`` command. The SIF examples record the image checksum in
+``OUTPUT/sif.sha256``.
 
 DL-only and individual-model runs do not produce a surface completion marker.
 Inspect the predicted NIfTIs and timing totals appropriate to that stage.

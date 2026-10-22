@@ -83,7 +83,7 @@ Missing surface license or assets
 ---------------------------------
 
 Supply a nonempty FreeSurfer license using ``--license`` in the CLI, or a
-read-only bind and ``FS_LICENSE`` for direct Docker. The license path inside the
+read-only bind and ``FS_LICENSE`` for direct Docker or SIF execution. The license path inside the
 container differs from the host path. The published adult image already supplies
 FreeSurfer, c3d, fsaverage, atlases, and the custom pial executable. Check the image
 identity and mounts if those assets are missing; follow the maintainer build guide
@@ -122,9 +122,25 @@ opened result workspace. Keep the ticket until delivery is complete and retain
 the original MRI for viewing. Remote DSS availability is separate from whether
 ``purple-mri doctor`` succeeds on your local Docker host.
 
-Singularity startup
----------------------------
+Singularity startup and older images
+------------------------------------
 
-A missing FUSE helper or permission error is a host runtime configuration issue.
-See :doc:`containers`. The SIF's existence alone does not show it can run on every
-host; the maintainer has now passed startup and Task2732 file checks on Lambda.
+Use the prebuilt image and checksum in :doc:`singularity`. The fixed SIF passed
+uninterrupted full DL and LH surfaces, and its registry download matched the
+tested file. Older images sharing the ``v1.1.0`` filename or tag can still contain
+these earlier runtime problems:
+
+* Read-only ``fold_0`` bookkeeping paths during nnU-Net initialization.
+* VTK errors involving host ``libGLdispatch.so.0`` and ``GLIBC_2.38``.
+* Transform estimation unable to create relative ``talsrcimg.img`` scratch files.
+
+If you see one of these, compare the SIF checksum and pull the published artifact
+into a new directory if it differs. The current image handles those paths and
+surface libraries internally, including a combined ``--nv`` run. Do not edit
+model metadata or add the old per-model mounts to the current examples.
+
+A missing FUSE helper or ``Operation not permitted`` before container startup is
+a host runtime issue. Some unprivileged installations need ``squashfuse`` on PATH;
+use your site's configured runtime or ask its administrator. Check the writable
+output bind and GPU allocation separately. The tested host does not establish
+compatibility with every runtime or cluster configuration.
