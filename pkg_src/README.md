@@ -11,9 +11,15 @@ Source: https://github.com/Pulkit-Khandelwal/purple-mri
 
 Documentation: https://purple-mri.readthedocs.io/en/latest/
 
+Start with the [quick start](https://purple-mri.readthedocs.io/en/latest/quickstart.html).
+For commands without the Python launcher, see
+[direct Docker usage](https://purple-mri.readthedocs.io/en/latest/docker.html).
+This repository README receives documentation corrections after release; it does
+not replace the metadata embedded in the already published 1.1.0 distributions.
+
 ## Install version 1.1.0
 
-Use Python 3.9 or newer. After publication on PyPI:
+Use Python 3.9 or newer. Version 1.1.0 is published on PyPI:
 
 ```bash
 python3 -m venv ~/venvs/purple-mri
@@ -23,7 +29,7 @@ purple-mri --version
 purple-mri --help
 ```
 
-Before publication, install the supplied release wheel:
+For offline installation, use the matching published release wheel:
 
 ```bash
 python -m pip install --no-index --no-deps --upgrade ./dist/purple_mri-1.1.0-py3-none-any.whl
@@ -173,8 +179,10 @@ python -m build
 
 Keep root and `pkg_src` metadata aligned; tests compare their project definitions.
 Unit tests and wheel-install checks do not establish scientific accuracy.
-The maintainer reported successful Docker Task2732 and combined DL/merge runs;
-surfaces reached atlas conversion, with final completion still pending. The
+The published 1.1.0 wheel passed Task2732 GPU inference with exit 0 (2:31).
+The development CLI also completed full DL/merge (23:31) and LH surface/parcellation
+processing (2:17:06, with a COMPLETE marker) using the same Docker image.
+These are observed runtimes for one case, not performance guarantees. The
 surface scripts retain opposite-hemisphere compatibility copies and RH-coded
 working ASEG labels; consult the documentation before interpreting laterality.
 This package does not automate PyPI publication.

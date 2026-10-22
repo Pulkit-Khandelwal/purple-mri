@@ -22,4 +22,6 @@
 - Replace old CRUISE/two-container instructions with current usage and limitations.
 
 This is a packaging/launcher refactor, not a change to scientific label mappings,
-surface placement parameters or trained weights. No PyPI release has been made.
+surface placement parameters or trained weights. Python 1.1.0 is published on
+PyPI, and its release wheel passed standalone Task2732 GPU inference. Subsequent
+repository documentation corrections do not replace those published artifacts.

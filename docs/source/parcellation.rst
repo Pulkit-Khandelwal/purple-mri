@@ -1,7 +1,7 @@
 Surface reconstruction and parcellation
 ===============================================
 
-The current Docker surface stage uses the MRI and corrected Purple 10-label
+The Docker surface stage uses the MRI and corrected Purple 10-label
 segmentation. Run it after DL in one command or use ``--segmentation`` to supply
 an existing corrected result; see :doc:`quickstart`. Select ``--hemi lh`` or
 ``--hemi rh``, provide a FreeSurfer license, and choose an appropriate thread count.
@@ -41,11 +41,38 @@ The current script writes the following under
    * - ``wmparc.mgz``
      - White-matter parcellation
 
-For an optional NIfTI conversion, with FreeSurfer available:
+Export NIfTI files using Docker
+-------------------------------
+
+Use the bundled FreeSurfer tools; no host FreeSurfer installation is required.
+The following exports all nine volumes from one completed subject into a new
+folder. Edit the paths and keep the original MGZ outputs.
 
 .. code-block:: bash
 
-   mri_convert /path/to/SUBJECT/mri/DKTatlas.mgz /path/to/DKTatlas.nii.gz
+   (
+   set -euo pipefail
+   SUBJECT_DIR="/absolute/path/results/exvivo_surface/SUBJECT"
+   EXPORT_DIR="/absolute/path/new_nifti_export"
+   LICENSE="/absolute/path/license.txt"
+   test -d "$SUBJECT_DIR/mri"
+   test -s "$LICENSE"
+   mkdir "$EXPORT_DIR"
+   docker run --rm \
+     --mount "type=bind,src=$SUBJECT_DIR,dst=/subject,readonly" \
+     --mount "type=bind,src=$EXPORT_DIR,dst=/export" \
+     --mount "type=bind,src=$LICENSE,dst=/license.txt,readonly" \
+     --env FS_LICENSE=/license.txt --env NO_FSFAST=1 \
+     --entrypoint /bin/bash pulks/docker_purple_mri:v1.1.0 -c '
+       set -eo pipefail
+       source /opt/freesurfer/SetUpFreeSurfer.sh
+       for atlas in aparc DKTatlas a2009s brainnetome HCP-MMP1.glasser \
+         Schaefer2018_400Parcels_17Networks julich economo wmparc; do
+         test -s "/subject/mri/$atlas.mgz"
+         mri_convert "/subject/mri/$atlas.mgz" "/export/$atlas.nii.gz"
+       done
+     '
+   )
 
 This changes the storage format; it does not guarantee alignment to a different
 reference grid. Compare geometry with the original MRI. If resampling labels is

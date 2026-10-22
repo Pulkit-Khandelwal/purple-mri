@@ -5,6 +5,10 @@ Prepare one excised hemisphere per scan, with one hemisphere per batch. Name eac
 3-D, single-channel NIfTI ``SUBJECT_0000.nii.gz``. Use an output directory that is
 new or empty and separate from the input. See :doc:`inputs` for full requirements.
 
+This page uses the Python CLI and the published Docker image. For equivalent
+container commands without installing the Python package, see :doc:`docker`.
+Complete :doc:`installation`, including ``purple-mri pull``, before running.
+
 Segmentation and surfaces
 ---------------------------------
 
@@ -20,7 +24,18 @@ Replace the example paths and select the actual anatomical hemisphere:
      --threads 20 \
      --dry-run
 
-Review the command, then run it again without ``--dry-run``. Use ``--hemi lh``
+After reviewing the dry run, start actual processing:
+
+.. code-block:: bash
+
+   purple-mri run exvivo_dl exvivo_surface \
+     --input /path/to/inputs \
+     --output /path/to/results_run1 \
+     --hemi rh \
+     --license /path/to/license.txt \
+     --threads 20
+
+Use ``--hemi lh``
 for a left hemisphere. Do not manually mirror the MRI to choose a hemisphere.
 ``--pull`` can be added to refresh the Docker tag before a real run.
 
@@ -69,6 +84,11 @@ Long jobs and completion
 Use ``tmux`` or the site's job scheduler. In tmux, detach with ``Ctrl+B``, then
 ``D`` to leave the job running. In CLI 1.1.0, ``Ctrl+C`` requests cancellation of
 that run's container. It is not a detach command.
+
+Immediately after the command returns, ``echo $?`` reports its exit status.
+If saving terminal output through ``tee``, enable ``set -o pipefail`` first so a
+pipeline failure is not hidden by successful logging. Write the log outside the
+new CLI output directory; creating a log inside it before launch makes it nonempty.
 
 Check the command exit status and ``purple_run.json``. A successful surface
 stage also writes ``exvivo_surface/COMPLETE``. Inspect the outputs described in

@@ -1,6 +1,24 @@
 Troubleshooting
 =======================
 
+Python environment setup
+------------------------
+
+If ``python3 -m venv`` fails because ``ensurepip`` is unavailable, use an existing
+Python environment with pip, or create a Conda environment if Conda is available:
+
+.. code-block:: bash
+
+   conda create -n purple-cli python=3.12 pip
+   conda activate purple-cli
+   python -m pip install 'purple-mri==1.1.0'
+   purple-mri --version
+
+No root access is needed for this Conda route. If ``purple-mri`` is not found,
+activate the environment where it was installed, or use
+``python -m purple_mri --help`` with that environment's interpreter. Installing
+the CLI does not configure Docker or download its image.
+
 Docker or image unavailable
 -----------------------------------
 
@@ -60,6 +78,31 @@ New failed/cancelled containers are retained. After checking logs and preserving
 needed outputs, an exited container can be removed with ``docker rm CONTAINER_ID``.
 If provenance says ``unknown`` or ``running_after_client_exit``, check actual
 Docker state before retrying. Use tmux detach, not Ctrl+C, to leave a job running.
+
+Missing surface license or assets
+---------------------------------
+
+Supply a nonempty FreeSurfer license using ``--license`` in the CLI, or a
+read-only bind and ``FS_LICENSE`` for direct Docker. The license path inside the
+container differs from the host path. The published adult image already supplies
+FreeSurfer, c3d, fsaverage, atlases, and the custom pial executable. Check the image
+identity and mounts if those assets are missing; follow the maintainer build guide
+only when rebuilding an image.
+
+Task289 appears in ``models`` but cannot load
+---------------------------------------------
+
+``models`` lists accepted selections, not an inventory of bundled checkpoints.
+Task289 is optional and may be absent. Use a compatible image containing its
+intended trained assets; do not substitute another task's weights or metadata.
+
+Direct Docker files are owned by root
+-------------------------------------
+
+Direct Docker commands use the image's default user. Check your site's Docker
+and filesystem permissions before starting. Container output paths must be inside
+a writable host bind mount. The CLI does not currently expose a Docker ``--user``
+option, and these instructions do not claim arbitrary-user execution is validated.
 
 Surface messages and laterality
 ---------------------------------------

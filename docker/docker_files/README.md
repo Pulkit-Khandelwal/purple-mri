@@ -2,6 +2,13 @@
 
 Build target: `pulks/docker_purple_mri:v1.1.0` (Linux AMD64).
 
+This is a **maintainer build guide**. To run the published image, use the
+[Python CLI quick start](https://purple-mri.readthedocs.io/en/latest/quickstart.html)
+or [direct Docker guide](https://purple-mri.readthedocs.io/en/latest/docker.html).
+Users of those workflows do not need to download weights or compile the pial
+binary separately. A successful test of the published image does not establish
+that this from-source recipe has been rebuilt and validated; see the status below.
+
 This folder combines the adult DL pipeline, surface reconstruction, timing
 updates, and custom pial build. It starts from NVIDIA CUDA 11.8 / Ubuntu 20.04
 and does not require the old `docker_hippogang_exvivo_segm` image.

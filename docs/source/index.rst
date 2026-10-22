@@ -18,6 +18,30 @@ topology-corrected cortical reconstructions, native-space anatomical
 parcellations, spatial normalization, and vertex-wise morphometric analyses.
 
 
+Start here: adult release 1.1.0
+-------------------------------
+
+Use the published Python CLI with Docker for adult segmentation, topology
+correction, surface reconstruction, and parcellation:
+
+.. code-block:: bash
+
+   python -m pip install 'purple-mri==1.1.0'
+   purple-mri pull
+   purple-mri run exvivo_dl exvivo_surface \
+     --input /absolute/path/inputs --output /absolute/path/new_results \
+     --hemi lh --license /absolute/path/license.txt --threads 20
+
+Read :doc:`installation` first for the Linux, GPU, Python, and license requirements.
+Then use :doc:`quickstart` or :doc:`docker` for complete examples, and :doc:`outputs`
+to find results. Inputs are named ``SUBJECT_0000.nii.gz``; select the actual
+hemisphere and a fresh output directory. Task2732 is the subcortical model.
+
+The broader research workflows described below are separate from the adult CLI.
+Infant container stages are not implemented. See :doc:`release_notes` for the
+reported validation scope.
+
+
 .. image:: _static/animation.gif
    :width: 900px
    :align: center
@@ -206,16 +230,25 @@ parcellation, registration, template construction, and group analysis.
 
    installation
    quickstart
+   docker
    inputs
+   outputs
 
 
 .. toctree::
    :maxdepth: 1
-   :caption: Workflows
+   :caption: Adult Container Workflow
 
    segmentation
    posthoc_correction
    parcellation
+   qc
+
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Other Research Workflows
+
    registration
    template_construction
    group_analysis
@@ -226,8 +259,6 @@ parcellation, registration, template construction, and group analysis.
    :caption: Reference
 
    cli
-   outputs
-   qc
    troubleshooting
    containers
    legacy
