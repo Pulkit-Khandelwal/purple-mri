@@ -1,6 +1,10 @@
 Template Construction
 =====================
 
+This is a separate repository research workflow. It is not a stage of
+``purple-mri run`` and needs the host tools listed below. For adult segmentation
+and surfaces in the published Docker image, start with :doc:`quickstart`.
+
 Overview
 --------
 

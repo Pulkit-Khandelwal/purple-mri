@@ -44,11 +44,47 @@ Run options
    * - ``--dry-run``
      - Validate host paths and print the equivalent command without running.
 
+Equivalent container settings
+-----------------------------
+
+The Python CLI constructs these settings for the Docker launcher. See :doc:`docker`
+for runnable commands. Container paths must refer to locations inside bind mounts.
+
+.. list-table::
+   :header-rows: 1
+   :widths: 32 68
+
+   * - CLI option
+     - Direct Docker equivalent
+   * - ``--input DIR``
+     - Read-only input bind and ``EXVIVO_INPUT_DIR``.
+   * - ``--output DIR``
+     - Writable output bind; set ``EXVIVO_DL_OUTPUT_DIR``,
+       ``EXVIVO_SURFACE_OUTPUT_DIR``, ``EXVIVO_MODEL_OUTPUT_DIR``, and
+       ``EXVIVO_TIMING_DIR`` for the desired layout.
+   * - ``--hemi lh`` or ``rh``
+     - ``EXVIVO_HEMI=lh`` or ``rh``.
+   * - ``--license FILE``
+     - Read-only license bind and ``FS_LICENSE`` pointing to that container path.
+   * - ``--segmentation DIR``
+     - Read-only corrected-label bind and ``EXVIVO_SEGM_DIR``.
+   * - ``--threads N``
+     - ``EXVIVO_THREADS=N``; defaults to 8 in both launchers.
+   * - ``--gpus SELECTOR``
+     - Docker ``--gpus SELECTOR`` for DL. Omit it for a surface-only job.
+   * - ``--image IMAGE`` / ``--pull``
+     - Select the Docker image / explicitly run ``docker pull IMAGE`` first.
+
+The CLI also sets ``NO_FSFAST=1`` and an 8 GiB shared-memory limit. Its run-record
+and cancellation handling are Python features, not additional stage arguments.
+
 Stages
 --------------
 
 ``exvivo_dl`` runs all adult DL steps and merge. ``exvivo_all`` is an alias;
-both use the CLI's ``exvivo_dl`` output subdirectory. ``exvivo_surface`` runs
+both use the CLI's ``exvivo_dl`` output subdirectory. With the direct container
+launcher and no explicit output override, ``exvivo_all`` instead retains its
+historical ``exvivo_all`` output directory. Neither spelling includes surfaces. ``exvivo_surface`` runs
 surface reconstruction and atlas mapping. The only supported two-stage sequence
 is ``exvivo_dl exvivo_surface`` (or the alias followed by surfaces).
 

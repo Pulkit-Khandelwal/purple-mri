@@ -73,8 +73,14 @@ The corrected Purple label convention is:
 Output location
 -----------------------
 
-Output must be new or empty. It cannot equal, contain, or be contained within
+For the Python CLI, output must be new or empty. It cannot equal, contain, or be contained within
 the input directory. Surface segmentation inputs must also remain separate from
 output. There is no automatic resume or overwrite. The CLI binds MRI inputs,
 segmentation inputs, and the license read-only; results are written to the
 separate output mount.
+
+Direct Docker callers choose their own bind mounts and output settings; follow
+:doc:`docker` to use the same separated input/output layout. The project-folder
+examples in the repository container guide use a different default, placing
+outputs below ``data_for_inference/output_from_nnunet_inference``. Do not mix
+those host paths with the CLI examples.

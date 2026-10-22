@@ -17,6 +17,19 @@ or uncertain jobs for inspection. This fixes the earlier development CLI behavio
 where interrupting the Python client could leave its container running. Existing
 jobs launched by that older version are unaffected by installing this release.
 
+Documentation refresh after publication
+---------------------------------------
+
+The repository documentation now distinguishes the Python CLI, direct Docker, and
+separate native research workflows. It adds complete direct Docker examples,
+container-based export of the nine atlas volumes, output/provenance differences,
+and environment troubleshooting. The package README and changelog now reflect
+that Python 1.1.0 is published and the reported Docker surface run completed.
+
+This is a documentation-only update. It does not replace the PyPI distributions,
+change package version or runtime code, rebuild the Docker image, or move the
+existing ``v1.1.0`` Git tag.
+
 Validation reported through 2026-10-22
 ---------------------------------------
 

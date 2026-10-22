@@ -6,6 +6,26 @@ trained weights, FreeSurfer, Convert3D, and the custom pial tools. Installing th
 package does not download the image. A Singularity SIF is a separate distribution
 and is not needed to install or use this Docker CLI.
 
+Choose how to launch Docker
+---------------------------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 70
+
+   * - Route
+     - Use it when
+   * - Python CLI
+     - You want path validation, dry runs, run records, and managed cancellation.
+       Install below, then follow :doc:`quickstart`.
+   * - Direct Docker
+     - You prefer explicit container commands. No host Python package is needed;
+       follow :doc:`docker`.
+
+Both routes use the same published Docker image and stage names. The input/output
+layout is explicit in each guide. For separate host-based research workflows,
+see their individual guides and :doc:`legacy`.
+
 Requirements
 --------------------
 
@@ -33,6 +53,9 @@ Version 1.1.0 is available on `PyPI <https://pypi.org/project/purple-mri/1.1.0/>
    python -m pip install 'purple-mri==1.1.0'
    purple-mri --version
    purple-mri --help
+
+If ``venv`` reports that ``ensurepip`` is unavailable, see :doc:`troubleshooting`
+for an existing-environment or Conda installation without administrator access.
 
 For an offline installation, use the matching wheel from the release bundle:
 

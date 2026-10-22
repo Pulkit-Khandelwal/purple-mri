@@ -6,6 +6,20 @@ Run adult ex vivo MRI segmentation, post-hoc topology correction, cortical surfa
 
 [Docker Hub](https://hub.docker.com/r/pulks/docker_purple_mri) · [GitHub](https://github.com/Pulkit-Khandelwal/purple-mri) · [Read the Docs](https://purple-mri.readthedocs.io/en/latest/)
 
+## Choose how to run Docker
+
+The [Python CLI quick start](https://purple-mri.readthedocs.io/en/latest/quickstart.html)
+provides installation, dry-run validation, and run records. The
+[direct Docker guide](https://purple-mri.readthedocs.io/en/latest/docker.html)
+provides all four common workflows with separate read-only input and writable
+output mounts. Both use the same stage launcher and Task2732 selection.
+
+The Docker examples below retain the project-folder layout: mount the parent of
+`data_for_inference/` at `/data/exvivo`; outputs appear under that project. Pip
+examples use a separate `--output` folder instead. Choose one layout and follow
+its paths consistently. No host FreeSurfer, atlas, or custom pial installation
+is required for either container route.
+
 ## Choose a workflow
 
 | Option | What it runs |
@@ -147,6 +161,15 @@ By default, outputs are saved on the host under:
 | Surface completion marker | `exvivo_surface/COMPLETE` |
 | Per-step timings and workflow totals | `timings_<UTC timestamp>_<process ID>/` |
 
+For the exact nine atlas filenames, interpretation of hemisphere compatibility
+copies, and Docker-based NIfTI export, see the
+[parcellation guide](https://purple-mri.readthedocs.io/en/latest/parcellation.html).
+
+These direct commands do not write the Python CLI's `purple_run.json`. Record the
+image identity with `docker image inspect pulks/docker_purple_mri:v1.1.0` and save
+logs alongside the results. The separate-mount examples in the Read the Docs
+Docker guide resolve and record the image ID before execution.
+
 All intermediate NIfTI files are retained. Results persist on the host after `--rm` removes the container.
 
 Progress and timings print to the terminal. Each timing directory contains:
@@ -183,7 +206,9 @@ Keep output paths inside a mounted directory so files remain accessible on the h
 
 ## Individual model options
 
-All existing individual model options remain available. They run the selected model rather than the full DL workflow.
+The launcher accepts the individual model options below. They run one model
+rather than the full DL workflow. An accepted option does not guarantee that its
+checkpoint is present; Task289 is optional and may be absent from the image.
 
 | Option | Model |
 | --- | --- |
@@ -194,7 +219,7 @@ All existing individual model options remain available. They run the selected mo
 | `exvivo_umc_strip_cerebellum` | Cerebellum stripping for UMC MRI. |
 | `exvivo_posthoc_topology` | Raw post-hoc bridged-sulcus prediction from a prepared segmentation input; see the topology workflow above. |
 | `exvivo_multi_sequence_mtl_amygdala_subfields` | MTL and amygdala subfields; trained on CISS/T2w/FLASH MRI. |
-| `exvivo_multi_sequence_subcortical` | Subcortical structures; trained on CISS/T2w/FLASH MRI. |
+| `exvivo_multi_sequence_subcortical` | Task2732 flip-fixed subcortical model; trained on CISS/T2w/FLASH MRI. |
 
 For example:
 

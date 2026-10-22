@@ -6,6 +6,17 @@ small Python launcher. Docker distributes the scientific environment and weights
 A SIF is an alternative container artifact for a compatible Singularity or
 Apptainer host. Do not include an 18 GB SIF in a Python wheel.
 
+Choose the Docker launcher
+--------------------------
+
+Use :doc:`installation` and :doc:`quickstart` for the Python CLI, or :doc:`docker`
+for direct Docker commands. Both launch the same scientific pipeline. The CLI
+adds host-path validation, a dry run, a JSON run record, and managed cancellation.
+The direct examples set input and output mounts explicitly and save the image ID.
+
+The historical pip native entry point and the repository's separate analysis
+scripts have different host requirements; see :doc:`legacy`.
+
 Docker identity
 -----------------------
 

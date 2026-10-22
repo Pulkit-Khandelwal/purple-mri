@@ -1,7 +1,11 @@
 Outputs and provenance
 ==============================
 
-Paths are relative to the CLI's ``--output`` directory. A single model writes
+Paths are relative to the CLI's ``--output`` directory. The :doc:`docker`
+examples explicitly choose the same processing-output layout, but direct Docker
+does not create the Python CLI's ``purple_run.json``. The repository's
+project-folder examples use ``data_for_inference/output_from_nnunet_inference``
+and timestamped timing directories instead. A single model writes
 ``predictions/SUBJECT.nii.gz``; the combined DL workflow retains its intermediates.
 
 .. list-table:: Main files and directories
@@ -59,11 +63,29 @@ removed by topology correction. Use the corrected 10-label result for surfaces.
 
 Surface atlas volumes are MGZ files under ``SUBJECT/mri``; see
 :doc:`parcellation` for their exact names and conversion. The standalone CLI does
-not produce the DSS provider's four/six attachment bundles or an ITK-SNAP
-workspace. It preserves the full processing output, including MRI working copies.
+not package or upload DSS attachments or create an ITK-SNAP workspace. It preserves the full processing output, including MRI working copies.
 
-Run record
-------------------
+Check completion
+----------------
+
+For a combined run, require a successful command exit, successful ``dl``,
+``surface``, and ``overall`` totals, and the surface ``COMPLETE`` marker. A single
+``worker ended successfully`` message describes one worker, not the entire run.
+An output folder or a vanished Docker container is not a completion check.
+
+For CLI runs, replace ``OUTPUT`` below with the host output directory:
+
+.. code-block:: bash
+
+   cat OUTPUT/timings/run_summary.tsv
+   cat OUTPUT/exvivo_surface/COMPLETE
+   python -m json.tool OUTPUT/purple_run.json
+
+DL-only and individual-model runs do not produce a surface completion marker.
+Inspect the predicted NIfTIs and timing totals appropriate to that stage.
+
+Run record (Python CLI)
+-----------------------
 
 ``purple_run.json`` includes ``package_version``, the requested ``image``, resolved
 ``image_id``, available ``repo_digests``, ``stages``, and ``hemisphere``. Container
