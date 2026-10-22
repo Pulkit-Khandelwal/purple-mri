@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+set -eo pipefail
 working_dir=$1
 str_split=$2
 for i in $str_split; do subjects+=($i) ; done

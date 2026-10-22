@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+set -eo pipefail
 working_dir=$1
 generated_files_folder=$2
 mri_dir=$3

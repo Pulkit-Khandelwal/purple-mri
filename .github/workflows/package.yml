@@ -1,0 +1,40 @@
+name: Python package and docs
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            pkg_src
+            tests
+            docker/docker_files
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python -m pip install build twine
+      - run: python -m pip install -e .
+      - run: python -m unittest discover -s tests -v
+      - run: python -m build
+      - run: python -m twine check --strict dist/*
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            pkg_src
+            docs
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install . -r docs/requirements.txt
+      - run: sphinx-build -W --keep-going -b html docs/source docs/_build/html

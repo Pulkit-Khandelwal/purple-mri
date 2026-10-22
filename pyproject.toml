@@ -1,8 +1,44 @@
 [build-system]
-requires = ["flit_core >=3.2,<4"]
-build-backend = "flit_core.buildapi"
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "purple-mri"
+version = "1.1.0"
+description = "Command-line interface for Purple ex vivo MRI workflows"
+readme = "pkg_src/README.md"
+requires-python = ">=3.9"
 authors = [{name = "Pulkit Khandelwal", email = "pkhandelwal1@mgh.harvard.edu"}]
-dynamic = ["version", "description"]
+dependencies = []
+
+[project.optional-dependencies]
+legacy = ["numpy", "torch", "pykeops", "pymeshlab", "vtk", "SimpleITK", "geomloss", "pandas"]
+dev = ["build", "twine"]
+
+[project.scripts]
+purple-mri = "purple_mri.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/Pulkit-Khandelwal/purple-mri"
+Documentation = "https://purple-mri.readthedocs.io/en/latest/"
+Issues = "https://github.com/Pulkit-Khandelwal/purple-mri/issues"
+
+[tool.setuptools.packages.find]
+where = ["pkg_src"]
+include = ["purple_mri*"]
+
+[tool.setuptools.package-data]
+purple_mri = ["scripts/*.sh"]
+
+[tool.setuptools]
+package-dir = {"" = "pkg_src"}
+script-files = [
+  "pkg_src/purple_mri/scripts/run_surface_pipeline.sh",
+  "pkg_src/purple_mri/scripts/do_mni_txs.sh",
+  "pkg_src/purple_mri/scripts/prepare_segm_files.sh",
+  "pkg_src/purple_mri/scripts/create_mesh.sh",
+  "pkg_src/purple_mri/scripts/make_fs_directories.sh",
+  "pkg_src/purple_mri/scripts/parcellation.sh",
+  "pkg_src/purple_mri/scripts/topology_correction.sh",
+  "pkg_src/purple_mri/scripts/decimate_mesh.py",
+]

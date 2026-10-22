@@ -97,7 +97,7 @@ for stage in "${stages[@]}"; do
     echo "[6/8] MTL and amygdala subfields"
     timed_step dl 06 "MTL and amygdala subfields" predict 269 "$INPUT_DIR" "$OUT_DIR/06_mtl"
     echo "[7/8] Subcortical structures"
-    timed_step dl 07 "Subcortical structures" predict 273 "$INPUT_DIR" "$OUT_DIR/07_subcortical"
+    timed_step dl 07 "Subcortical structures" predict 2732 "$INPUT_DIR" "$OUT_DIR/07_subcortical"
     echo "[8/8] Merge and clean residual labels"
     timed_step dl 08 "Merge and clean residual labels" helper merge
     timing_total dl "$dl_started" "$dl_started_utc" 0
@@ -114,7 +114,7 @@ for stage in "${stages[@]}"; do
       exvivo_posthoc_topology) task=279 ;;
       exvivo_umc_strip_cerebellum) task=101 ;;
       exvivo_multi_sequence_mtl_amygdala_subfields) task=269 ;;
-      exvivo_multi_sequence_subcortical) task=273 ;;
+      exvivo_multi_sequence_subcortical) task=2732 ;;
       exvivo_flash_more_subcort) task=289 ;;
     esac
     predict "$task" "$INPUT_DIR" "${EXVIVO_MODEL_OUTPUT_DIR:-$INPUT_DIR/output_from_nnunet_inference}" "$trainer"

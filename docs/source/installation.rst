@@ -1,248 +1,81 @@
 Installation
-============
+====================
 
-Overview
---------
+The Python package is a small launcher. The Docker image supplies nnU-Net,
+trained weights, FreeSurfer, Convert3D, and the custom pial tools. Installing the
+package does not download the image. A Singularity SIF is a separate distribution
+and is not needed to install or use this Docker CLI.
 
-``purple-mri`` combines several neuroimaging tools and workflow-specific
-dependencies. Not every dependency is required for every analysis.
-
-The recommended way to use ``purple-mri`` is to clone the repository and run
-the corresponding workflow scripts directly.
-
-
-Clone the Repository
+Requirements
 --------------------
+
+* Python 3.9 or newer for the CLI (Python 3.12 is a suitable choice).
+* A Linux Docker host with permission to access its Docker daemon.
+* An NVIDIA GPU, a compatible driver, and configured Docker GPU access for DL.
+* A personal FreeSurfer license file for surface reconstruction.
+* Storage for the large container image and per-subject intermediates. The
+  maintainer's converted SIF is about 18 GB; Docker storage and working space are
+  additional. Resource needs depend on image dimensions and the workflow.
+
+Host Python does not need nnU-Net, PyTorch, or FreeSurfer for Docker execution.
+Surface-only jobs do not request a GPU. Native macOS/Windows execution of this
+container workflow has not been validated; use a suitable Linux host.
+
+Install the release
+---------------------------
+
+Version 1.1.0 is available on `PyPI <https://pypi.org/project/purple-mri/1.1.0/>`_:
+
+.. code-block:: bash
+
+   python3 -m venv ~/venvs/purple-mri
+   source ~/venvs/purple-mri/bin/activate
+   python -m pip install 'purple-mri==1.1.0'
+   purple-mri --version
+   purple-mri --help
+
+For an offline installation, use the matching wheel from the release bundle:
+
+.. code-block:: bash
+
+   python -m pip install --no-index --no-deps --upgrade \
+     ./dist/purple_mri-1.1.0-py3-none-any.whl
+
+Get the container
+-------------------------
+
+.. code-block:: bash
+
+   purple-mri pull
+   purple-mri doctor
+   purple-mri models
+
+The default tag is ``pulks/docker_purple_mri:v1.1.0``. ``pull`` explicitly
+refreshes that tag. ``doctor`` checks Docker access and local image metadata;
+it does not run inference or check GPU access, checkpoints, or scientific quality.
+``models`` lists expected selections, not the checkpoint inventory.
+
+For GPU setup, follow the `NVIDIA Container Toolkit documentation
+<https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html>`_.
+Obtain a license from `FreeSurfer registration
+<https://surfer.nmr.mgh.harvard.edu/registration.html>`_ and keep it on the host.
+
+Upgrade or remove
+-------------------------
+
+Upgrade with ``python -m pip install --upgrade 'purple-mri==1.1.0'``. Use ``python -m pip uninstall purple-mri`` to remove the launcher.
+Neither action deletes Docker images or MRI outputs. Use a new output directory
+for each run; upgrading does not modify a job that is already running.
+
+From source
+-------------------
 
 .. code-block:: bash
 
    git clone https://github.com/Pulkit-Khandelwal/purple-mri.git
    cd purple-mri
-
-
-Core Requirements
------------------
-
-The main requirements across the ``purple-mri`` workflows are:
-
-* Linux
-* Python 3.10+
-* Git
-* Docker
-* FreeSurfer
-* Convert3D / ``c3d``
-* ANTs for MRI preprocessing
-* ``greedy`` for registration and template construction
-
-Additional requirements depend on the workflow being used.
-
-
-Python Dependencies
--------------------
-
-Create a Python environment if desired:
-
-.. code-block:: bash
-
-   python -m venv .venv
-   source .venv/bin/activate
-
-Install the Python dependencies:
-
-.. code-block:: bash
-
-   pip install -r dependencies.txt
-
-
-Segmentation
-------------
-
-Deep learning-based segmentation is distributed through Docker.
-
-The currently documented segmentation image is:
-
-.. code-block:: text
-
-   pulks/docker_hippogang_exvivo_segm:v1.4.6
-
-For GPU inference, Docker must be configured to access an NVIDIA GPU.
-
-Pull the image using:
-
-.. code-block:: bash
-
-   docker pull pulks/docker_hippogang_exvivo_segm:v1.4.6
-
-The recommended complete segmentation workflow can then be run with:
-
-.. code-block:: text
-
-   exvivo_all
-
-Detailed instructions are available here:
-
-:doc:`segmentation`
-
-For the full list of individual segmentation models and Docker options, see:
-
-`Ex vivo Docker documentation <https://github.com/Pulkit-Khandelwal/purple-mri/blob/main/docker/exvivo_docker.md>`_
-
-
-Post-hoc Topology Correction
-----------------------------
-
-Standalone post-hoc topology correction uses the same segmentation Docker
-image with:
-
-.. code-block:: text
-
-   exvivo_posthoc_topology
-
-The workflow also uses ``c3d`` to prepare and apply the topology-correction
-masks.
-
-See:
-
-:doc:`posthoc_correction`
-
-Detailed command-line instructions are maintained here:
-
-`Topology correction notes <https://github.com/Pulkit-Khandelwal/purple-mri/blob/main/docker/topology_correction_notes.md>`_
-
-
-Surface Reconstruction and Parcellation
----------------------------------------
-
-The surface-based pipeline requires FreeSurfer.
-
-The workflow has been developed and tested with:
-
-.. code-block:: text
-
-   FreeSurfer 7.4.0
-
-FreeSurfer installation instructions are available at:
-
-https://surfer.nmr.mgh.harvard.edu/fswiki/DownloadAndInstall
-
-The surface pipeline also requires:
-
-* ``fsaverage`` in the working directory
-* external atlas resources used by ``parcellation.sh``
-* the Python dependencies in ``dependencies.txt``
-* Docker or Singularity for pial-surface placement
-
-
-Custom Pial-Surface Binary
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Pial-surface placement uses a custom compiled version of the FreeSurfer
-``mris_place_surface`` binary.
-
-It is distributed as a container so that users do not need to compile the
-binary locally.
-
-Setup instructions:
-
-`Pial-surface Docker/Singularity instructions <https://github.com/Pulkit-Khandelwal/purple-mri/blob/main/docker/pial_surface_binary_docker_singularity.md>`_
-
-GitHub release:
-
-`purple-mris-place-surface <https://github.com/Pulkit-Khandelwal/purple-mri/releases/tag/v0.1.0-fs-binary-docker>`_
-
-Once configured, the container is called automatically by the surface
-pipeline.
-
-See:
-
-:doc:`parcellation`
-
-
-Registration
-------------
-
-Ex vivo to in vivo registration requires:
-
-* ``greedy`` binaries available in ``PATH``
-* ``c3d`` (Convert3D)
-* FreeSurfer utilities, including ``mri_label2vol``
-* SynthSeg-derived segmentation of the corresponding in vivo T1w MRI
-* topology-corrected ``purple-mri`` segmentation of the ex vivo MRI
-
-See:
-
-:doc:`registration`
-
-
-Template Construction
----------------------
-
-Population-specific volumetric template construction requires:
-
-* ``greedy``
-* ``greedy_template_average``
-* ``jq``
-* ``c3d``
-
-The required commands must be available in ``PATH``.
-
-For example:
-
-.. code-block:: bash
-
-   export PATH="/path/to/greedy_binaries/:$PATH"
-
-See:
-
-:doc:`template_construction`
-
-
-Group Analysis
---------------
-
-Vertex-wise surface analysis uses FreeSurfer-generated surface data together
-with the GLM utilities provided in the repository.
-
-Depending on the analysis, requirements include:
-
-* FreeSurfer
-* ``mesh_merge_arrays``
-* ``meshglm``
-* Python
-* NumPy
-* SciPy
-* pandas
-* VTK
-* PyTorch
-* PyMeshLab
-* PyKeOps
-* GeomLoss
-* Plotly
-* ParaView for visualization
-
-See:
-
-:doc:`group_analysis`
-
-
-Documentation Dependencies
---------------------------
-
-To build the Sphinx documentation locally:
-
-.. code-block:: bash
-
-   pip install -r docs/requirements.txt
-
-
-Workflow Documentation
-----------------------
-
-After installation, proceed through the workflow-specific documentation:
-
-* :doc:`segmentation`
-* :doc:`posthoc_correction`
-* :doc:`parcellation`
-* :doc:`registration`
-* :doc:`template_construction`
-* :doc:`group_analysis`
+   python -m pip install .
+
+Installation from ``./pkg_src`` is also supported. Development installation can
+use ``python -m pip install -e .``. The optional ``legacy`` extra is only for the
+older native workflow; see :doc:`legacy`.

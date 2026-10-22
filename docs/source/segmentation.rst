@@ -1,235 +1,30 @@
-Segmentation
-============
-
-Overview
---------
-
-The segmentation stage produces volumetric anatomical label maps from
-high-resolution postmortem MRI. These segmentations are used for downstream
-topology correction, cortical surface reconstruction, anatomical parcellation,
-and quantitative analysis.
-
-The recommended workflow consists of:
-
-1. Pre-processing the MRI using bias-field correction and intensity normalization.
-2. Running the ``purple-mri`` deep learning segmentation pipeline using Docker.
-3. Performing post-hoc topology correction.
-4. Using the corrected segmentation for downstream surface reconstruction and
-   anatomical parcellation.
-
-The complete ex vivo segmentation pipeline can be run using the
-``exvivo_all`` option.
-
-Individual segmentation models can also be run separately. See the detailed
-Docker documentation for the complete list of available models and options.
-
-Current Docker version: ``v1.4.6``.
-
-
-Pre-processing
---------------
-
-Before segmentation, perform bias-field correction and intensity
-normalization/standardization of the MRI.
-
-Recommended tools include:
-
-* ``N4BiasFieldCorrection`` from ANTs
-* ``c3d`` from Convert3D
-
-We strongly recommend providing an input mask to ``N4BiasFieldCorrection``.
-A coarse mask can be generated using intensity thresholding.
-
-An example bias-correction script is available here:
-
-https://github.com/Pulkit-Khandelwal/upenn-picsl-brain-ex-vivo/tree/main/misc_scripts/perform_bias_correction.sh
-
-
-Input Naming Convention
------------------------
-
-Place the preprocessed MRI inside a directory named:
-
-.. code-block:: text
-
-   data_for_inference
-
-Do **not** rename this directory.
-
-Each input image must end with:
-
-.. code-block:: text
-
-   _0000.nii.gz
-
-For example:
-
-.. code-block:: text
-
-   data_for_inference/
-   └── 100085R_reslice_0000.nii.gz
-
-
-Deep Learning Inference
------------------------
-
-The ``purple-mri`` segmentation models are distributed as a Docker image:
-
-https://hub.docker.com/r/pulks/docker_hippogang_exvivo_segm
-
-The recommended approach is to run the complete ex vivo segmentation pipeline
-using:
-
-.. code-block:: text
-
-   exvivo_all
-
-
-Step 1 - Prepare the Data
--------------------------
-
-Place ``data_for_inference`` inside a directory that will be mounted into the
-Docker container.
-
-For example:
-
-.. code-block:: text
-
-   /data/pulkit/docker_stuff/data_for_inference_v146/
-   └── data_for_inference/
-       └── 100085R_reslice_0000.nii.gz
-
-In this example, the directory:
-
-.. code-block:: text
-
-   /data/pulkit/docker_stuff/data_for_inference_v146/
-
-will be mounted to ``/data/exvivo`` inside the Docker container.
-
-
-Step 2 - Pull the Docker Image
-------------------------------
-
-Pull version ``v1.4.6`` of the Docker image:
-
-.. code-block:: bash
-
-   docker pull pulks/docker_hippogang_exvivo_segm:v1.4.6
-
-
-Step 3 - Run the Complete Ex Vivo Pipeline
-------------------------------------------
-
-The following is an example command for running the complete ex vivo
-segmentation pipeline:
-
-.. code-block:: bash
-
-   docker run --rm --gpus all --shm-size=8g 
-     -v /data/pulkit/docker_stuff/data_for_inference_v146:/data/exvivo 
-     pulks/docker_hippogang_exvivo_segm:v1.4.6 
-     /bin/bash /src/commands_nnunet_inference.sh exvivo_all
-
-Here:
-
-* ``--rm`` removes the Docker container automatically after the run finishes.
-* ``--gpus all`` makes the available NVIDIA GPU(s) accessible to the container.
-* ``--shm-size=8g`` provides additional shared memory for inference.
-* ``-v`` mounts the host directory containing ``data_for_inference`` to
-  ``/data/exvivo`` inside the container.
-* ``v1.4.6`` specifies the Docker image version.
-* ``exvivo_all`` runs the complete ex vivo segmentation pipeline.
-
-
-Running Individual Segmentation Models
---------------------------------------
-
-The example above uses ``exvivo_all`` because this is the recommended option
-for running the complete segmentation workflow.
-
-Individual segmentation models can also be run separately by replacing
-``exvivo_all`` with the corresponding model option.
-
-Available models include segmentation of cortical and subcortical structures,
-MTL and amygdala subfields, thalamus, additional FLASH structures, and other
-specialized tasks.
-
-For the complete list of available ``${OPTION}`` values and instructions for
-running individual models, see:
-
-`Detailed Docker documentation <https://github.com/Pulkit-Khandelwal/purple-mri/blob/main/docker/exvivo_docker.md>`_
-
-
-Output
-------
-
-Segmentation outputs are written back to the mounted
-``data_for_inference`` directory on the host machine.
-
-The main output directory is:
-
-.. code-block:: text
-
-   data_for_inference/
-   └── output_from_nnunet_inference/
-
-The exact contents of ``output_from_nnunet_inference`` depend on whether the
-complete ``exvivo_all`` pipeline or an individual segmentation model is run.
-
-Because the input directory is mounted into the Docker container, all generated
-outputs remain available on the host machine after the container exits.
-
-
-Post-hoc Topology Correction
-----------------------------
-
-Post-hoc topology correction identifies and removes predicted buried-sulcus
-regions from the original ``purple-mri`` segmentation.
-
-When using the complete ``exvivo_all`` workflow, topology correction forms part
-of the complete ex vivo processing pipeline.
-
-Topology correction can also be run independently using:
-
-.. code-block:: text
-
-   exvivo_posthoc_topology
-
-The complete standalone procedure, including creation of the topology-model
-input, removal of predicted buried-sulcus regions, and generation of the
-corrected foreground mask, is described here:
-
-:doc:`posthoc_correction`
-
-
-Notes
------
-
-* Input NIfTI files must follow the ``*_0000.nii.gz`` naming convention.
-* The input directory must be named ``data_for_inference``.
-* The current documented Docker version is ``v1.4.6``.
-* Warnings may appear in the terminal during inference; if the pipeline
-  continues normally, these can generally be ignored.
-* Runtime depends on the selected model, image size, and available GPU hardware.
-* Use ``exvivo_all`` when the complete ex vivo segmentation workflow is desired.
-* Use an individual model option when only a particular segmentation task is
-  needed.
-
-
-Additional Docker Documentation
--------------------------------
-
-Detailed documentation for the Docker image, including all available model
-options and the Docker version change log, is available here:
-
-`Ex vivo Docker documentation <https://github.com/Pulkit-Khandelwal/purple-mri/blob/main/docker/exvivo_docker.md>`_
-
-
-Next Steps
-----------
-
-After segmentation and topology correction, proceed to cortical surface
-reconstruction and anatomical parcellation:
-
-:doc:`parcellation`
+Adult segmentation workflow
+===================================
+
+Run ``purple-mri run exvivo_dl --input INPUT --output OUTPUT`` for the combined
+adult segmentation workflow. It uses the following sequence:
+
+1. Task283 produces the original Purple 10-label segmentation.
+2. Component cleanup keeps the largest face-connected component for labels
+   1–5, 7, 9, and 10, preserves all WMH voxels (label 6), and retains ventricular
+   components (label 8) of at least 5 cubic millimeters.
+3. The cleaned labels are remapped into the Task279 input convention.
+4. Task279 predicts post-hoc topology labels.
+5. Its buried-sulcus label is saved as a mask and removed from the cleaned Purple
+   segmentation to form ``05_purple_corrected``.
+6. Task269 predicts MTL and amygdala subfields from the MRI.
+7. Task2732 predicts subcortical structures from the MRI.
+8. The pipeline merges and cleans residual labels into ``11_final_merged``.
+
+The original predictions are retained. The Task2732 update changes the selected
+checkpoint, while the existing merge label mapping remains in place. Review
+component removal, topology masks, and model boundaries on each specimen.
+
+``exvivo_t2w`` runs only Task283; ``exvivo_multi_sequence_subcortical`` runs only
+Task2732. These do not perform the complete cleanup/merge sequence. See
+:doc:`cli` for other individual models and :doc:`outputs` for output paths.
+
+The maintainer reported a successful Task2732 standalone run and a complete
+DL/merge run on Lambda using the updated image. One full DL run took 23 minutes
+31 seconds for the reported scan; this is an observation, not a runtime estimate
+for other scans or hardware.
