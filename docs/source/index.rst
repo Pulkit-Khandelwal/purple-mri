@@ -33,9 +33,13 @@ correction, surface reconstruction, and parcellation:
      --hemi lh --license /absolute/path/license.txt --threads 20
 
 Read :doc:`installation` first for the Linux, GPU, Python, and license requirements.
-Then use :doc:`quickstart` or :doc:`docker` for complete examples, and :doc:`outputs`
+Then use :doc:`quickstart`, :doc:`docker`, or :doc:`singularity` for complete examples, and :doc:`outputs`
 to find results. Inputs are named ``SUBJECT_0000.nii.gz``; select the actual
 hemisphere and a fresh output directory. Task2732 is the subcortical model.
+
+For a Linux host using Singularity, download the verified SIF and follow
+:doc:`singularity`; it runs DL and surfaces together without a local Docker or
+Python CLI installation.
 
 Prefer remote processing? Follow :doc:`itksnap` to submit through the ITK-SNAP
 DSS interface and retrieve result attachments. It needs no local Docker or GPU;
@@ -237,6 +241,7 @@ parcellation, registration, template construction, and group analysis.
    quickstart
    itksnap
    docker
+   singularity
    inputs
    outputs
 

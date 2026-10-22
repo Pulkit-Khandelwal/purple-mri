@@ -4,7 +4,9 @@ Installation
 The Python package is a small launcher. The Docker image supplies nnU-Net,
 trained weights, FreeSurfer, Convert3D, and the custom pial tools. Installing the
 package does not download the image. A Singularity SIF is a separate distribution
-and is not needed to install or use this Docker CLI.
+and is not needed to install or use this Docker CLI. For a host using Singularity
+or Apptainer, follow :doc:`singularity` to download the verified SIF and run the
+pipeline directly; that route requires no local Python package or Docker.
 
 Remote processing through ITK-SNAP
 ----------------------------------

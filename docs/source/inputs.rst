@@ -1,7 +1,7 @@
 Inputs and hemisphere selection
 =======================================
 
-This page describes local Docker and Python CLI inputs. For GUI image assignment
+This page describes local Docker, Python CLI, and SIF inputs. For GUI image assignment
 and the registered service's hemisphere restrictions, see :doc:`itksnap`.
 
 Input files
@@ -29,13 +29,16 @@ Hemisphere
 
 ``--hemi lh`` or ``--hemi rh`` is required for surface stages. Every scan in a
 surface batch must belong to that hemisphere. DL-only runs do not require this
-flag. Task2732 is the flip-fixed subcortical model selected by both the combined
+flag. In direct Docker or SIF commands, set ``EXVIVO_HEMI=lh`` or
+``EXVIVO_HEMI=rh`` instead. Task2732 is the flip-fixed subcortical model selected by both the combined
 DL stage and the standalone subcortical option.
 
 Surface-only segmentation
 ---------------------------------
 
-``--segmentation`` must point to corrected Purple 10-label files named
+The CLI ``--segmentation`` argument, or a read-only label mount selected through
+``EXVIVO_SEGM_DIR`` in direct container commands, must point to corrected Purple
+10-label files named
 ``SUBJECT.nii.gz``, matching every MRI's identifier. Their shape, affine, and
 spacing must agree with the MRI. The container checks these conditions and label
 values. Use the ``05_purple_corrected`` output, not ``11_final_merged`` and not a

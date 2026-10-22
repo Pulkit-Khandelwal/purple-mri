@@ -32,29 +32,33 @@ Tags can be updated. The CLI records the immutable ID actually used. ``--image``
 can select a compatible digest reference, and ``--pull`` explicitly refreshes
 it. Changing Python code does not rebuild or modify the image.
 
-Singularity status
-------------------
+Singularity identity
+--------------------
 
-Python CLI 1.1.0 launches Docker only. The separately published SIF is hosted at
-``oras://registry-1.docker.io/pulks/singularity_purple_mri:v1.1.0``. Its download was
-compared byte-for-byte with the original local image. Task2732 GPU inference
-passed with a writable bookkeeping mount; the original SIF needs runtime
-workarounds that are documented in the repository's
-`container guide <https://github.com/Pulkit-Khandelwal/purple-mri/blob/main/docker/exvivo_docker.md>`_.
+Use :doc:`singularity` for the prebuilt SIF and full, DL-only, surface-only, and
+individual-model examples. It runs the same launcher and stage sequence as
+Docker in one ``exec --cleanenv --nv`` invocation. The Python CLI remains
+Docker-only.
 
-A newer native SIF candidate is being prepared to use the same combined-stage
-interface as Docker without per-model mounts. Its real model initialization and
-surface-library checks passed. Full DL and the first three surface steps passed;
-transform estimation then failed because FreeSurfer attempted to create
-``talsrcimg.img`` in the read-only code directory. A corrected transform script
-uses the subject's writable output directory. A resumed run with this script
-completed surfaces, parcellation and statistics successfully.
+The SIF is published at
+``oras://registry-1.docker.io/pulks/singularity_purple_mri:v1.1.0``.
+The fixed artifact was uploaded on 2026-10-22, downloaded, and compared
+byte-for-byte with the file that passed uninterrupted DL + LH surfaces.
 
-The final rebuilt SIF has not yet been reported as passing an uninterrupted
-combined run. Do not assume the existing registry tag contains these fixes.
-The Docker workflow remains the documented PyPI route while this test finishes.
+.. literalinclude:: _static/releases/purple_mri_v1.1.0.sif.sha256
+   :language: text
+
+This is a SIF file checksum. It differs from Docker image IDs and registry
+manifest digests. Download the :download:`checksum file
+<_static/releases/purple_mri_v1.1.0.sif.sha256>` and retain it with the image and
+run logs. The tag also named an older SIF, so a filename or tag alone cannot
+establish which artifact you have.
+
+The published SIF includes inference-bookkeeping, surface-library, and writable
+transform-directory fixes. The Docker image identified above predates those
+SIF-specific changes; converting that Docker tag directly does not reproduce
+this SIF. The existing trained-model selections and stage interface are retained.
 
 A compatible host runtime is required. Some unprivileged installations need
-``squashfuse`` on PATH; this is a host requirement rather than a missing file in
-the image. Apptainer has not been live-tested for this release. See
-:doc:`release_notes` for the validation record.
+``squashfuse`` on PATH. Apptainer and RH end-to-end runs have not been live-tested
+for this artifact. See :doc:`release_notes` for the validation record.

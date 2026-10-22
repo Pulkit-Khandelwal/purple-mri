@@ -34,7 +34,7 @@ build the documentation:
    python -m unittest discover -s tests -v
    sphinx-build -W --keep-going -b html docs/source docs/_build/html
 
-Review the generated installation, quick-start, Docker, output, and parcellation
+Review the generated installation, quick-start, Docker, Singularity, output, and parcellation
 pages. The existing GitHub workflow runs package checks and a strict Sphinx build;
 it does not run MRI inference or publish packages. An optional external link
 check is ``sphinx-build -b linkcheck docs/source docs/_build/linkcheck``; review
@@ -55,7 +55,7 @@ in the project settings and keep both files equivalent.
    triggered it, start a build for ``latest`` manually.
 4. Verify the build's Git commit matches the merged change, then wait for a
    successful build before checking the public pages.
-5. Open the live installation, quick-start, direct Docker, output, and
+5. Open the live installation, quick-start, direct Docker, Singularity, output, and
    parcellation pages. Confirm the new content and navigation are present.
 
 ``latest`` follows the default branch. The ``v1.1.0`` documentation version follows
@@ -70,6 +70,21 @@ A local successful Sphinx build establishes that the sources build; it does not
 establish that the hosted site has deployed. See the official
 `Read the Docs version guide <https://docs.readthedocs.com/platform/stable/versions.html>`_
 and `build process <https://docs.readthedocs.com/platform/stable/builds.html>`_.
+
+SIF publication record
+----------------------
+
+The native SIF published on 2026-10-22 completed an uninterrupted full DL + LH
+surface run, then passed upload/download byte comparison. Its checksum is stored
+in ``docs/source/_static/releases/purple_mri_v1.1.0.sif.sha256`` and displayed in
+:doc:`singularity` and :doc:`release_notes`. Keep the tested SIF, checksum, build
+context, runtime version, and full-run logs together for provenance.
+
+A future SIF change needs its own artifact identity and appropriate validation.
+Do not describe a resumed run with a mounted script fix as testing an unmodified
+SIF. Publish the exact tested file, download it into a new directory, and compare
+it with the tested file before changing user download instructions. SIF updates
+are separate from Docker tags, Python distributions, and the Git release tag.
 
 Future Python releases
 ----------------------

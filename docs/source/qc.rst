@@ -16,7 +16,7 @@ medial-wall/cut-surface behavior, atlas boundaries, and implausible thickness or
 regional statistics. Distinguish the requested hemisphere from the compatibility
 copies described in :doc:`parcellation`.
 
-Record the image ID, acquisition details, hemisphere, software version, failed
+Record the Docker image ID or SIF checksum, acquisition details, hemisphere, software version, failed
 steps, and any manual corrections. Successful tests, file readability, exit code
 zero, or ``COMPLETE`` demonstrate processing behavior, not anatomical validity.
 

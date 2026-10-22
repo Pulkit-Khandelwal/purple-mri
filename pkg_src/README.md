@@ -167,11 +167,15 @@ The historical installed `.sh` command names are retained as well.
 
 ## Singularity / Apptainer
 
-The Docker image can be converted separately to `purple_mri_v1.1.0.sif`.
-The maintainer reported successful SIF startup, Task2732 launcher selections,
-and readability of the required model files. SIF GPU inference and surfaces
-have not been tested end to end. This CLI does not launch SIF workflows, and
-SIF files are not included in the Python package.
+The published `purple_mri_v1.1.0.sif` supports the same stage sequence as direct
+Docker, including `exvivo_dl exvivo_surface` in one invocation. Its complete
+DL + LH surface run passed on 2026-10-22 (2:37:13), and a registry download
+matched the tested file byte-for-byte. See the [SIF guide](https://purple-mri.readthedocs.io/en/latest/singularity.html)
+for the ORAS download, checksum, and examples. No per-model mounts or writable
+overlay are needed. Apptainer and RH runs remain untested for this artifact.
+
+Python CLI 1.1.0 launches Docker only; invoke Singularity/Apptainer directly.
+SIF files are distributed separately and are not included in the Python package.
 
 ## Development and verification
 
