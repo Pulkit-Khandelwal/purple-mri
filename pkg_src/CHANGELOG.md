@@ -1,5 +1,16 @@
 # Package changelog
 
+## 1.2.0
+
+- Route pipeline stages through Docker v1.2.0 with explicit T2w/CISS/FLASH/T2* contrast.
+- Add Task278 `exvivo_flash_gm_wm`, tissue merge and existing-projection atlas merge commands.
+- Use complete DL roots and `12_surface_labels` for reconstruction.
+- Write full-run outputs to `dl/`, `surface/` and `atlases/`.
+- Pass hemisphere, merge QC, ROI and preflight settings to the container.
+- Add explicit resume with immutable image/input checks, active-container checks, run locks and attempt history.
+- Retain verified container cancellation, real exit status and legacy native entry points.
+- Document migration from the former segmentation-directory override.
+
 ## 1.1.0
 
 - Align package version 1.1.0 with the v1.1.0 container release.

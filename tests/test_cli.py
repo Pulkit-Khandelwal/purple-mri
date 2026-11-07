@@ -26,7 +26,7 @@ class CLITests(unittest.TestCase):
 
     def args(self, stages=None, extra=()):
         return cli.parser().parse_args(["run", *(stages or ["exvivo_dl"]),
-            "--input", str(self.source), "--output", str(self.output), *extra])
+            "--input", str(self.source), "--output", str(self.output), "--contrast", "flash", *extra])
 
     def quiet(self, argv):
         with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
@@ -48,10 +48,11 @@ class CLITests(unittest.TestCase):
 
     def test_docker_argv_readonly_and_spaces(self):
         cmd = docker_command(self.args())
-        self.assertIn(f"type=bind,src={self.source},dst=/inputs,readonly", cmd)
-        self.assertIn("EXVIVO_MODEL_OUTPUT_DIR=/outputs/predictions", cmd)
+        self.assertIn(f"type=bind,src={self.source},dst=/input,readonly", cmd)
+        self.assertIn("EXVIVO_MODEL_OUTPUT_DIR=/output/predictions", cmd)
         self.assertIn("--gpus", cmd)
-        self.assertEqual(cmd[-3:], [DEFAULT_IMAGE, "/src/commands_nnunet_inference.sh", "exvivo_dl"])
+        self.assertEqual(cmd[cmd.index(DEFAULT_IMAGE):cmd.index(DEFAULT_IMAGE)+3],
+                         [DEFAULT_IMAGE, "/src/commands_nnunet_inference.sh", "exvivo_dl"])
 
     def test_combined_requires_hemisphere_and_license(self):
         for extra in ((), ("--hemi", "rh"), ("--license", str(self.license))):
@@ -65,20 +66,23 @@ class CLITests(unittest.TestCase):
             self.assertIn("EXVIVO_HEMI=" + hemi, cmd)
             self.assertIn("FS_LICENSE=/license.txt", cmd)
 
-    def test_surface_only_requires_segmentation(self):
+    def test_surface_only_requires_dl_root(self):
         with self.assertRaises(ValueError):
             validate_run(self.args(["exvivo_surface"], ("--hemi", "rh", "--license", str(self.license))))
 
     def test_surface_only_matches_filename_and_no_gpu(self):
-        seg = self.root / "seg"
-        seg.mkdir()
-        args = self.args(["exvivo_surface"], ("--hemi", "lh", "--license", str(self.license), "--segmentation", str(seg)))
+        dl = self.root / "dl"
+        dl.mkdir()
+        args = self.args(["exvivo_surface"], ("--hemi", "lh", "--license", str(self.license), "--dl-dir", str(dl)))
         with self.assertRaises(ValueError):
             validate_run(args)
-        (seg / "subject.nii.gz").write_bytes(b"seg")
+        for stage in ("11_final_merged", "12_surface_labels"):
+            (dl / stage).mkdir()
+            (dl / stage / "subject.nii.gz").write_bytes(b"seg")
         cmd = docker_command(args)
         self.assertNotIn("--gpus", cmd)
-        self.assertIn("EXVIVO_SEGM_DIR=/segmentations", cmd)
+        self.assertIn("EXVIVO_DL_OUTPUT_DIR=/reuse_dl", cmd)
+        self.assertIn(f"type=bind,src={dl},dst=/reuse_dl", cmd)
 
     def test_no_seg_override_in_combined(self):
         with self.assertRaises(ValueError):
@@ -139,7 +143,7 @@ class CLITests(unittest.TestCase):
         with patch("purple_mri.cli.shutil.which", return_value="/bin/docker"), \
              patch("purple_mri.cli.subprocess.run", side_effect=subprocess.CalledProcessError(9, ["docker", "pull"])):
             rc = self.quiet(["run", "exvivo_dl", "--input", str(self.source),
-                             "--output", str(self.output), "--pull"])
+                             "--output", str(self.output), "--contrast", "flash", "--pull"])
         self.assertEqual(rc, 9)
         self.assertFalse(self.output.exists())
 

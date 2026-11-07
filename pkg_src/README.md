@@ -2,197 +2,208 @@
 
 Penn Utilities for Registration and Parcellation of Ex vivo MRI.
 
-This package provides a lightweight command-line interface to the adult Purple
-Docker pipeline. Model weights, FreeSurfer, Convert3D and the custom pial binary
-remain in the container; **pip does not install or download them**. Installing the
-base package does not install PyTorch or the native surface stack.
+The lightweight Python CLI runs the Purple Docker pipeline. The container supplies
+trained models, FreeSurfer, Convert3D, atlas resources and the custom pial binary.
+Use Python 3.9+ on a Linux Docker host, NVIDIA Docker GPU support for inference,
+and a FreeSurfer license for surface and atlas processing.
 
-Source: https://github.com/Pulkit-Khandelwal/purple-mri
+[Source](https://github.com/Pulkit-Khandelwal/purple-mri) ·
+[Documentation](https://purple-mri.readthedocs.io/en/latest/) ·
+[Docker](https://hub.docker.com/r/pulks/docker_purple_mri)
 
-Documentation: https://purple-mri.readthedocs.io/en/latest/
-
-Start with the [quick start](https://purple-mri.readthedocs.io/en/latest/quickstart.html).
-For commands without the Python launcher, see
-[direct Docker usage](https://purple-mri.readthedocs.io/en/latest/docker.html).
-For remote processing without this package, see the
-[ITK-SNAP/DSS guide](https://purple-mri.readthedocs.io/en/latest/itksnap.html).
-The illustrated service is an RH-only test registration; availability depends
-on an active provider and account access.
-This repository README receives documentation corrections after release; it does
-not replace the metadata embedded in the already published 1.1.0 distributions.
-
-## Install version 1.1.0
-
-Use Python 3.9 or newer. Version 1.1.0 is published on PyPI:
+## Install
 
 ```bash
 python3 -m venv ~/venvs/purple-mri
 source ~/venvs/purple-mri/bin/activate
-python -m pip install 'purple-mri==1.1.0'
+python -m pip install 'purple-mri==1.2.0'
 purple-mri --version
-purple-mri --help
-```
-
-For offline installation, use the matching published release wheel:
-
-```bash
-python -m pip install --no-index --no-deps --upgrade ./dist/purple_mri-1.1.0-py3-none-any.whl
-```
-
-From a source checkout, use `python -m pip install .`. Installing from `pkg_src/`
-is also supported. Both build configurations package the same source. Package
-version `1.1.0` accompanies Docker tag `v1.1.0`; they are separate artifacts.
-
-Actual container execution needs a Linux Docker host. Deep-learning stages need
-an NVIDIA GPU and Docker GPU support; surface-only runs do not request a GPU.
-FreeSurfer license files and MRI data must remain local, not in this package.
-
-## Pull and inspect the image
-
-```bash
 purple-mri pull
 purple-mri doctor
-purple-mri models
 ```
 
-The default image is `pulks/docker_purple_mri:v1.1.0`. `pull` explicitly downloads
-the current tag. `doctor` checks Docker access and the local image, not GPU
-compatibility, model integrity or segmentation accuracy. `models` lists expected
-task selections; it is not proof that every optional checkpoint is bundled.
-Task289 requires its external model asset if it is absent from your image.
+A downloaded release wheel can also be installed offline:
 
-Every real run resolves the local tag to its immutable image ID and records that
-ID, registry digests, package version, stages and exit status in
-`OUTPUT/purple_run.json`. `--pull` refreshes the tag before this resolution. The
-mutable `v1.1.0` tag alone is not sufficient provenance for reproducible research.
+```bash
+python -m pip install --no-index --no-deps ./purple_mri-1.2.0-py3-none-any.whl
+```
 
-## Combined segmentation and surfaces
+The default image is `pulks/docker_purple_mri:v1.2.0`. Each run resolves it to an
+immutable local image ID, which is recorded with registry digests and input
+checksums in `purple_run.json`. `--image` selects another compatible image;
+`--pull` explicitly refreshes it. `doctor` checks Docker access and image metadata.
+`models` lists the named model selections. Model-file and native-grid checks run
+inside the container.
 
-Place single-channel input files such as `subject_0000.nii.gz` in an input folder.
-Use **one hemisphere per batch** and a new, separate output directory:
+## Full segmentation, surfaces and atlas merges
+
+Prepare single-channel files named `SUBJECT_0000.nii.gz`. Use one contrast and one
+hemisphere per batch. Choose the actual hemisphere with `--hemi lh` or `--hemi rh`.
 
 ```bash
 purple-mri run exvivo_dl exvivo_surface \
-  --input /path/to/data_for_inference \
-  --output /path/to/purple_results \
-  --hemi rh \
-  --license /path/to/license.txt \
-  --threads 20 \
-  --pull
+  --contrast flash --hemi rh \
+  --input /absolute/path/inputs \
+  --output /absolute/path/new_results \
+  --license /absolute/path/license.txt \
+  --threads 8 --gpus device=0
 ```
 
-Use `--hemi lh` for left-hemisphere input; do not manually flip the MRI.
-Add `--dry-run` to validate host paths and print the command without pulling,
-creating output files or starting a container. Dry-run checks names and file
-presence, not NIfTI contents or geometry. The container performs its own checks.
+Choose `t2w`, `ciss`, `flash` or `t2star`. T2* uses the FLASH route. This command
+runs the DL tissue merge, creates the reconstruction label map, reconstructs the
+selected hemisphere, corrects Brainnetome annotation assignments, projects atlas
+labels and merges seven atlases with the detailed tissue labels.
 
-The combined workflow runs Purple Task283, cleanup, Task279 post-hoc topology
-correction, Task269 MTL/amygdala inference, Task2732 flip-fixed subcortical
-inference, and label merging, then reconstructs surfaces using
-`exvivo_dl/05_purple_corrected`. It retains container timing reports.
+| Contrast | DL route |
+| --- | --- |
+| T2w / CISS | Task283, component cleanup, Task279 topology, Task269 MTL, Task2732 subcortical, tissue merge |
+| FLASH / T2* | The same foundation plus Task278 for cortical GM and buried-sulcus refinement, followed by the FLASH tissue merge |
 
-Outputs under `--output`:
+The container applies MTL rim correction to the detailed tissue merge for all four
+contrasts. The FLASH route removes disconnected GM components before surface-label
+creation and atlas assignment. For either hemisphere, Brainnetome correction uses
+nearby valid assignments inside the selected cortex before projection. Atlas
+merging assigns residual generic cortical GM to cortical parcels while preserving
+WM, MTL and subcortical labels. These algorithms run in Docker; the Python launcher
+passes the contrast, hemisphere and processing options to that implementation.
+
+Add `--dry-run` to validate host filenames and print argv without creating results
+or starting Docker. Add `--preflight-only` to run container input/model checks
+without processing; use a separate output directory for this preflight record.
+Preflight completion is recorded as `kind: preflight`.
+
+## Outputs
+
+Paths are relative to `--output` for a full run:
 
 | Path | Contents |
 | --- | --- |
-| `exvivo_dl/` | Segmentation intermediates, corrected Purple and final merged labels |
-| `exvivo_surface/` | Subject surfaces, atlas parcellations, statistics and fsaverage |
-| `timings/` | Container timing reports |
-| `purple_run.json` | Image and run provenance |
+| `dl/05_purple_corrected/` | Baseline topology-corrected Purple segmentation |
+| `dl/06_mtl/`, `dl/07_subcortical/` | Detailed model predictions |
+| `dl/13_flash_task278/`, `dl/13b_flash_task278_cleaned/` | Raw and cleaned Task278 predictions for FLASH/T2* |
+| `dl/11_final_merged/` | Detailed merged tissue map; cortical GM is 101 and WM is 107 |
+| `dl/12_surface_labels/` | Reconstruction map with codes 0–10; detailed MTL labels collapse to 10 |
+| `surface/SUBJECT/{surf,label,mri,stats,qc}/` | Meshes, annotations, projected atlases, metrics and provenance |
+| `atlases/SUBJECT/` | Seven final cortical atlas merges, lookup tables and reports |
+| `timings/` | Timing reports |
+| `purple_run.json`, `cli_history/` | Current container status and prior resumed attempts |
 
-Unlike direct Docker examples, the CLI binds separate input and output folders.
-Input and license mounts are read-only. Output must be new or empty; there is no
-implicit overwrite or resume. `exvivo_all` remains an alias, but the CLI explicitly
-uses `exvivo_dl/` as its output directory for either spelling.
+`12_surface_labels` is generated from the detailed tissue merge **before** cortical
+reconstruction. Codes 1–10 are the foreground vocabulary; an individual case can
+have fewer nonempty labels. `11_final_merged` retains detailed structures and
+cortical GM 101. The final atlas merges replace cortical GM 101 with atlas parcels.
+
+The seven merged atlases are DKT, Destrieux, Glasser, Schaefer400, Economo, Julich
+and Brainnetome. Check `dl/STRUCTURES_COMPLETE`, `surface/COMPLETE`,
+`atlases/COMPLETE`, the run exit status, reports and anatomical alignment.
 
 ## DL only and individual models
 
 ```bash
-purple-mri run exvivo_dl \
-  --input /path/to/data_for_inference --output /path/to/dl_results
+purple-mri run exvivo_dl --contrast ciss \
+  --input /absolute/path/inputs --output /absolute/path/new_dl_results
+
+purple-mri run exvivo_flash_gm_wm --contrast flash \
+  --input /absolute/path/inputs --output /absolute/path/task278_results
 
 purple-mri run exvivo_multi_sequence_subcortical \
-  --input /path/to/data_for_inference --output /path/to/subcortical_results
+  --input /absolute/path/inputs --output /absolute/path/subcortical_results
 ```
 
-Individual model outputs are written to `OUTPUT/predictions/`. All existing adult
-model option names are retained. Infant container stages are not implemented.
+`exvivo_all` is an alias for DL only. Individual models write `predictions/`.
+`exvivo_flash_gm_wm` selects Task278 and accepts FLASH/T2* (defaults to FLASH).
+Task278 alone produces its three-label prediction; use `exvivo_dl` for the complete
+FLASH tissue merge. The single-model subcortical option selects Task2732.
 
-## Surfaces from existing corrected segmentations
+## Reuse completed v1.2.0 results
+
+Surface processing uses the **complete DL root**, including `11_final_merged` and
+`12_surface_labels`. It also performs the final atlas merges:
 
 ```bash
-purple-mri run exvivo_surface \
-  --input /path/to/data_for_inference \
-  --segmentation /path/to/previous_results/exvivo_dl/05_purple_corrected \
-  --output /path/to/new_surface_results \
-  --hemi rh --license /path/to/license.txt --threads 20
+purple-mri run exvivo_surface --contrast flash --hemi rh \
+  --input /absolute/path/inputs \
+  --dl-dir /absolute/path/previous_results/dl \
+  --output /absolute/path/new_surface_results \
+  --license /absolute/path/license.txt --threads 8
 ```
 
-Input `subject_0000.nii.gz` must have a corresponding corrected
-`subject.nii.gz`. Use **corrected Purple 10-label** segmentations, not the final
-merged multi-structure labels. Input MRI and labels must be geometrically aligned.
+The reused DL root is writable because the container records surface checkpoints
+there. This command writes new surfaces and atlas merges beneath its `--output`.
 
-## Completion and cancellation
-
-The CLI records a unique container name and ID before processing starts. It
-inspects the container's actual exit status instead of assuming that an attached
-client's exit means processing finished. `Ctrl+C` requests cancellation of this
-run's verified container, with a 30-second stop grace period. In tmux, use
-`Ctrl+B`, then `D` to detach while leaving processing running.
-
-Successful containers are removed. Failed, cancelled, or unconfirmed containers
-are retained for inspection. Check `purple_run.json` and Docker state before
-retrying. A null `exit_code` with `unknown` or `running_after_client_exit` status
-means completion is unconfirmed. This behavior does not retroactively manage
-containers launched by the older development CLI.
-
-## Original native surface workflow (compatibility only)
-
-The historical seven-positional-argument invocation still works:
+To merge already projected atlases without repeating reconstruction or projection:
 
 ```bash
-python -m pip install '.[legacy]'
-python -m purple_mri \
+purple-mri run exvivo_atlas_merge --contrast flash --hemi rh \
+  --input /absolute/path/inputs \
+  --dl-dir /absolute/path/previous_results/dl \
+  --surface-dir /absolute/path/previous_results/surface \
+  --output /absolute/path/new_atlas_results \
+  --license /absolute/path/license.txt --threads 8
+```
+
+This mounts both reused roots read-only. The container validates surface/annotation
+provenance and hashes before merging. MRI, output and reuse directories must be
+separate and non-nested. Surface-only, atlas-only and merge-only commands use CPU.
+
+`exvivo_merge --contrast ... --dl-dir ...` completes the tissue merge in a prediction
+root whose final merge has not yet run. It writes the tissue merge and reconstruction
+labels **in the supplied DL root**. Use the original pipeline command with `--resume`
+to continue a prior CLI run. Surface/projection provenance must match the resulting labels.
+
+## Resume and cancellation
+
+Repeat the **same processing command** with `--resume` and the same output folder.
+The CLI checks image ID, input checksums, contrast, hemisphere, paths, threads and
+merge settings; the container checks stage dependencies and output hashes. Input
+or processing changes require a new output directory. Resume applies to pipeline
+runs started with this CLI, and preserves earlier records in `cli_history/`.
+
+```bash
+# Append this option to the original processing command:
+# --resume
+```
+
+The CLI records the container ID before starting and reads its actual exit status.
+`Ctrl+C` stops only this run's verified container, with 30 seconds grace. Successful
+containers are removed; failed or unconfirmed containers remain available for
+`docker logs` and inspection. A still-active previous container blocks resume.
+Use tmux or a scheduler for long runs; detach from tmux with Ctrl+B, then D.
+
+## Upgrade from 1.1.0
+
+| 1.1.0 usage | 1.2.0 usage |
+| --- | --- |
+| Pipeline without contrast | Add `--contrast t2w`, `ciss`, `flash` or `t2star` |
+| `--segmentation .../05_purple_corrected` | Use `--dl-dir` with the complete v1.2.0 DL root |
+| `OUTPUT/exvivo_dl`, `OUTPUT/exvivo_surface` | `OUTPUT/dl`, `OUTPUT/surface`, `OUTPUT/atlases` |
+| New output per attempt | New output initially; explicit matching `--resume` for later attempts |
+
+## Historical native workflow
+
+The seven-positional-argument RH-only native launcher remains available:
+
+```bash
+python -m pip install 'purple-mri[legacy]==1.2.0'
+purple-mri legacy-surface \
   /path/to/freesurfer /path/to/output /path/to/mri /path/to/segmentation \
   /path/to/atlases 20 /path/to/autodet.gw.stats.binary.dat
 ```
 
-It is equivalent to `purple-mri legacy-surface` followed by those seven arguments.
-The seventh argument is a **statistics file**, not `lh`/`rh`. This compatibility
-path remains **RH-only**, uses the older native scripts, and requires the host
-FreeSurfer/c3d environment and external resources, including fsaverage, to be set
-up as before. It is not a replacement for the current Docker surface algorithm.
-Paths and subject names containing shell metacharacters or spaces are rejected.
-The historical installed `.sh` command names are retained as well.
+Its seventh argument is a statistics file. It uses the original host scripts and
+requires their FreeSurfer/c3d environment and atlas resources. The existing
+installed shell commands and `python -m purple_mri` entry point are retained.
 
-## Singularity / Apptainer
-
-The published `purple_mri_v1.1.0.sif` supports the same stage sequence as direct
-Docker, including `exvivo_dl exvivo_surface` in one invocation. Its complete
-DL + LH surface run passed on 2026-10-22 (2:37:13), and a registry download
-matched the tested file byte-for-byte. See the [SIF guide](https://purple-mri.readthedocs.io/en/latest/singularity.html)
-for the ORAS download, checksum, and examples. No per-model mounts or writable
-overlay are needed. Apptainer and RH runs remain untested for this artifact.
-
-Python CLI 1.1.0 launches Docker only; invoke Singularity/Apptainer directly.
-SIF files are distributed separately and are not included in the Python package.
-
-## Development and verification
+## Development
 
 ```bash
 PYTHONPATH=pkg_src python -m unittest discover -s tests -v
-python -m pip install build
+python -m pip install build twine
 python -m build
+python -m twine check --strict dist/*
 ```
 
-Keep root and `pkg_src` metadata aligned; tests compare their project definitions.
-Unit tests and wheel-install checks do not establish scientific accuracy.
-The published 1.1.0 wheel passed Task2732 GPU inference with exit 0 (2:31).
-The development CLI also completed full DL/merge (23:31) and LH surface/parcellation
-processing (2:17:06, with a COMPLETE marker) using the same Docker image.
-These are observed runtimes for one case, not performance guarantees. The
-surface scripts retain opposite-hemisphere compatibility copies and RH-coded
-working ASEG labels; consult the documentation before interpreting laterality.
-This package does not automate PyPI publication.
-
-See the project documentation for publications, input preparation and QC.
+Root and `pkg_src/` builds use the same package source and metadata. CLI tests check
+routing, paths, lifecycle and resume behavior; anatomical QC uses the output MRI,
+label maps, surfaces and reports. Singularity is distributed separately at
+`oras://registry-1.docker.io/pulks/singularity_purple_mri:v1.2.0`.

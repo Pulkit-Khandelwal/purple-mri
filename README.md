@@ -7,7 +7,7 @@ parcellation, registration, and morphometric analysis of high-resolution
 postmortem human brain MRI.
 
 [Documentation](https://purple-mri.readthedocs.io/en/latest/) ·
-[PyPI 1.1.0](https://pypi.org/project/purple-mri/1.1.0/) ·
+[PyPI](https://pypi.org/project/purple-mri/) ·
 [Docker image](https://hub.docker.com/r/pulks/docker_purple_mri) ·
 [Singularity SIF](https://purple-mri.readthedocs.io/en/latest/singularity.html) ·
 [Release notes](https://purple-mri.readthedocs.io/en/latest/release_notes.html)
@@ -34,129 +34,93 @@ and group analysis.
 | Docker directly | Docker and GPU access for DL | [Direct Docker examples](https://purple-mri.readthedocs.io/en/latest/docker.html) |
 | Singularity / Apptainer | Compatible Linux runtime and GPU access for DL | [SIF download and usage](https://purple-mri.readthedocs.io/en/latest/singularity.html) |
 
-The two local Docker routes use **`pulks/docker_purple_mri:v1.1.0`**. The image contains the
-trained models, FreeSurfer, Convert3D, atlas resources, and custom pial binary.
-Provide a FreeSurfer license for surfaces. Installing the pip package installs
-the launcher; `purple-mri pull` downloads the scientific environment separately.
-
-The Python CLI launches Docker. The separately published **`purple_mri_v1.1.0.sif`**
-runs the same `exvivo_dl exvivo_surface` stage sequence in one Singularity invocation.
-The fixed SIF passed a complete DL + LH surface run and registry download comparison
-on 2026-10-22. Follow the [SIF guide](https://purple-mri.readthedocs.io/en/latest/singularity.html)
-for the checksum and full, DL-only, surface-only, and individual-model examples.
-
-### Submit through ITK-SNAP
-
-Open a prepared MRI, select **Tools → Distributed Segmentation Service**, connect
-to `https://dss.itksnap.org`, and choose the purple service available to your account.
-The illustrated **purple 0.1.0** registration uses the **InputMRI** tag and is an
-**RH-only test service**. It is separate from Docker/PyPI version `1.1.0`.
-
-Follow the [illustrated walkthrough](https://purple-mri.readthedocs.io/en/latest/itksnap.html)
-for input assignment, ticket tracking, and the **six attachment downloads**:
-segmentations, surfaces, reports, and three parcellation ZIP files. Use the
-paperclips in the ticket log. This delivery returns results without an MRI copy
-or a result workspace; keep your original MRI for viewing and QC. Provider access
-and availability are required. See the guide before submitting a left hemisphere.
+The local Docker routes use **`pulks/docker_purple_mri:v1.2.0`**. The image supplies
+trained models, FreeSurfer, Convert3D, atlas resources and the custom pial binary.
+The Python package supplies the launcher. Use a Linux Docker host with NVIDIA GPU
+support for inference and a FreeSurfer license for surfaces and atlas processing.
 
 ### Install and run locally
-
-Use a Linux host with an NVIDIA GPU configured for Docker. For CPU-only surface
-processing, see the surface-only example below. Prepare one excised hemisphere
-per scan and one hemisphere per batch. Name inputs `SUBJECT_0000.nii.gz`.
 
 ```bash
 python3 -m venv ~/venvs/purple-mri
 source ~/venvs/purple-mri/bin/activate
-python -m pip install 'purple-mri==1.1.0'
+python -m pip install 'purple-mri==1.2.0'
 purple-mri pull
 purple-mri doctor
-```
 
-Choose the actual hemisphere (`lh` or `rh`), a new output directory, and your
-license path. This runs all adult DL stages, followed by surfaces and parcellation:
-
-```bash
 purple-mri run exvivo_dl exvivo_surface \
+  --contrast flash --hemi rh \
   --input /absolute/path/inputs \
   --output /absolute/path/new_results \
-  --hemi lh \
   --license /absolute/path/license.txt \
-  --threads 20
+  --threads 8 --gpus device=0
 ```
 
-Add `--dry-run` to inspect the command before starting. `doctor` checks Docker
-access and image metadata; it does not run GPU or model checks. See
-[inputs](https://purple-mri.readthedocs.io/en/latest/inputs.html) for naming,
-geometry, and acquisition requirements.
+Use one contrast and hemisphere per batch, with `SUBJECT_0000.nii.gz` inputs.
+Choose `t2w`, `ciss`, `flash` or `t2star`, and the actual `lh` or `rh` hemisphere.
+The full command performs DL segmentation, tissue cleanup and merging, cortical
+reconstruction, Brainnetome annotation correction, atlas projection and seven
+atlas merges. FLASH/T2* adds Task278 to the T2w/CISS model foundation.
 
-### Run with Singularity
-
-Download the prebuilt SIF into a directory without an existing copy:
-
-```bash
-singularity pull purple_mri_v1.1.0.sif \
-  oras://registry-1.docker.io/pulks/singularity_purple_mri:v1.1.0
-```
-
-Verify the [published checksum](docs/source/_static/releases/purple_mri_v1.1.0.sif.sha256)
-and follow the [complete command](https://purple-mri.readthedocs.io/en/latest/singularity.html#complete-adult-dl-and-surfaces).
-It binds inputs, outputs, and your license, then runs
-`/bin/bash /src/commands_nnunet_inference.sh exvivo_dl exvivo_surface` with `--nv`.
-No per-model mounts or writable overlay are required. Docker and pip are not
-required for this route. Apptainer uses the equivalent interface but has not
-been live-tested for this release.
+Add `--dry-run` to print the command. `--preflight-only` runs container input/model
+checks; use a separate output directory for its record. See the
+[package guide](pkg_src/README.md) for full options and migration from 1.1.0.
 
 ### Run stages separately
 
 ```bash
-# Complete DL segmentation, topology correction, and merge
-purple-mri run exvivo_dl \
+purple-mri run exvivo_dl --contrast ciss \
   --input /absolute/path/inputs --output /absolute/path/new_dl_results
 
-# Surfaces from the corrected 10-label result; CPU only
-purple-mri run exvivo_surface \
+purple-mri run exvivo_surface --contrast ciss --hemi lh \
   --input /absolute/path/inputs \
-  --segmentation /absolute/path/new_dl_results/exvivo_dl/05_purple_corrected \
+  --dl-dir /absolute/path/new_dl_results/dl \
   --output /absolute/path/new_surface_results \
-  --hemi lh --license /absolute/path/license.txt --threads 20
+  --license /absolute/path/license.txt --threads 8
 
-# Task2732 subcortical segmentation only
-purple-mri run exvivo_multi_sequence_subcortical \
-  --input /absolute/path/inputs --output /absolute/path/new_subcortical_results
+purple-mri run exvivo_flash_gm_wm --contrast flash \
+  --input /absolute/path/flash_inputs --output /absolute/path/task278_results
 ```
 
-`exvivo_all` remains an alias for **DL only**. The complete adult sequence is
-`exvivo_dl exvivo_surface`. Topology correction is included in `exvivo_dl`.
-The subcortical model is **Task2732**, in both combined and individual runs.
+Surface processing uses the complete DL root and its `12_surface_labels` map;
+it also merges the atlases. Use `exvivo_atlas_merge` with `--dl-dir` and
+`--surface-dir` to reuse completed v1.2.0 projections. `exvivo_all` means DL only.
 
-### Find and check results
+### Find results
 
-Paths below are relative to the Python CLI's `--output` directory:
-
-| Output | Location |
+| Output | Location beneath a full run's `--output` |
 | --- | --- |
-| Corrected Purple 10-label segmentation used for surfaces | `exvivo_dl/05_purple_corrected/` |
-| Final merged DL segmentation | `exvivo_dl/11_final_merged/` |
+| Detailed tissue merge | `dl/11_final_merged/` |
+| Reconstruction labels, codes 0–10 | `dl/12_surface_labels/` |
+| FLASH/T2* raw and cleaned predictions | `dl/13_flash_task278/`, `dl/13b_flash_task278_cleaned/` |
+| Surfaces, annotations, projections and metrics | `surface/SUBJECT/{surf,label,mri,stats,qc}/` |
+| Seven final atlas merges and lookup tables | `atlases/SUBJECT/` |
 | Individual-model predictions | `predictions/` |
-| Surfaces, atlas volumes, annotations, and statistics | `exvivo_surface/SUBJECT/{surf,mri,label,stats}/` |
-| Successful surface completion marker | `exvivo_surface/COMPLETE` |
-| Timings and exit codes | `timings/` |
-| CLI run and Docker image identity | `purple_run.json` |
+| Container identity, input hashes and actual exit status | `purple_run.json` |
 
-Surface inputs must use `05_purple_corrected`. The detailed merged segmentation
-has a different label convention. The surface stage supplies eight cortical
-atlas volumes plus `wmparc`; see [parcellations and NIfTI export](https://purple-mri.readthedocs.io/en/latest/parcellation.html).
+The detailed map retains MTL and subcortical structures, WM 107 and cortical GM
+101. Reconstruction uses the collapsed `12_surface_labels` map. Atlas merges
+replace generic GM 101 with parcel labels and preserve noncortical structures.
+The seven final atlases are DKT, Destrieux, Glasser, Schaefer400, Economo, Julich
+and Brainnetome.
 
-Use tmux or a job scheduler for long runs. In tmux, detach with **Ctrl+B, then D**.
-CLI 1.1.0 treats **Ctrl+C as cancellation**. Check the exit status, timing reports,
-and output files, then perform [anatomical QC](https://purple-mri.readthedocs.io/en/latest/qc.html).
+The CLI checks run identity before `--resume`; repeat the original command with
+that option. Ctrl+C cancels the verified container. Use tmux or a scheduler for
+long runs. Check completion markers, reports and anatomical alignment.
 
-Docker full DL and LH surfaces completed successfully; the published 1.1.0 wheel
-also passed Task2732 GPU inference. The published native SIF completed full DL
-and LH surfaces in 2:37:13, and its registry download matched the tested file. See the
-[validation record](https://purple-mri.readthedocs.io/en/latest/release_notes.html)
-for scope and observed runtimes.
+### Singularity and remote processing
+
+The published Singularity image is available at:
+
+```bash
+singularity pull purple_mri_v1.2.0.sif \
+  oras://registry-1.docker.io/pulks/singularity_purple_mri:v1.2.0
+```
+
+For ITK-SNAP, select **Tools → Distributed Segmentation Service**, connect to
+`https://dss.itksnap.org`, and use the purple service registered for your account.
+Follow its input tags and the [service instructions](https://github.com/Pulkit-Khandelwal/purple-dss).
+Service availability depends on provider and account access.
 
 ## Documentation and other workflows
 
@@ -176,8 +140,8 @@ The repository also contains workflows beyond the adult container commands:
 | Historical pip native surface launcher | [Legacy guide](https://purple-mri.readthedocs.io/en/latest/legacy.html) |
 | Standalone source surface scripts | [Source workflow distinctions](https://purple-mri.readthedocs.io/en/latest/legacy.html#standalone-repository-scripts) |
 
-Infant container stages are placeholders. Registration, templates, and group
-analysis are separate research workflows. Their host dependencies and setup
+Registration, templates, infant reconstruction and group analysis are separate
+research workflows. Their host dependencies and setup
 are described in their guides; they are not installed by the lightweight CLI.
 The adult container already supplies fsaverage, atlas assets, and the custom
 pial executable, so users do not need the standalone pial container setup.

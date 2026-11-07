@@ -1,6 +1,5 @@
 """Public CLI. Container images own scientific dependencies and model weights."""
 import argparse
-from datetime import datetime, timezone
 import json
 import os
 from pathlib import Path
@@ -11,9 +10,9 @@ import subprocess
 import sys
 
 from . import __version__
-from .containers import docker_command, host_path, validate_run
+from .containers import docker_command, host_path
 from .lifecycle import execute_container
-from .workflows import DEFAULT_IMAGE, MODELS, STAGES
+from .workflows import CONTRASTS, DEFAULT_IMAGE, MODELS, STAGES
 
 
 def positive_int(value):
@@ -39,10 +38,17 @@ def parser():
     run = commands.add_parser("run", help="Run the current Docker workflow")
     run.add_argument("stages", nargs="+", choices=STAGES)
     run.add_argument("--input", required=True, help="Directory of subject_0000.nii.gz inputs")
-    run.add_argument("--output", required=True, help="New or empty directory, separate from input")
+    run.add_argument("--output", required=True, help="New/empty result directory, or matching CLI run with --resume")
+    run.add_argument("--contrast", choices=CONTRASTS, help="Required for pipeline stages; one contrast per batch")
     run.add_argument("--hemi", choices=("lh", "rh"))
     run.add_argument("--license", help="Host FreeSurfer license file")
-    run.add_argument("--segmentation", help="Corrected Purple 10-label directory for surface-only runs")
+    run.add_argument("--dl-dir", help="Existing complete v1.2.0 DL root for surface/merge/atlas stages")
+    run.add_argument("--surface-dir", help="Existing v1.2.0 surface root for atlas-only reuse")
+    run.add_argument("--segmentation", help=argparse.SUPPRESS)
+    run.add_argument("--resume", action="store_true", help="Resume the same CLI run using container checkpoints")
+    run.add_argument("--preflight-only", action="store_true", help="Run container input/model preflight without processing")
+    run.add_argument("--save-qc-volumes", action="store_true", help="Save optional tissue merge QC volumes")
+    run.add_argument("--max-roi-voxels", type=positive_int, default=64_000_000)
     run.add_argument("--threads", type=positive_int, default=8)
     run.add_argument("--gpus", default="all", help="Docker GPU selector (default: all)")
     run.add_argument("--image", type=image_ref, default=DEFAULT_IMAGE)
@@ -87,19 +93,9 @@ def run_container(args):
         checked(["docker", "pull", args.image])
     image = inspect_image(args.image)
     command = docker_command(args, image["Id"])
-    _, output = validate_run(args)
-    output.mkdir(parents=True, exist_ok=True)
-    record = {
-        "package_version": __version__, "image": args.image, "image_id": image["Id"],
-        "repo_digests": image.get("RepoDigests", []), "stages": args.stages,
-        "hemisphere": args.hemi, "started_utc": datetime.now(timezone.utc).isoformat(),
-        "exit_code": None,
-    }
-    provenance = output / "purple_run.json"
-    # Exclusive creation prevents two CLI runs from using this output.
-    with provenance.open("x") as stream:
-        json.dump(record, stream, indent=2)
-    return execute_container(command, provenance, record)
+    from .runs import run_record
+    with run_record(args, image) as (provenance, record):
+        return execute_container(command, provenance, record)
 
 
 def legacy_surface(args):
