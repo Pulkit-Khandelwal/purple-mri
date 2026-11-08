@@ -1,5 +1,5 @@
 purple-mri
-==========
+============
 
 ``purple-mri`` (Penn Utilities for Registration and Parcellation of Ex vivo MRI)
 is a computational framework for segmentation, registration, cortical surface
@@ -18,38 +18,85 @@ topology-corrected cortical reconstructions, native-space anatomical
 parcellations, spatial normalization, and vertex-wise morphometric analyses.
 
 
-Start here: adult release 1.1.0
--------------------------------
+Results across MRI contrasts
+------------------------------
 
-Use the published Python CLI with Docker for adult segmentation, topology
-correction, surface reconstruction, and parcellation:
+Examples from the UPenn postmortem MRI workflows. Select a figure to open its full-resolution PNG.
+
+MRI and volumetric parcellation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. figure:: _static/examples/01_volume_atlas_comparison.png
+   :width: 100%
+   :align: center
+   :target: _static/examples/01_volume_atlas_comparison.png
+   :alt: MRI and volumetric parcellation: Sagittal MRI and seven cortical atlas overlays for UPenn subject 123019, with CISS, T2w and FLASH in rows. Columns show MRI, DKT, Destrieux, Glasser/HCP-MMP1, Schaefer400 (17 networks), von Economo, Julich and Brainnetome. The display is mirrored; CISS/T2w overlays are smoothed for visualization. Magenta indicates unresolved lookup-table IDs.
+   :class: purple-example
+
+   Sagittal MRI and seven cortical atlas overlays for UPenn subject 123019, with CISS, T2w and FLASH in rows. Columns show MRI, DKT, Destrieux, Glasser/HCP-MMP1, Schaefer400 (17 networks), von Economo, Julich and Brainnetome. The display is mirrored; CISS/T2w overlays are smoothed for visualization. Magenta indicates unresolved lookup-table IDs.
+
+Cortical surface parcellation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. figure:: _static/examples/02_surface_parcellations_view1.png
+   :width: 100%
+   :align: center
+   :target: _static/examples/02_surface_parcellations_view1.png
+   :alt: Cortical surface parcellation: Surface parcellations across CISS, T2w and FLASH. Columns follow the same seven-atlas order as the volumetric comparison.
+   :class: purple-example
+
+   Surface parcellations across CISS, T2w and FLASH. Columns follow the same seven-atlas order as the volumetric comparison.
+
+Additional surface view
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. figure:: _static/examples/03_surface_parcellations_view2.png
+   :width: 100%
+   :align: center
+   :target: _static/examples/03_surface_parcellations_view2.png
+   :alt: Additional surface view: A second surface view of the seven cortical atlases, with CISS, T2w and FLASH in rows.
+   :class: purple-example
+
+   A second surface view of the seven cortical atlases, with CISS, T2w and FLASH in rows.
+
+Antemortem–postmortem registration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. figure:: _static/examples/04_antemortem_postmortem_registration.png
+   :width: 100%
+   :align: center
+   :target: _static/examples/04_antemortem_postmortem_registration.png
+   :alt: Antemortem–postmortem registration: Within-subject registration of postmortem MRI to antemortem MRI, shown through moments initialization, affine alignment and deformable registration. Orange overlays show the registered postmortem MRI; green and purple contours show GM/background and GM/WM boundaries. The right panel shows the nonlinear deformation field.
+   :class: purple-example
+
+   Within-subject registration of postmortem MRI to antemortem MRI, shown through moments initialization, affine alignment and deformable registration. Orange overlays show the registered postmortem MRI; green and purple contours show GM/background and GM/WM boundaries. The right panel shows the nonlinear deformation field.
+
+Start here: adult release 1.2.0
+---------------------------------
+
+Install the Python launcher and run the complete segmentation, surface and atlas
+workflow on a Linux Docker host:
 
 .. code-block:: bash
 
-   python -m pip install 'purple-mri==1.1.0'
+   python -m pip install 'purple-mri==1.2.0'
    purple-mri pull
    purple-mri run exvivo_dl exvivo_surface \
+     --contrast flash --hemi rh \
      --input /absolute/path/inputs --output /absolute/path/new_results \
-     --hemi lh --license /absolute/path/license.txt --threads 20
+     --license /absolute/path/license.txt --threads 8 --gpus device=0
 
-Read :doc:`installation` first for the Linux, GPU, Python, and license requirements.
-Then use :doc:`quickstart`, :doc:`docker`, or :doc:`singularity` for complete examples, and :doc:`outputs`
-to find results. Inputs are named ``SUBJECT_0000.nii.gz``; select the actual
-hemisphere and a fresh output directory. Task2732 is the subcortical model.
+Choose ``t2w``, ``ciss``, ``flash`` or ``t2star`` and the actual ``lh`` or ``rh``
+hemisphere. Use one contrast and hemisphere per batch. Inputs are single-channel
+NIfTIs named ``SUBJECT_0000.nii.gz``.
 
-For a Linux host using Singularity, download the verified SIF and follow
-:doc:`singularity`; it runs DL and surfaces together without a local Docker or
-Python CLI installation.
+The full workflow creates a detailed tissue merge, derives ``12_surface_labels``
+for cortical reconstruction, corrects Brainnetome annotations within the selected
+cortex, and merges seven cortical atlases with the detailed tissue labels.
 
-Prefer remote processing? Follow :doc:`itksnap` to submit through the ITK-SNAP
-DSS interface and retrieve result attachments. It needs no local Docker or GPU;
-the illustrated ``purple 0.1.0`` registration is an RH-only test service and
-requires an available provider.
-
-The broader research workflows described below are separate from the adult CLI.
-Infant container stages are not implemented. See :doc:`release_notes` for the
-reported validation scope.
-
+Read :doc:`installation`, then :doc:`quickstart`. For direct container execution,
+use :doc:`docker` or :doc:`singularity`; for remote submission, use :doc:`itksnap`.
+Find the resulting files in :doc:`outputs` and review them with :doc:`qc`.
 
 .. image:: _static/animation.gif
    :width: 900px
@@ -57,7 +104,7 @@ reported validation scope.
 
 
 Introductory Video
-------------------
+--------------------
 
 .. raw:: html
 
@@ -71,7 +118,7 @@ Introductory Video
 
 
 Core Capabilities
------------------
+-------------------
 
 ``purple-mri`` provides tools for:
 
@@ -101,7 +148,7 @@ Core Capabilities
    <div style="height: 40px;"></div>
 
 Development and Evolution
--------------------------
+---------------------------
 
 ``purple-mri`` originated at the **University of Pennsylvania** in the
 `Penn ADRD Trajectories, Copathology, and Heterogeneity (PATCH) Lab
@@ -160,7 +207,7 @@ lifespan, from early postnatal development to late-life neurodegeneration.
 
 
 Scientific Context
-------------------
+--------------------
 
 Postmortem MRI provides a bridge between macroscopic neuroimaging and
 microscopic neuropathology.
@@ -183,49 +230,22 @@ in vivo imaging.
 
 
 Workflow
---------
+----------
 
-A typical ``purple-mri`` analysis follows the sequence:
-
-.. code-block:: text
-
-   Postmortem MRI
-         |
-         v
-   Pre-processing
-         |
-         v
-   Deep learning segmentation
-         |
-         v
-   Post-hoc topology correction
-         |
-         v
-   Cortical surface reconstruction
-         |
-         v
-   Anatomical parcellation
-         |
-         +----------------------+
-         |                      |
-         v                      v
-   Spatial registration    Cortical morphometry
-         |                      |
-         +----------+-----------+
-                    |
-                    v
-          Group / vertex-wise analysis
-                    |
-                    v
-      Imaging-pathology associations
+The adult pipeline proceeds from MRI through segmentation and topology correction
+to a detailed tissue merge. It derives the reconstruction label map before
+building surfaces, assigning cortical annotations, projecting atlas labels and
+merging them with the detailed tissue segmentation. Registration, template
+construction and group analysis are available through the corresponding
+repository workflows.
 
 
 Getting Started
----------------
+-----------------
 
-The **1.1.0 Python CLI** provides the adult Docker segmentation and surface
-workflow. The broader research capabilities below also include separate
-repository workflows; infant container stages are not implemented in this CLI.
+The **1.2.0 Python CLI** provides the adult Docker segmentation, surface and atlas
+workflow. The broader research capabilities below include separate repository
+workflows with their own setup instructions.
 
 
 Start with the installation instructions and then follow the individual
@@ -281,7 +301,7 @@ parcellation, registration, template construction, and group analysis.
 
 
 Software Ecosystem
-------------------
+--------------------
 
 .. image:: _static/purple_ecosystem.png
    :width: 900px
@@ -292,7 +312,7 @@ Software Ecosystem
    <div style="height: 40px;"></div>
 
 Development and Collaborating Institutions
-------------------------------------------
+--------------------------------------------
 
 ``purple-mri`` was developed at Penn and has continued to evolve through
 collaborative research at the University of Pennsylvania and Harvard Medical School. It is maintained by Pulkit
@@ -300,16 +320,7 @@ Khandelwal.
 
 .. raw:: html
 
-   <div style="
-        display:grid;
-        grid-template-columns:repeat(6, 1fr);
-        align-items:center;
-        justify-items:center;
-        column-gap:10px;
-        width:100%;
-        margin-top:28px;
-        margin-bottom:28px;
-   ">
+   <div class="purple-institutions">
 
      <div style="width:105px; height:65px; display:flex; align-items:center; justify-content:center;">
        <img src="_static/p9.png"

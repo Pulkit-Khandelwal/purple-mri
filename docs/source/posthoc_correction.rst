@@ -1,5 +1,5 @@
 Post-hoc topology correction
-====================================
+==============================
 
 The combined ``exvivo_dl`` workflow performs topology preparation, prediction,
 and application automatically. This is the recommended path.
@@ -22,6 +22,8 @@ This command only predicts topology labels. It does not clean a raw Purple
 segmentation, prepare the input, apply the mask, or run the final merge. Never
 substitute raw MRI for the prepared label maps.
 
-Review ``04_buried_sulcus_mask`` together with ``05_purple_corrected``. The final
-multimodel merge may refill removed regions through other model overlays; its
-labels are not the surface reconstruction input.
+Review ``dl/04_buried_sulcus_mask`` together with ``dl/05_purple_corrected``.
+The subsequent contrast-specific tissue merge incorporates detailed structures
+and, for FLASH/T2*, Task278 refinement. Reconstruction uses
+``dl/12_surface_labels``, derived from that final tissue merge; see
+:doc:`segmentation` and :doc:`outputs`.

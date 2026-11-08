@@ -1,51 +1,38 @@
-Inputs and hemisphere selection
-=======================================
+Inputs, contrast and hemisphere
+=================================
 
-This page describes local Docker, Python CLI, and SIF inputs. For GUI image assignment
-and the registered service's hemisphere restrictions, see :doc:`itksnap`.
+Prepare 3-D single-channel NIfTI MRI with a filename such as
+``SUBJECT_0000.nii.gz``. Every top-level ``*.nii.gz`` in the input folder must
+follow that convention and be nonempty. Subject identifiers start with a letter
+or digit and may contain letters, digits, underscores, hyphens and periods.
+The ``_0000`` suffix identifies the input channel; predictions omit it.
 
-Input files
--------------------
+Preserve spatial metadata, voxel spacing and anatomical orientation. Keep MRI
+and segmentation files in separate folders. Symlinks must resolve inside the
+mounted input root. Docker bind paths may contain spaces, but not commas or
+newlines.
 
-The adult DL workflow takes 3-D, single-channel NIfTI MRI. Put files directly in
-the input directory, for example ``donor123_0000.nii.gz``. The subject identifier
-may contain letters, digits, underscores, hyphens, and periods; it must start
-with a letter or digit. Avoid spaces in filenames. Every top-level ``*.nii.gz``
-file in that directory must follow this naming convention and be nonempty.
+Contrast and hemisphere
+-------------------------
 
-The suffix ``_0000`` denotes the input channel. Outputs remove that suffix:
-``donor123.nii.gz``. Do not place raw MRI and segmentation NIfTIs together in the
-input folder. Symlinks must resolve within their respective mounted directory.
-The CLI accepts host directory names with spaces, but rejects commas and newlines
-in Docker bind paths.
+Pipeline stages require ``--contrast t2w``, ``ciss``, ``flash`` or ``t2star``.
+Use one contrast per batch. FLASH/T2* selects the Task278 refinement route;
+T2w/CISS uses the baseline tissue route.
 
-Preserve the MRI's spatial metadata, voxel spacing, and anatomical orientation.
-The CLI does not determine the hemisphere from a filename, resample the scan, or
-verify its acquisition domain. Use data appropriate to the selected model and
-inspect atypical contrast, damaged tissue, or unusual geometry individually.
+Surface and atlas stages also require ``--hemi lh`` or ``--hemi rh``. Every scan
+in that batch must represent the selected anatomical hemisphere. Select the
+actual hemisphere; do not mirror the data to choose a route. Direct container
+commands accept these same contrast/hemisphere flags.
 
-Hemisphere
-------------------
+Reusing DL results
+--------------------
 
-``--hemi lh`` or ``--hemi rh`` is required for surface stages. Every scan in a
-surface batch must belong to that hemisphere. DL-only runs do not require this
-flag. In direct Docker or SIF commands, set ``EXVIVO_HEMI=lh`` or
-``EXVIVO_HEMI=rh`` instead. Task2732 is the flip-fixed subcortical model selected by both the combined
-DL stage and the standalone subcortical option.
+For a standalone surface run, pass ``--dl-dir`` pointing to the complete v1.2.0
+DL root, including ``11_final_merged``, ``12_surface_labels`` and reports.
+MRI and labels must agree in subject identity, shape and spatial geometry.
+The container uses ``12_surface_labels/SUBJECT.nii.gz`` for reconstruction.
 
-Surface-only segmentation
----------------------------------
-
-The CLI ``--segmentation`` argument, or a read-only label mount selected through
-``EXVIVO_SEGM_DIR`` in direct container commands, must point to corrected Purple
-10-label files named
-``SUBJECT.nii.gz``, matching every MRI's identifier. Their shape, affine, and
-spacing must agree with the MRI. The container checks these conditions and label
-values. Use the ``05_purple_corrected`` output, not ``11_final_merged`` and not a
-standalone Task2732 result. The surface path treats WMH as white matter in a
-separate working copy while retaining the corrected segmentation.
-
-The corrected Purple label convention is:
+The reconstruction label vocabulary is:
 
 .. list-table::
    :header-rows: 1
@@ -76,17 +63,14 @@ The corrected Purple label convention is:
    * - 10
      - Medial temporal lobe (MTL)
 
-Output location
------------------------
 
-For the Python CLI, output must be new or empty. It cannot equal, contain, or be contained within
-the input directory. Surface segmentation inputs must also remain separate from
-output. There is no automatic resume or overwrite. The CLI binds MRI inputs,
-segmentation inputs, and the license read-only; results are written to the
-separate output mount.
+Output directories
+--------------------
 
-Direct Docker callers choose their own bind mounts and output settings; follow
-:doc:`docker` to use the same separated input/output layout. The project-folder
-examples in the repository container guide use a different default, placing
-outputs below ``data_for_inference/output_from_nnunet_inference``. Do not mix
-those host paths with the CLI examples.
+Use a new or empty output directory for a first CLI run, separate from and not
+nested within the input or reused-result directories. To continue the same run,
+repeat the original command with ``--resume`` and matching inputs/options.
+
+MRI inputs are read-only. Surface processing writes checkpoints in its reused
+DL root. Atlas-only reuse mounts existing DL and surface roots read-only and
+writes new atlas results beneath the new output root. See :doc:`quickstart`.

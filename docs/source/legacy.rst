@@ -1,11 +1,11 @@
 Legacy native surface workflow
-======================================
+================================
 
 The historical seven-argument invocation is retained:
 
 .. code-block:: bash
 
-   python -m pip install 'purple-mri[legacy]==1.1.0'
+   python -m pip install 'purple-mri[legacy]==1.2.0'
    python -m purple_mri \
      /path/to/freesurfer /path/to/output /path/to/mri /path/to/segmentation \
      /path/to/atlases 20 /path/to/autodet.gw.stats.binary.dat
@@ -28,7 +28,7 @@ fresh-output and container provenance guarantees apply to Docker runs, not to
 arbitrary direct use of these old shell scripts.
 
 Standalone repository scripts
------------------------------
+-------------------------------
 
 The source tree's ``purple_mri/run_surface_pipeline.sh`` is a separate entry
 point from the Python package's historical ``legacy-surface`` command. Its

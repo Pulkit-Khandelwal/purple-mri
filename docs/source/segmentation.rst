@@ -1,30 +1,43 @@
-Adult segmentation workflow
-===================================
+Adult segmentation and tissue merging
+=======================================
 
-Run ``purple-mri run exvivo_dl --input INPUT --output OUTPUT`` for the combined
-adult segmentation workflow. It uses the following sequence:
+Run the complete DL route with an explicit acquisition contrast:
 
-1. Task283 produces the original Purple 10-label segmentation.
-2. Component cleanup keeps the largest face-connected component for labels
-   1–5, 7, 9, and 10, preserves all WMH voxels (label 6), and retains ventricular
-   components (label 8) of at least 5 cubic millimeters.
+.. code-block:: bash
+
+   purple-mri run exvivo_dl --contrast flash \
+     --input /absolute/path/inputs --output /absolute/path/new_results
+
+The workflow retains intermediate predictions and performs these steps:
+
+1. Task283 predicts the baseline Purple tissue labels.
+2. Component cleanup prepares those labels for topology correction.
 3. The cleaned labels are remapped into the Task279 input convention.
-4. Task279 predicts post-hoc topology labels.
-5. Its buried-sulcus label is saved as a mask and removed from the cleaned Purple
-   segmentation to form ``05_purple_corrected``.
-6. Task269 predicts MTL and amygdala subfields from the MRI.
-7. Task2732 predicts subcortical structures from the MRI.
-8. The pipeline merges and cleans residual labels into ``11_final_merged``.
+4. Task279 predicts the post-hoc topology labels.
+5. The topology correction creates ``05_purple_corrected``.
+6. Task269 predicts detailed MTL/amygdala labels and Task2732 predicts subcortical
+   structures from the MRI.
+7. FLASH/T2* additionally runs Task278 for GM/WM and buried-sulcus refinement.
+8. The contrast-specific merge combines the predictions, applies MTL rim
+   correction, and writes ``11_final_merged``. FLASH/T2* includes disconnected-GM
+   component cleanup.
+9. The pipeline derives ``12_surface_labels`` from the final tissue merge for
+   subsequent cortical reconstruction.
 
-The original predictions are retained. The Task2732 update changes the selected
-checkpoint, while the existing merge label mapping remains in place. Review
-component removal, topology masks, and model boundaries on each specimen.
+The MTL rim correction applies to T2w, CISS, FLASH and T2*. It operates in the
+detailed tissue merge before the reconstruction-label collapse and atlas
+assignment. The tissue and seven atlas outputs therefore share that correction.
+Existing protected structures are retained according to the merge rules.
 
-``exvivo_t2w`` runs only Task283; ``exvivo_multi_sequence_subcortical`` runs only
-Task2732. These do not perform the complete cleanup/merge sequence. See
-:doc:`cli` for other individual models and :doc:`outputs` for output paths.
+FLASH/T2* refinement
+----------------------
 
-The maintainer reported a successful Task2732 standalone run and a complete
-DL/merge run on Lambda using the updated image. One full DL run took 23 minutes
-31 seconds for the reported scan; this is an observation, not a runtime estimate
-for other scans or hardware.
+Task278 refines cortical GM, WM and sulcus/background decisions while the merge
+protects detailed MTL and subcortical structures. The raw prediction is retained
+in ``13_flash_task278`` and the cleaned output in ``13b_flash_task278_cleaned``.
+GM island cleanup precedes reconstruction-label creation and atlas assignment.
+Review the change masks and reports together with the MRI.
+
+For a Task278 prediction alone, use ``exvivo_flash_gm_wm --contrast flash``.
+For the complete tissue result and reconstruction map, use ``exvivo_dl``.
+See :doc:`outputs`, :doc:`posthoc_correction` and :doc:`qc`.

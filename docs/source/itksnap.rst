@@ -1,5 +1,5 @@
 Use ITK-SNAP with the remote DSS service
-========================================
+==========================================
 
 Submit a prepared adult ex vivo hemisphere MRI through ITK-SNAP and download
 purple-mri results as attachments. Processing runs on the provider's computer.
@@ -19,7 +19,7 @@ MRI copy or a result workspace. You will open the downloaded labels alongside
 your original MRI for QC.
 
 1. Prepare and open the MRI
----------------------------
+-----------------------------
 
 Use a preprocessed adult ex vivo MRI of one hemisphere. Check anatomical side,
 orientation, voxel spacing, coverage, contrast, and obvious tissue or acquisition
@@ -41,7 +41,7 @@ processed subject ``case``.
    segmentation overlay.
 
 2. Connect to DSS
------------------
+-------------------
 
 Open **Tools → Distributed Segmentation Service** and select **Connect**.
 Set **Server URL** to ``https://dss.itksnap.org``. If login is required, click
@@ -55,7 +55,7 @@ into **Login Token**. Check that **Server Status** confirms the connection.
    The account identifier is hidden and the token field is empty in this example.
 
 3. Select the service and assign the MRI
-----------------------------------------
+------------------------------------------
 
 In **Submit**, select the purple-mri entry from **Service**. The illustrated
 service is ``purple 0.1.0``; its description identifies purple-mri.
@@ -78,7 +78,7 @@ ticket ID and the original MRI filename.
    inputs are assigned; the generic InputMRI tag does not select a hemisphere.
 
 4. Follow the ticket and download attachments
----------------------------------------------
+-----------------------------------------------
 
 Select the ticket under **Results**. ``ready`` means queued; ``claimed`` means a
 provider has taken the job. Read its logs for processing progress and errors.
@@ -106,7 +106,7 @@ checked. Deleting a ticket while it is processing or awaiting uploads can
 prevent further delivery.
 
 Expected download set
-~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
 
 The six-bundle provider uses the names below. Match them to your ticket's log;
 older provider versions may use other names or bundle layouts. In the screenshot,
@@ -136,8 +136,8 @@ identifies the corrected and final merged results.
 
 Together, the three parcellation ZIP files contain eight cortical atlas volumes
 and ``wmparc``. See :doc:`parcellation` for atlas meanings and hemisphere
-conventions. This provider delivers converted NIfTIs; local Docker surface runs
-retain the underlying MGZ volumes unless you export them separately.
+conventions. This illustrated provider delivers converted NIfTIs. The v1.2.0 local pipeline
+also writes seven final native-grid atlas merges under ``atlases/SUBJECT/mri``.
 
 Before treating delivery as complete, check the ticket's final status, look for
 all six download messages, and verify that every archive extracts and contains
@@ -145,7 +145,7 @@ the expected files. A processing success status alone does not establish that
 all expected attachments were delivered or that the anatomy is correct.
 
 5. Open labels and perform QC
------------------------------
+-------------------------------
 
 Open the corresponding MRI as the main image, then load a downloaded
 ``.nii.gz`` label map as a segmentation. Select the label-description/color table
@@ -170,7 +170,7 @@ Use only a table that matches the actual label values and atlas version. These
 atlas tables are not universal lookup tables for merged DL segmentations.
 
 Troubleshooting
----------------
+-----------------
 
 .. list-table::
    :header-rows: 1
@@ -204,7 +204,7 @@ Troubleshooting
 .. _dss-service-versions:
 
 Service versions and documentation scope
-----------------------------------------
+------------------------------------------
 
 .. list-table:: Service interface recorded on 22 October 2026
    :header-rows: 1
@@ -216,15 +216,10 @@ Service versions and documentation scope
    * - ``purple 0.1.0``
      - ``InputMRI``
      - Illustrated existing registration; RH-only backend test.
-   * - Proposed ``purple 0.2.0``
-     - ``InputMRI_LH`` or ``InputMRI_RH``
-     - Repository descriptor requires exactly one hemisphere tag. Its README
-       reports activation and validation pending; this guide does not establish
-       that it is available on the live server.
 
 The service descriptor version, provider software, Docker image tag, Python
 package version, and ITK-SNAP application version are separate identifiers.
-Docker/PyPI ``1.1.0`` does not rename the DSS service to ``1.1.0`` or enable LH
+Docker/PyPI ``1.2.0`` does not rename the registered DSS service or enable LH
 submission in the RH-only registration. Follow the form and provider instructions
 for the service actually available to your account.
 

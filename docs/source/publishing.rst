@@ -1,12 +1,13 @@
 Maintainer documentation and releases
-=====================================
+=======================================
 
-Python 1.1.0 is published on PyPI, and the source release is tagged ``v1.1.0``.
+Python 1.2.0 is published on PyPI. Container artifacts and documentation are
+maintained as separate releases.
 Documentation corrections on ``main`` do not replace those distributions, change
 the installed package, rebuild the container, or move the release tag.
 
 Documentation-only updates
---------------------------
+----------------------------
 
 Use a separate branch and pull request based on current ``main``. Keep runtime
 code and package versions unchanged for documentation corrections. The package
@@ -41,7 +42,7 @@ check is ``sphinx-build -b linkcheck docs/source docs/_build/linkcheck``; review
 network/authentication failures separately from genuinely broken links.
 
 Deploy to Read the Docs
------------------------
+-------------------------
 
 The repository contains ``.readthedocs.yaml`` using ``docs/source/conf.py`` and
 pinned documentation requirements. The matching ``readthedocs.yaml`` is retained
@@ -72,22 +73,24 @@ establish that the hosted site has deployed. See the official
 and `build process <https://docs.readthedocs.com/platform/stable/builds.html>`_.
 
 SIF publication record
-----------------------
+------------------------
 
-The native SIF published on 2026-10-22 completed an uninterrupted full DL + LH
-surface run, then passed upload/download byte comparison. Its checksum is stored
-in ``docs/source/_static/releases/purple_mri_v1.1.0.sif.sha256`` and displayed in
-:doc:`singularity` and :doc:`release_notes`. Keep the tested SIF, checksum, build
-context, runtime version, and full-run logs together for provenance.
+Keep the published SIF, checksum, build context, runtime version and full-run
+logs together. A changed SIF needs its own artifact identity and appropriate
+validation. Publish the exact artifact intended for distribution, download it
+to a new directory, and compare it before updating download instructions.
 
-A future SIF change needs its own artifact identity and appropriate validation.
-Do not describe a resumed run with a mounted script fix as testing an unmodified
-SIF. Publish the exact tested file, download it into a new directory, and compare
-it with the tested file before changing user download instructions. SIF updates
-are separate from Docker tags, Python distributions, and the Git release tag.
+Shared documentation media
+----------------------------
+
+The README and homepage use the PNGs in ``docs/source/_static/examples``. Keep
+one asset per figure, reference it relatively from each page, and preserve a
+full-resolution link. ``figure_manifest.json`` records source hashes and crop
+boxes; ``scripts/docs/prepare_landing_figures.py`` reproduces the figures.
+Scientific image pixels remain unchanged; labels are added outside the crops.
 
 Future Python releases
-----------------------
+------------------------
 
 Use a new version for Python functionality changes. Keep the root and
 ``pkg_src/pyproject.toml`` versions aligned, update release notes, and test the
@@ -105,5 +108,5 @@ intended release. Inspect the wheel and source archive: no MRI, model weights,
 container images, personal license files, or credentials should be bundled.
 Publish only the explicit reviewed artifacts for the new version, following the
 `Python packaging guide <https://packaging.python.org/en/latest/tutorials/packaging-projects/>`_.
-Do not rebuild and upload 1.1.0 again. Package publication, Docker publication,
+Use a new version for each new PyPI upload. Package publication, Docker publication,
 and documentation deployment are separate operations.

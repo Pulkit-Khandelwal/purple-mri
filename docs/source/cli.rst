@@ -1,5 +1,5 @@
 Command reference
-=========================
+===================
 
 .. code-block:: text
 
@@ -10,136 +10,113 @@ Command reference
    purple-mri run STAGE [STAGE] --input DIR --output DIR [options]
    purple-mri legacy-surface FS OUTPUT MRI SEGMENTATION ATLASES THREADS STATS
 
-``python -m purple_mri`` exposes the same interface. ``--help`` is available for
-each subcommand. The historical seven-positional-argument form is preserved;
-see :doc:`legacy`.
+``python -m purple_mri`` exposes the same interface. Use each subcommand's
+``--help`` for its installed version. The default Docker image is
+``pulks/docker_purple_mri:v1.2.0``.
 
 Run options
--------------------
+-------------
 
 .. list-table::
    :header-rows: 1
-   :widths: 25 75
+   :widths: 34 66
 
    * - Option
      - Meaning
    * - ``--input DIR``
-     - Required directory of ``SUBJECT_0000.nii.gz`` scans.
+     - Required directory of ``SUBJECT_0000.nii.gz`` inputs.
    * - ``--output DIR``
-     - Required new or empty, separate output directory.
+     - New/empty results, or the matching prior run with ``--resume``.
+   * - ``--contrast {t2w,ciss,flash,t2star}``
+     - Required for pipeline stages; one contrast per batch.
    * - ``--hemi {lh,rh}``
-     - Actual hemisphere; required for surfaces.
+     - Actual hemisphere; required for surface/atlas processing.
    * - ``--license FILE``
-     - Host FreeSurfer license; required for surfaces.
-   * - ``--segmentation DIR``
-     - Corrected 10-label inputs; required only for surface-only runs.
+     - Host FreeSurfer license for surface/atlas stages.
+   * - ``--dl-dir DIR``
+     - Existing DL root for standalone surface, tissue merge or atlas stages.
+   * - ``--surface-dir DIR``
+     - Existing surface/projection root for atlas-only reuse.
+   * - ``--resume``
+     - Resume the same pipeline run with matching image, inputs and settings.
+   * - ``--preflight-only``
+     - Run container input/model checks without processing.
+   * - ``--save-qc-volumes``
+     - Save optional tissue-merge QC volumes.
+   * - ``--max-roi-voxels N``
+     - Merge ROI size limit; default 64000000.
    * - ``--threads N``
-     - Positive surface thread count; default 8. Does not limit every DL worker.
+     - Surface/merge threads; default 8. Does not cap every DL worker.
    * - ``--gpus SELECTOR``
-     - Docker GPU selector, default ``all``; for example ``device=0``.
+     - Docker GPU selector; default ``all``, for example ``device=0``.
    * - ``--image IMAGE``
-     - Docker tag, digest reference, or local image ID; default ``pulks/docker_purple_mri:v1.1.0``.
+     - Compatible Docker tag, digest or local image ID.
    * - ``--pull``
-     - Refresh the selected image before resolving its immutable ID.
+     - Refresh the image before resolving its immutable ID.
    * - ``--dry-run``
-     - Validate host paths and print the equivalent command without running.
+     - Validate host paths and print the command without starting processing.
 
-Equivalent container settings
+Pipeline stages
+-----------------
+
+* ``exvivo_dl``: model inference, topology correction, tissue merging and cleanup.
+* ``exvivo_all``: compatibility alias for DL only.
+* ``exvivo_surface``: reconstruction, annotation correction, projection and atlas merges.
+* ``exvivo_atlas_merge``: merge validated existing projections with tissue labels.
+* ``exvivo_merge``: complete tissue merging in a supplied prediction root.
+
+The combined sequence is ``exvivo_dl exvivo_surface``. Standalone surface/atlas/
+merge stages require ``--dl-dir``; atlas-only also requires ``--surface-dir``.
+Tissue-only merging writes its results in the supplied DL root.
+
+Individual model selections
 -----------------------------
-
-The Python CLI constructs these settings for the Docker launcher. See :doc:`docker`
-for runnable commands. Container paths must refer to locations inside bind mounts.
 
 .. list-table::
    :header-rows: 1
-   :widths: 32 68
-
-   * - CLI option
-     - Direct Docker equivalent
-   * - ``--input DIR``
-     - Read-only input bind and ``EXVIVO_INPUT_DIR``.
-   * - ``--output DIR``
-     - Writable output bind; set ``EXVIVO_DL_OUTPUT_DIR``,
-       ``EXVIVO_SURFACE_OUTPUT_DIR``, ``EXVIVO_MODEL_OUTPUT_DIR``, and
-       ``EXVIVO_TIMING_DIR`` for the desired layout.
-   * - ``--hemi lh`` or ``rh``
-     - ``EXVIVO_HEMI=lh`` or ``rh``.
-   * - ``--license FILE``
-     - Read-only license bind and ``FS_LICENSE`` pointing to that container path.
-   * - ``--segmentation DIR``
-     - Read-only corrected-label bind and ``EXVIVO_SEGM_DIR``.
-   * - ``--threads N``
-     - ``EXVIVO_THREADS=N``; defaults to 8 in both launchers.
-   * - ``--gpus SELECTOR``
-     - Docker ``--gpus SELECTOR`` for DL. Omit it for a surface-only job.
-   * - ``--image IMAGE`` / ``--pull``
-     - Select the Docker image / explicitly run ``docker pull IMAGE`` first.
-
-The CLI also sets ``NO_FSFAST=1`` and an 8 GiB shared-memory limit. Its run-record
-and cancellation handling are Python features, not additional stage arguments.
-
-Stages
---------------
-
-``exvivo_dl`` runs all adult DL steps and merge. ``exvivo_all`` is an alias;
-both use the CLI's ``exvivo_dl`` output subdirectory. With the direct container
-launcher and no explicit output override, ``exvivo_all`` instead retains its
-historical ``exvivo_all`` output directory. Neither spelling includes surfaces. ``exvivo_surface`` runs
-surface reconstruction and atlas mapping. The only supported two-stage sequence
-is ``exvivo_dl exvivo_surface`` (or the alias followed by surfaces).
-
-.. list-table:: Individual selections
-   :header-rows: 1
-   :widths: 58 12 30
 
    * - Stage
      - Task
-     - Purpose
+     - Input/use
    * - ``exvivo_t2w``
      - 283
-     - Original Purple 10-label segmentation
-   * - ``invivo_flair_wmh``
-     - 451
-     - In vivo FLAIR WMH
-   * - ``exvivo_flash_thalamus``
-     - 276
-     - FLASH thalamus
+     - Baseline Purple tissue prediction.
    * - ``exvivo_posthoc_topology``
      - 279
-     - Prepared label-map topology input
-   * - ``exvivo_umc_strip_cerebellum``
-     - 101
-     - Cerebellum removal
+     - Prepared topology label maps; see :doc:`posthoc_correction`.
    * - ``exvivo_multi_sequence_mtl_amygdala_subfields``
      - 269
-     - MTL/amygdala subfields
+     - Detailed MTL/amygdala prediction.
    * - ``exvivo_multi_sequence_subcortical``
      - 2732
-     - Flip-fixed subcortical segmentation
-   * - ``exvivo_flash_more_subcort``
-     - 289
-     - Optional model asset; may be absent
+     - Subcortical prediction.
+   * - ``exvivo_flash_gm_wm``
+     - 278
+     - FLASH/T2* GM/WM/sulcus prediction.
 
-Each model needs its intended input contrast and preprocessing. In particular,
-Task279 takes prepared segmentation maps, not raw MRI; see
-:doc:`posthoc_correction`. Task289 availability must be checked in the selected
-image. Infant stages are not implemented in this container CLI. Registration,
-template construction, and group analysis remain separate repository workflows.
+Individual selections write ``predictions/``. Use ``purple-mri models`` to list
+the full named model selections for the installed package, and use the selected
+image's preflight to check its assets. Each model requires its intended input.
+
+Direct container settings
+---------------------------
+
+The Python launcher maps input/output roots to container binds and sets
+``EXVIVO_INPUT_DIR``, ``EXVIVO_DL_OUTPUT_DIR``, ``EXVIVO_SURFACE_OUTPUT_DIR``,
+``EXVIVO_ATLAS_OUTPUT_DIR``, ``EXVIVO_MODEL_OUTPUT_DIR`` and ``EXVIVO_TIMING_DIR``.
+It passes contrast and processing options to the image launcher and supplies
+``FS_LICENSE``, ``EXVIVO_HEMI``, ``EXVIVO_THREADS`` and ``NO_FSFAST=1``.
+Direct examples use explicit path flags; see :doc:`docker` and :doc:`singularity`.
 
 Execution and exit status
----------------------------------
+---------------------------
 
-Real runs resolve the image tag to an immutable local image ID. The CLI creates
-a named, labeled container, records its ID before starting it, and attaches to
-its output. Dry-run prints an equivalent ``docker run`` command.
+The CLI resolves the image to an immutable local ID, records a named container
+before starting it, and inspects its exit state. Ctrl+C requests cancellation
+of that verified container. Successful containers are removed; failed or
+unconfirmed containers are retained for inspection.
 
-A normal run returns the container's inspected exit code. Validation failures
-return 2; Docker setup failures return a nonzero status. Ctrl+C returns 130 and
-attempts ``docker stop`` on this run's verified container, with 30 seconds of
-grace. The attached client is isolated from the terminal process group so the
-CLI can manage cancellation. Successful containers are removed. Failed,
-cancelled, or unconfirmed containers are retained for inspection.
-
-If Docker cannot confirm completion, the CLI returns nonzero and records
-``exit_code: null`` with ``unknown`` or ``running_after_client_exit`` status.
-Do not treat a client's disappearance as proof that processing stopped.
+A normal run returns the inspected container exit code. Validation errors return
+2; cancellation returns CLI status 130. The run record distinguishes container
+exit status from client exit status. Inspect the recorded container if the
+client was interrupted externally; see :doc:`troubleshooting`.

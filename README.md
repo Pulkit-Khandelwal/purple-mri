@@ -12,6 +12,34 @@ postmortem human brain MRI.
 [Singularity SIF](https://purple-mri.readthedocs.io/en/latest/singularity.html) ·
 [Release notes](https://purple-mri.readthedocs.io/en/latest/release_notes.html)
 
+## Results across MRI contrasts
+
+Examples from the UPenn postmortem MRI workflows. Select any figure to open its full-resolution PNG.
+
+### MRI and volumetric parcellation
+
+[![MRI and volumetric parcellation](docs/source/_static/examples/01_volume_atlas_comparison.png)](docs/source/_static/examples/01_volume_atlas_comparison.png)
+
+Sagittal MRI and seven cortical atlas overlays for UPenn subject 123019, with CISS, T2w and FLASH in rows. Columns show MRI, DKT, Destrieux, Glasser/HCP-MMP1, Schaefer400 (17 networks), von Economo, Julich and Brainnetome. The display is mirrored; CISS/T2w overlays are smoothed for visualization. Magenta indicates unresolved lookup-table IDs.
+
+### Cortical surface parcellation
+
+[![Cortical surface parcellation](docs/source/_static/examples/02_surface_parcellations_view1.png)](docs/source/_static/examples/02_surface_parcellations_view1.png)
+
+Surface parcellations across CISS, T2w and FLASH. Columns follow the same seven-atlas order as the volumetric comparison.
+
+### Additional surface view
+
+[![Additional surface view](docs/source/_static/examples/03_surface_parcellations_view2.png)](docs/source/_static/examples/03_surface_parcellations_view2.png)
+
+A second surface view of the seven cortical atlases, with CISS, T2w and FLASH in rows.
+
+### Antemortem–postmortem registration
+
+[![Antemortem–postmortem registration](docs/source/_static/examples/04_antemortem_postmortem_registration.png)](docs/source/_static/examples/04_antemortem_postmortem_registration.png)
+
+Within-subject registration of postmortem MRI to antemortem MRI, shown through moments initialization, affine alignment and deformable registration. Orange overlays show the registered postmortem MRI; green and purple contours show GM/background and GM/WM boundaries. The right panel shows the nonlinear deformation field.
+
 ## Workflow overview
 
 ![purple-mri workflows: segmentation, topology correction, cortical reconstruction, atlas parcellation and morphometry; registration across modalities; and group studies in template space.](docs/source/_static/purple_flowchart_UPDATED.png)

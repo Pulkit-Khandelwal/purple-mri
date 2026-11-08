@@ -1,0 +1,105 @@
+{
+  "method": "Lossless rectangular cropping with added atlas headings or a retained scientific legend. No interpolation, sharpening, denoising, generative enhancement, relabeling, or anatomical edits. PNG DPI metadata does not increase resolution.",
+  "figures": [
+    {
+      "source": "Screenshot 2026-11-07 at 7.51.51\u202fPM.png",
+      "source_sha256": "91fb549bb6ffd48ce4de5201229b85ea67c7281f33b6ba5ca5cb9e98dcecd84a",
+      "source_pixels": [
+        2048,
+        874
+      ],
+      "crop_box": [
+        2,
+        2,
+        2046,
+        795
+      ],
+      "output": "01_volume_atlas_comparison.png",
+      "output_sha256": "b871a7adc70c7be91ab8f7002bc6e85c3f5cf5a8eb00bb9b388e5981635dbc58",
+      "output_pixels": [
+        2044,
+        830
+      ],
+      "content_offset": [
+        0,
+        0
+      ],
+      "scientific_pixels_preserved": true
+    },
+    {
+      "source": "Screenshot 2026-11-07 at 7.53.45\u202fPM.png",
+      "source_sha256": "6e91385994fa206c9fcc32385ca67b7857a2a12b258f485227a77e4586d972c6",
+      "source_pixels": [
+        2048,
+        546
+      ],
+      "crop_box": [
+        0,
+        0,
+        2040,
+        544
+      ],
+      "output": "02_surface_parcellations_view1.png",
+      "output_sha256": "a5df186e1b9e97ec50afc5d0ffc29150eb635b63d425516f00471924db2a358e",
+      "output_pixels": [
+        2040,
+        620
+      ],
+      "content_offset": [
+        0,
+        76
+      ],
+      "scientific_pixels_preserved": true
+    },
+    {
+      "source": "Screenshot 2026-11-07 at 7.54.18\u202fPM.png",
+      "source_sha256": "aced6a031fcb5ab6c125f63c32118924b6009598de6b8d04ac51a127380e770d",
+      "source_pixels": [
+        2048,
+        533
+      ],
+      "crop_box": [
+        0,
+        0,
+        2040,
+        525
+      ],
+      "output": "03_surface_parcellations_view2.png",
+      "output_sha256": "6904658de78fe2087c10d0e5b99698172eceec7fd68f9bd8967e64e4d5adecc9",
+      "output_pixels": [
+        2040,
+        601
+      ],
+      "content_offset": [
+        0,
+        76
+      ],
+      "scientific_pixels_preserved": true
+    },
+    {
+      "source": "Screenshot 2026-11-07 at 7.58.29\u202fPM.png",
+      "source_sha256": "092cf9e2a3495f7b521e2978b8e65a18582af35f9bce7d17cd3c1b4a3bcf786e",
+      "source_pixels": [
+        2048,
+        913
+      ],
+      "crop_box": [
+        0,
+        12,
+        2048,
+        890
+      ],
+      "output": "04_antemortem_postmortem_registration.png",
+      "output_sha256": "a3653546822407e48e24014f6f85ce3b88d9e368fdee9653b8646db19782a6a7",
+      "output_pixels": [
+        2048,
+        878
+      ],
+      "content_offset": [
+        0,
+        0
+      ],
+      "scientific_pixels_preserved": true
+    }
+  ]
+}

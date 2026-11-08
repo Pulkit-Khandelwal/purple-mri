@@ -1,98 +1,104 @@
 Quick start
-===================
+=============
 
-Prepare one excised hemisphere per scan, with one hemisphere per batch. Name each
-3-D, single-channel NIfTI ``SUBJECT_0000.nii.gz``. Use an output directory that is
-new or empty and separate from the input. See :doc:`inputs` for full requirements.
+Use one contrast and one anatomical hemisphere per batch. Place single-channel
+NIfTIs named ``SUBJECT_0000.nii.gz`` in the input directory. Keep input, output
+and reused-result directories separate. Complete :doc:`installation` first.
 
-This page uses the Python CLI and the published Docker image. For equivalent
-container commands without installing the Python package, see :doc:`docker`
-or :doc:`singularity`.
-For remote processing through the ITK-SNAP GUI, use :doc:`itksnap`.
-Complete :doc:`installation`, including ``purple-mri pull``, before running.
-
-Segmentation and surfaces
----------------------------------
-
-Replace the example paths and select the actual anatomical hemisphere:
+Full segmentation, surfaces and atlas merges
+----------------------------------------------
 
 .. code-block:: bash
 
    purple-mri run exvivo_dl exvivo_surface \
-     --input /path/to/inputs \
-     --output /path/to/results_run1 \
-     --hemi rh \
-     --license /path/to/license.txt \
-     --threads 20 \
-     --dry-run
+     --contrast flash --hemi rh \
+     --input /absolute/path/inputs \
+     --output /absolute/path/new_results \
+     --license /absolute/path/license.txt \
+     --threads 8 --gpus device=0
 
-After reviewing the dry run, start actual processing:
+Choose ``t2w``, ``ciss``, ``flash`` or ``t2star``; T2* uses the FLASH route.
+Select the actual hemisphere with ``--hemi lh`` or ``--hemi rh``. Use a new or
+empty output directory for the first invocation. See :doc:`outputs` for the
+``dl/``, ``surface/`` and ``atlases/`` directories.
 
-.. code-block:: bash
-
-   purple-mri run exvivo_dl exvivo_surface \
-     --input /path/to/inputs \
-     --output /path/to/results_run1 \
-     --hemi rh \
-     --license /path/to/license.txt \
-     --threads 20
-
-Use ``--hemi lh``
-for a left hemisphere. Do not manually mirror the MRI to choose a hemisphere.
-``--pull`` can be added to refresh the Docker tag before a real run.
-
-A dry run validates host paths and names but does not read NIfTI voxel data,
-pull an image, create outputs, or check Docker/GPU availability.
+Add ``--dry-run`` to print the command after host-path validation. Add
+``--preflight-only`` to run container input/model checks without inference;
+use a separate output directory for that preflight record.
 
 DL only
----------------
+---------
 
 .. code-block:: bash
 
-   purple-mri run exvivo_dl \
-     --input /path/to/inputs --output /path/to/dl_run1
+   purple-mri run exvivo_dl --contrast ciss \
+     --input /absolute/path/inputs --output /absolute/path/new_dl_results \
+     --gpus device=0
 
-The corrected 10-label segmentation is under
-``dl_run1/exvivo_dl/05_purple_corrected``. The final merged segmentation is under
-``dl_run1/exvivo_dl/11_final_merged``. See :doc:`outputs` for the distinction.
+This writes the detailed merge to ``dl/11_final_merged`` and the reconstruction
+map to ``dl/12_surface_labels``. ``exvivo_all`` is an alias for DL only.
 
-Surfaces using that DL result
--------------------------------------
+Surfaces from completed DL results
+------------------------------------
+
+Supply the complete DL root from a v1.2.0 run:
 
 .. code-block:: bash
 
-   purple-mri run exvivo_surface \
-     --input /path/to/inputs \
-     --segmentation /path/to/dl_run1/exvivo_dl/05_purple_corrected \
-     --output /path/to/surface_run1 \
-     --hemi rh --license /path/to/license.txt --threads 20
+   purple-mri run exvivo_surface --contrast ciss --hemi lh \
+     --input /absolute/path/inputs \
+     --dl-dir /absolute/path/new_dl_results/dl \
+     --output /absolute/path/new_surface_results \
+     --license /absolute/path/license.txt --threads 8
 
-The MRI and corrected labels must match in geometry and subject identity.
-Use a new output directory for this second command.
+The container reads ``12_surface_labels`` for reconstruction and uses the
+matching detailed merge for the final atlas outputs. The reused DL root is
+writable because it records surface checkpoints. This CPU workflow writes new
+surfaces and atlas merges beneath the new output directory.
 
-Subcortical model only
+Reuse existing atlas projections
+----------------------------------
+
+.. code-block:: bash
+
+   purple-mri run exvivo_atlas_merge --contrast flash --hemi rh \
+     --input /absolute/path/inputs \
+     --dl-dir /absolute/path/completed_results/dl \
+     --surface-dir /absolute/path/completed_results/surface \
+     --output /absolute/path/new_atlas_results \
+     --license /absolute/path/license.txt --threads 8
+
+The existing DL and surface roots are mounted read-only. The container verifies
+surface/projection provenance and hashes before reusing them.
+
+Individual model predictions
 ------------------------------
 
 .. code-block:: bash
 
    purple-mri run exvivo_multi_sequence_subcortical \
-     --input /path/to/inputs --output /path/to/subcortical_run1
+     --input /absolute/path/inputs --output /absolute/path/subcortical_results
 
-This selects Task2732. Outputs go to ``subcortical_run1/predictions``.
+   purple-mri run exvivo_flash_gm_wm --contrast flash \
+     --input /absolute/path/flash_inputs --output /absolute/path/task278_results
 
-Long jobs and completion
---------------------------------
+These select Task2732 and Task278 respectively and write ``predictions/``.
+Use ``exvivo_dl`` for the complete tissue cleanup and merge.
 
-Use ``tmux`` or the site's job scheduler. In tmux, detach with ``Ctrl+B``, then
-``D`` to leave the job running. In CLI 1.1.0, ``Ctrl+C`` requests cancellation of
-that run's container. It is not a detach command.
+Resume and completion
+-----------------------
 
-Immediately after the command returns, ``echo $?`` reports its exit status.
-If saving terminal output through ``tee``, enable ``set -o pipefail`` first so a
-pipeline failure is not hidden by successful logging. Write the log outside the
-new CLI output directory; creating a log inside it before launch makes it nonempty.
+Repeat the original pipeline command with the same image, inputs, output,
+contrast, hemisphere and options, adding ``--resume``. Matching stages are
+reused only when their dependencies and output hashes agree. Changed inputs or
+settings require a new run directory.
 
-Check the command exit status and ``purple_run.json``. A successful surface
-stage also writes ``exvivo_surface/COMPLETE``. Inspect the outputs described in
-:doc:`qc`; successful process completion alone does not establish anatomical
-accuracy. The CLI does not upload results to DSS or create attachment archives.
+Use tmux or your scheduler for long jobs. In tmux, detach with Ctrl+B, then D.
+Ctrl+C requests cancellation of the CLI's container. Enable ``set -o pipefail``
+when logging through ``tee``. Keep the terminal log outside a new CLI output
+directory until the launcher has created its run record.
+
+A complete full run requires exit code 0, the three markers
+``dl/STRUCTURES_COMPLETE``, ``surface/COMPLETE`` and ``atlases/COMPLETE``, and the
+expected files. Inspect ``purple_run.json`` and the reports, then perform
+:doc:`qc`. A preflight pass is an input/model check, not a processing result.

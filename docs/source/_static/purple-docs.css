@@ -1,0 +1,12 @@
+/* Keep native-resolution figures readable and avoid horizontal overflow. */
+.wy-nav-content { max-width: 1200px; }
+.rst-content .purple-example { margin: 1.25rem 0 2rem; }
+.rst-content .purple-example img { display: block; max-width: 100%; height: auto; }
+.rst-content .purple-example .caption { line-height: 1.6; margin-top: .75rem; }
+.purple-institutions { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); align-items: center; justify-items: center; gap: 18px 10px; margin: 28px 0; }
+@media (max-width: 760px) {
+  .purple-institutions { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 420px) {
+  .purple-institutions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
