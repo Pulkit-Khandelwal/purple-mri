@@ -1,0 +1,2 @@
+Max MIB Radius: 1.66439
+Max MIB Center: [-28.2055, -36.1033, -58.3786]

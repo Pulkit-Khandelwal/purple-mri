@@ -1,0 +1,20 @@
+__pycache__/
+.venv/
+.DS_Store
+*.nii
+*.nii.gz
+/work*/
+/outputs*/
+/dots/*
+!/dots/.gitkeep
+/segmentations/*
+!/segmentations/.gitkeep
+/manual_edits/*
+!/manual_edits/.gitkeep
+/automated_pancakes/*
+!/automated_pancakes/.gitkeep
+# Keep only the distributed example images under version control.
+!/dots/EXAMPLE001_PMDots.nii.gz
+!/manual_edits/EXAMPLE001_*.nii.gz
+!/automated_pancakes/EXAMPLE001_*.nii.gz
+!/reference_output/**/*.nii.gz
