@@ -1,0 +1,2 @@
+specimen_id	dots_file	segmentation_file	tissue_labels
+SUBJECT001	../dots/SUBJECT001_PMDots.nii.gz	../segmentations/SUBJECT001_seg.nii.gz	1

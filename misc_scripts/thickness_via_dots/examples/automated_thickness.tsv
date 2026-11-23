@@ -1,0 +1,2 @@
+specimen_id	dots_file	segmentation_dir
+EXAMPLE001	../dots/EXAMPLE001_PMDots.nii.gz	../automated_pancakes
