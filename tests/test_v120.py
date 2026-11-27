@@ -9,7 +9,7 @@ import unittest
 import test_cli
 from purple_mri import cli
 from purple_mri.containers import docker_command, validate_run
-from purple_mri.runs import ensure_previous_stopped, locked, run_record
+from purple_mri.runs import ensure_previous_stopped, locked, reuse_lock, run_record
 from purple_mri.workflows import CONTRASTS, DEFAULT_IMAGE, MODELS
 
 
@@ -166,6 +166,19 @@ class V120Tests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "run lock"):
                 with locked(self.output / ".purple_cli.lock"):
                     self.fail("concurrent writer accepted")
+
+    def test_contended_reuse_lock_leaves_output_clean_for_retry(self):
+        dl = self.dl()
+        a = self.args(["exvivo_surface"],
+                      ("--hemi", "rh", "--license", str(self.license), "--dl-dir", str(dl)))
+        image = {"Id": "sha256:" + "a" * 64}
+        with reuse_lock(a):
+            with self.assertRaisesRegex(ValueError, "run lock"):
+                with run_record(a, image):
+                    self.fail("concurrent DL reuse writer accepted")
+        self.assertFalse(self.output.exists())
+        with run_record(a, image) as (_, record):
+            self.assertEqual(record["stages"], ["exvivo_surface"])
 
     def test_resume_does_not_restart_active_previous_container(self):
         old = {"run_id": "r", "container_id": "a" * 64, "container_name": "purple-mri-r", "image_id": "img"}
