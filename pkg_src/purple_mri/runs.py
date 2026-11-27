@@ -90,31 +90,32 @@ def ensure_previous_stopped(old):
 @contextmanager
 def run_record(args, image):
     _, output = validate_run(args)
-    output.mkdir(parents=True, exist_ok=True)
-    with locked(output / ".purple_cli.lock"), reuse_lock(args):
-        validate_run(args, locked=True)
-        provenance = output / "purple_run.json"
-        current = context(args, image)
-        if args.resume:
-            old_text = provenance.read_text()
-            old = json.loads(old_text)
-            if old.get("request") != current:
-                raise ValueError("Resume inputs, image or processing options differ. Use the original "
-                                 "command/options or choose a new output directory.")
-            ensure_previous_stopped(old)
-            history = output / "cli_history"
-            history.mkdir(exist_ok=True)
-            saved = history / (datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ_") + uuid.uuid4().hex + ".json")
-            saved.write_text(old_text)
-        record = {
-            "package_version": __version__, "image": args.image, "image_id": image["Id"],
-            "repo_digests": image.get("RepoDigests", []), "stages": args.stages,
-            "contrast": effective_contrast(args), "hemisphere": args.hemi,
-            "kind": "preflight" if args.preflight_only else "processing",
-            "started_utc": datetime.now(timezone.utc).isoformat(), "exit_code": None,
-            "request": current,
-        }
-        if args.resume:
-            record["previous_attempt"] = str(saved.relative_to(output))
-        save_record(provenance, record)
-        yield provenance, record
+    with reuse_lock(args):
+        output.mkdir(parents=True, exist_ok=True)
+        with locked(output / ".purple_cli.lock"):
+            validate_run(args, locked=True)
+            provenance = output / "purple_run.json"
+            current = context(args, image)
+            if args.resume:
+                old_text = provenance.read_text()
+                old = json.loads(old_text)
+                if old.get("request") != current:
+                    raise ValueError("Resume inputs, image or processing options differ. Use the original "
+                                     "command/options or choose a new output directory.")
+                ensure_previous_stopped(old)
+                history = output / "cli_history"
+                history.mkdir(exist_ok=True)
+                saved = history / (datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ_") + uuid.uuid4().hex + ".json")
+                saved.write_text(old_text)
+            record = {
+                "package_version": __version__, "image": args.image, "image_id": image["Id"],
+                "repo_digests": image.get("RepoDigests", []), "stages": args.stages,
+                "contrast": effective_contrast(args), "hemisphere": args.hemi,
+                "kind": "preflight" if args.preflight_only else "processing",
+                "started_utc": datetime.now(timezone.utc).isoformat(), "exit_code": None,
+                "request": current,
+            }
+            if args.resume:
+                record["previous_attempt"] = str(saved.relative_to(output))
+            save_record(provenance, record)
+            yield provenance, record
